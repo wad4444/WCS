@@ -1,0 +1,163 @@
+import { RunService } from "@rbxts/services";
+import { getActiveHandler, logError, logMessage } from "./utility";
+import { Janitor } from "@rbxts/janitor";
+import { rootProducer } from "state/rootProducer";
+import { SelectCharacterData } from "state/selectors";
+import { GetRegisteredStatusEffectConstructor, StatusData, StatusEffect } from "./statusEffect";
+import { FlagWithData, Flags } from "./flags";
+import Signal from "@rbxts/rbx-better-signal";
+
+export interface CharacterData {
+    statusEffects: Map<string, StatusData>;
+}
+
+export class Character {
+    private static readonly currentCharMap = new Map<Instance, Character>();
+    public static readonly CharacterCreated = new Signal<(Character: Character) => void>();
+    public static readonly CharacterDestroyed = new Signal<(Character: Character) => void>();
+
+    public readonly Instance: Instance;
+    public readonly Humanoid: Humanoid;
+
+    public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>();
+    public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>();
+    public readonly DamageTaken = new Signal<(Damage: number) => void>();
+    public readonly Destroyed = new Signal();
+
+    private readonly janitor = new Janitor();
+    private readonly statusEffects: Map<string, StatusEffect> = new Map();
+
+    constructor(Instance: Instance);
+    /**
+     * @internal Reserved for internal usage
+     */
+    constructor(Instance: Instance, canCreateClient: (typeof Flags)["CanCreateCharacterClient"]);
+    constructor(Instance: Instance, canCreateClient?: (typeof Flags)["CanCreateCharacterClient"]) {
+        if (RunService.IsClient() && canCreateClient !== Flags.CanCreateCharacterClient) {
+            logError(
+                `Attempted to manually create a character on client. \n On client side character are created by the handler automatically, \n doing this manually can lead to a possible desync`,
+            );
+        }
+
+        if (Character.currentCharMap.get(Instance)) {
+            logError(`Attempted to create 2 different characters over a same instance.`);
+        }
+
+        if (!getActiveHandler()) {
+            logError(`Attempted to instantiate a character before server has started.`);
+        }
+
+        const humanoid = Instance.FindFirstChildOfClass("Humanoid");
+        if (!humanoid) {
+            logError(`Attempted to instantiate a character over an instance without humanoid.`);
+            error(``);
+        }
+
+        this.Instance = Instance;
+        this.Humanoid = humanoid;
+
+        Character.currentCharMap.set(Instance, this);
+        Character.CharacterCreated.Fire(this);
+
+        this.setupReplication_Client();
+
+        this.janitor.Add(this.DamageTaken);
+        this.janitor.Add(this.Destroyed);
+
+        this.updateHumanoidProps();
+
+        if (RunService.IsServer()) {
+            rootProducer.setCharacterData(this.Instance, this._packData());
+        }
+    }
+
+    private updateHumanoidProps() {
+
+    }
+
+    public Destroy() {
+        this.janitor.Cleanup();
+        Character.currentCharMap.delete(this.Instance);
+
+        if (RunService.IsServer()) {
+            rootProducer.deleteCharacterData(this.Instance);
+        }
+
+        Character.CharacterDestroyed.Fire(this);
+        this.Destroyed.Fire();
+    }
+
+    /**
+     * @internal Reserved for internal usage
+     */
+    public _addStatus(Status: StatusEffect) {
+        this.statusEffects.set(Status.GetId(), Status);
+        this.StatusEffectAdded.Fire(Status);
+
+        this.updateHumanoidProps();
+        const conn = Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
+
+        this.janitor.Add(conn);
+
+        Status.Destroyed.Once(() => {
+            conn.Disconnect();
+            this.statusEffects.delete(Status.GetId());
+            this.StatusEffectRemoved.Fire(Status);
+            this.updateHumanoidProps();
+        });
+    }
+
+    /**
+     * @internal Reserved for internal usage
+     */
+    public _packData(): CharacterData {
+        const packedStatusEffect = new Map<string, StatusData>();
+        this.statusEffects.forEach((Status, Id) => packedStatusEffect.set(Id, Status._packData()));
+
+        return {
+            statusEffects: packedStatusEffect,
+        };
+    }
+
+    private setupReplication_Client() {
+        if (!RunService.IsClient()) return;
+        if (!getActiveHandler()) return;
+
+        const processStatusAddition = (Data: StatusData, Id: string) => {
+            const constructor = GetRegisteredStatusEffectConstructor(Data.className);
+            if (!constructor) {
+                logError(
+                    `Replication Error: Could not find a registered StatusEffect with name {statusData.className}. \n Try doing :RegisterDirectory() on the file directory.`,
+                );
+            }
+
+            const newStatus = new constructor!(
+                this as never,
+                {
+                    flag: Flags.CanAssignCustomId,
+                    data: Id,
+                } as never,
+            );
+            this.statusEffects.set(Id, newStatus);
+        };
+
+        const disconnect = rootProducer.subscribe(SelectCharacterData(this.Instance), (CharacterData) => {
+            if (!CharacterData) return;
+
+            CharacterData.statusEffects.forEach((StatusData, Id) => {
+                if (!this.statusEffects.get(Id)) {
+                    processStatusAddition(StatusData, Id);
+                }
+            });
+        });
+        this.janitor.Add(disconnect);
+    }
+
+    public static GetCharacterMap() {
+        return table.clone(this.currentCharMap) as ReadonlyMap<Instance, Character>;
+    }
+
+    public static GetCharacterFromInstance(Instance: Instance) {
+        return this.currentCharMap.get(Instance);
+    }
+}
