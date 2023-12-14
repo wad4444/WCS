@@ -80,20 +80,22 @@ export class StatusEffect<T extends Replicatable = object> {
             logError(`Attempted to instantiate a character before server has started.`);
         }
 
-        if (!(RunService.IsClient() && tonumber(this.id)! > 0)) {
+        this.isReplicated = RunService.IsClient() && tonumber(this.id)! > 0;
+
+        if (!this.isReplicated) {
             Character._addStatus(this as StatusEffect);
         }
 
-        this.isReplicated = RunService.IsClient() && tonumber(this.id)! < 0;
         this.startReplicationClient();
 
         this.janitor.Add(this.Destroyed);
         this.janitor.Add(this.StateChanged);
         this.janitor.Add(this.MetadataChanged);
 
+        if (RunService.IsServer()) {
+            rootProducer.setStatusData(this.Character.Instance, this.id, this._packData());
+        }
         this.Construct();
-
-        rootProducer.setStatusData(this.Character.Instance, this.id, this._packData());
     }
 
     public Start(Time?: number) {
@@ -191,7 +193,7 @@ export class StatusEffect<T extends Replicatable = object> {
     }
 
     public GetHumanoidData() {
-        return this.humanoidData ? deepCopy(this.humanoidData) : undefined;
+        return this.humanoidData !== undefined ? deepCopy(this.humanoidData) : undefined;
     }
 
     public GetMetadata() {
@@ -230,26 +232,28 @@ export class StatusEffect<T extends Replicatable = object> {
     private startReplicationClient() {
         if (!this.isReplicated) return;
 
+        const processDataUpdate = (StatusData?: StatusData) => {
+            if (!StatusData) return;
+
+            if (StatusData.state !== this.state) {
+                this.StateChanged.Fire(StatusData.state, this.state);
+                this.state = StatusData.state;
+            }
+
+            if (StatusData.metadata !== this.metadata) {
+                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, this.metadata);
+                this.metadata = StatusData.metadata as T | undefined;
+            }
+
+            print(StatusData.humanoidData)
+            if (StatusData.humanoidData !== this.humanoidData) {
+                this.HumanoidDataChanged.Fire(StatusData.humanoidData, this.humanoidData);
+                this.humanoidData = StatusData.humanoidData;
+            }
+        };
         const subscription = rootProducer.subscribe(
             SelectStatusData(this.Character.Instance, this.id),
-            (StatusData) => {
-                if (!StatusData) return;
-
-                if (StatusData.state !== this.state) {
-                    this.StateChanged.Fire(StatusData.state, this.state);
-                    this.state = StatusData.state;
-                }
-
-                if (StatusData.metadata !== this.metadata) {
-                    this.MetadataChanged.Fire(StatusData.metadata as T | undefined, this.metadata);
-                    this.metadata = StatusData.metadata as T | undefined;
-                }
-
-                if (StatusData.humanoidData !== this.humanoidData) {
-                    this.HumanoidDataChanged.Fire(StatusData.humanoidData, this.humanoidData);
-                    this.humanoidData = StatusData.humanoidData;
-                }
-            },
+            processDataUpdate,
         );
 
         this.janitor.Add(
@@ -261,6 +265,8 @@ export class StatusEffect<T extends Replicatable = object> {
                 }
             }),
         );
+
+        processDataUpdate(SelectStatusData(this.Character.Instance, this.id)(rootProducer.getState()));
 
         this.janitor.Add(subscription);
     }

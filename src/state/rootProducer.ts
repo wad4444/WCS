@@ -1,4 +1,4 @@
-import Immut from "@rbxts/immut";
+import Immut, { nothing, original } from "@rbxts/immut";
 import { InferActions, InferState, createProducer } from "@rbxts/reflex";
 import { Character, CharacterData } from "source/character";
 import { StatusData } from "source/statusEffect";
@@ -32,47 +32,35 @@ export const rootProducer = createProducer(initialState, {
         });
     },
     setStatusData: (State, Character: Instance, Id: string, Data: StatusData) => {
-        return Immut.produce(State, (Draft) => {
-            const characterData = Draft.get(Character);
-            if (!characterData) return Draft;
+        const characterData = State.get(Character);
+        if (!characterData) return State;
 
-            Draft.set(Character, {
-                ...characterData,
-                statusEffects: Immut.produce(characterData.statusEffects, (Draft) => {
-                    Draft.set(Id, Data);
-                }),
-            });
+        return Immut.produce(State, (Draft) => {
+            const statusEffects = Draft.get(Character)?.statusEffects;
+            statusEffects?.set(Id, Data);
         });
     },
     deleteStatusData: (State, Character: Instance, Id: string) => {
-        return Immut.produce(State, (Draft) => {
-            const characterData = Draft.get(Character);
-            if (!characterData) return Draft;
+        const characterData = State.get(Character);
+        if (!characterData) return State;
 
-            Draft.set(Character, {
-                ...characterData,
-                statusEffects: Immut.produce(characterData.statusEffects, (Draft) => {
-                    Draft.delete(Id);
-                }),
-            });
+        return Immut.produce(State, (Draft) => {
+            const statusEffects = Draft.get(Character)?.statusEffects;
+            statusEffects?.delete(Id);
         });
     },
     patchStatusData: (State, Character: Instance, Id: string, Patch: Partial<StatusData>) => {
+        const characterData = State.get(Character);
+        if (!characterData) return State;
+
         return Immut.produce(State, (Draft) => {
-            const characterData = Draft.get(Character);
-            if (!characterData) return Draft;
+            const statusEffects = Draft.get(Character)?.statusEffects;
+            const previous = statusEffects?.get(Id);
+            if (!previous) return Draft;
 
-            Draft.set(Character, {
-                ...characterData,
-                statusEffects: Immut.produce(characterData.statusEffects, (Draft) => {
-                    const previous = Draft.get(Id);
-                    if (!previous) return;
-
-                    Draft.set(Id, {
-                        ...previous,
-                        ...Patch,
-                    });
-                }),
+            statusEffects?.set(Id, {
+                ...previous,
+                ...Patch,
             });
         });
     },

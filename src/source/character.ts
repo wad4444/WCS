@@ -73,19 +73,26 @@ export class Character {
         this.janitor.Add(this.DamageTaken);
         this.janitor.Add(this.Destroyed);
 
-        this.updateHumanoidProps();
-
         if (RunService.IsServer()) {
             rootProducer.setCharacterData(this.Instance, this._packData());
+        } else {
+            this.janitor.Add(this.StatusEffectAdded.Connect(() => this.updateHumanoidProps()));
+            this.janitor.Add(this.StatusEffectRemoved.Connect(() => this.updateHumanoidProps()));
         }
     }
 
     private updateHumanoidProps() {
+        if (RunService.IsServer()) return;
+
         const statuses: StatusEffect[] = [];
-        this.statusEffects.forEach((Status) => Status.GetHumanoidData() ?? statuses.push(Status));
+        this.statusEffects.forEach((Status) => {
+            if (Status.GetHumanoidData() && Status.GetState().IsActive) {
+                statuses.push(Status);
+            }
+        });
 
         if (statuses.isEmpty()) return;
-        const propsToApply = table.clone(this.defaultsProps);
+        const propsToApply = this.GetDefaultsProps();
         const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
             WalkSpeed: 0,
             JumpPower: 0,
@@ -123,7 +130,6 @@ export class Character {
     }
 
     public Destroy() {
-        this.janitor.Cleanup();
         Character.currentCharMap.delete(this.Instance);
 
         if (RunService.IsServer()) {
@@ -132,6 +138,7 @@ export class Character {
 
         Character.CharacterDestroyed.Fire(this);
         this.Destroyed.Fire();
+        this.janitor.Cleanup();
     }
 
     /**
@@ -141,13 +148,7 @@ export class Character {
         this.statusEffects.set(Status.GetId(), Status);
         this.StatusEffectAdded.Fire(Status);
 
-        this.updateHumanoidProps();
-        const conn = Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
-
-        this.janitor.Add(conn);
-
         Status.Destroyed.Once(() => {
-            conn.Disconnect();
             this.statusEffects.delete(Status.GetId());
             this.StatusEffectRemoved.Fire(Status);
             this.updateHumanoidProps();
@@ -187,13 +188,22 @@ export class Character {
                 } as never,
             );
             this.statusEffects.set(Id, newStatus);
+            this.StatusEffectAdded.Fire(newStatus);
+
+            const humanoidDataChanged = newStatus.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
+            const stateChanged = newStatus.StateChanged.Connect(() => this.updateHumanoidProps());
+
+            newStatus.Destroyed.Once(() => {
+                humanoidDataChanged.Disconnect();
+                stateChanged.Disconnect();
+            });
         };
 
-        const disconnect = rootProducer.subscribe(SelectCharacterData(this.Instance), (CharacterData) => {
+        const proccessDataUpdate = (CharacterData: CharacterData | undefined) => {
             if (!CharacterData) return;
 
             CharacterData.statusEffects.forEach((StatusData, Id) => {
-                if (!this.statusEffects.get(Id)) {
+                if (!this.statusEffects.has(Id)) {
                     processStatusAddition(StatusData, Id);
                 }
             });
@@ -201,12 +211,18 @@ export class Character {
             this.statusEffects.forEach((Status, Id) => {
                 if (!CharacterData.statusEffects.has(Id)) {
                     Status.Destroy();
+                    this.StatusEffectRemoved.Fire(Status);
                 }
             });
 
             if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
-        });
+        };
+
+        const disconnect = rootProducer.subscribe(SelectCharacterData(this.Instance), proccessDataUpdate);
+        proccessDataUpdate(SelectCharacterData(this.Instance)(rootProducer.getState()));
+
         this.janitor.Add(disconnect);
+        this.updateHumanoidProps();
     }
 
     public SetDefaultProps(Props: AffectableHumanoidProps) {
