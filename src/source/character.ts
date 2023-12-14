@@ -9,7 +9,10 @@ import Signal from "@rbxts/rbx-better-signal";
 
 export interface CharacterData {
     statusEffects: Map<string, StatusData>;
+    defaultProps: AffectableHumanoidProps;
 }
+
+export type AffectableHumanoidProps = Pick<Humanoid, "WalkSpeed" | "JumpPower" | "AutoRotate" | "JumpHeight">;
 
 export class Character {
     private static readonly currentCharMap = new Map<Instance, Character>();
@@ -26,6 +29,12 @@ export class Character {
 
     private readonly janitor = new Janitor();
     private readonly statusEffects: Map<string, StatusEffect> = new Map();
+    private defaultsProps: AffectableHumanoidProps = {
+        WalkSpeed: 16,
+        JumpPower: 100,
+        AutoRotate: true,
+        JumpHeight: 7.2,
+    };
 
     constructor(Instance: Instance);
     /**
@@ -72,7 +81,45 @@ export class Character {
     }
 
     private updateHumanoidProps() {
+        const statuses: StatusEffect[] = [];
+        this.statusEffects.forEach((Status) => Status.GetHumanoidData() ?? statuses.push(Status));
 
+        if (statuses.isEmpty()) return;
+        const propsToApply = table.clone(this.defaultsProps);
+        const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
+            WalkSpeed: 0,
+            JumpPower: 0,
+            AutoRotate: 0,
+            JumpHeight: 0,
+        };
+
+        let previousSetMPriority: number | undefined = undefined;
+        statuses.forEach((StatusEffect) => {
+            const humanoidData = StatusEffect.GetHumanoidData();
+            if (!humanoidData) return;
+
+            const mode = humanoidData.Mode;
+            const priority = humanoidData.Priority;
+            if (mode === "Increment" && !previousSetMPriority) {
+                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
+                    if (typeIs(Value, "number")) {
+                        propsToApply[PropertyName] = (Value + propsToApply[PropertyName as never]) as never;
+                    } else if (priority > incPriorityList[PropertyName]) {
+                        propsToApply[PropertyName as never] = Value as never;
+                        incPriorityList[PropertyName] = priority;
+                    }
+                }
+            } else if (mode === "Set" && (!previousSetMPriority || priority > previousSetMPriority)) {
+                previousSetMPriority = priority;
+                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
+                    propsToApply[PropertyName as never] = Value as never;
+                }
+            }
+        });
+
+        for (const [PropertyName, Value] of pairs(propsToApply)) {
+            this.Humanoid[PropertyName as never] = Value as never;
+        }
     }
 
     public Destroy() {
@@ -116,6 +163,7 @@ export class Character {
 
         return {
             statusEffects: packedStatusEffect,
+            defaultProps: this.defaultsProps,
         };
     }
 
@@ -149,8 +197,29 @@ export class Character {
                     processStatusAddition(StatusData, Id);
                 }
             });
+
+            this.statusEffects.forEach((Status, Id) => {
+                if (!CharacterData.statusEffects.has(Id)) {
+                    Status.Destroy();
+                }
+            });
+
+            if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
         });
         this.janitor.Add(disconnect);
+    }
+
+    public SetDefaultProps(Props: AffectableHumanoidProps) {
+        this.defaultsProps = Props;
+        if (RunService.IsServer()) {
+            rootProducer.patchCharacterData(this.Instance, {
+                defaultProps: Props,
+            });
+        }
+    }
+
+    public GetDefaultsProps() {
+        return table.clone(this.defaultsProps);
     }
 
     public static GetCharacterMap() {

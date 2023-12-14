@@ -24,6 +24,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@rbxts/deepcopy": "^0.1.3",
     "@rbxts/immut": "^0.4.4-ts.0",
     "@rbxts/janitor": "^1.15.4-ts.0",
     "@rbxts/rbx-better-signal": "^1.1.0",

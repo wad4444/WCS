@@ -1,4 +1,4 @@
-import type { Character } from "./character";
+import type { AffectableHumanoidProps, Character } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
 import { Constructor, ReadonlyDeep, getActiveHandler, logError } from "./utility";
@@ -7,6 +7,7 @@ import { Timer } from "@rbxts/timer";
 import { rootProducer } from "state/rootProducer";
 import { SelectStatusData } from "state/selectors";
 import Signal from "@rbxts/rbx-better-signal";
+import { deepCopy } from "@rbxts/deepcopy";
 
 export interface StatusData {
     className: string;
@@ -19,7 +20,6 @@ export interface StatusEffectState {
     IsActive: boolean;
 }
 
-export type AffectableHumanoidProps = Pick<Humanoid, "WalkSpeed" | "JumpPower" | "AutoRotate" | "JumpHeight">;
 export interface HumanoidData {
     Mode: "Set" | "Increment";
     Props: Partial<AffectableHumanoidProps>;
@@ -104,8 +104,6 @@ export class StatusEffect<T extends Replicatable = object> {
         if (!Time) return;
     }
 
-    public SetHumanoidData(Mode: "Set", Props: Partial<AffectableHumanoidProps>, Priority: number): void;
-    public SetHumanoidData(Mode: "Increment", Props: Partial<AffectableHumanoidProps>): void;
     public SetHumanoidData(Mode: "Set" | "Increment", Props: Partial<AffectableHumanoidProps>, Priority = 1) {
         const newData = {
             Mode: Mode,
@@ -190,6 +188,10 @@ export class StatusEffect<T extends Replicatable = object> {
 
     public GetState() {
         return table.clone(this.state) as ReadonlyState;
+    }
+
+    public GetHumanoidData() {
+        return this.humanoidData ? deepCopy(this.humanoidData) : undefined;
     }
 
     public GetMetadata() {

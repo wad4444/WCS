@@ -15,6 +15,17 @@ export const rootProducer = createProducer(initialState, {
             Draft.set(Character, CharacterData);
         });
     },
+    patchCharacterData: (State, Character: Instance, Patch: Partial<CharacterData>) => {
+        const currentData = State.get(Character);
+        if (!currentData) return State;
+
+        return Immut.produce(State, (Draft) => {
+            Draft.set(Character, {
+                ...currentData,
+                ...Patch,
+            });
+        });
+    },
     deleteCharacterData: (State, Character: Instance) => {
         return Immut.produce(State, (Draft) => {
             Draft.delete(Character);
