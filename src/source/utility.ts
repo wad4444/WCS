@@ -14,6 +14,12 @@ export function logError(Message: string, DisplayTraceback = true) {
     error(`\n ${errorString} \n ${Message} \n \n ${DisplayTraceback ?? debug.traceback()}`);
 }
 
+export function mapToArray<T extends defined, K extends defined>(Map: Map<T, K>) {
+    const arr: K[] = [];
+    Map.forEach((Value) => arr.push(Value));
+    return arr;
+}
+
 export function logMessage(Message: string) {
     print(`[${consolePrefix}]: ${Message}`);
 }

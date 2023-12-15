@@ -1,5 +1,5 @@
 import { RunService } from "@rbxts/services";
-import { getActiveHandler, logError, logMessage } from "./utility";
+import { Constructor, getActiveHandler, logError, logMessage, mapToArray } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { rootProducer } from "state/rootProducer";
 import { SelectCharacterData } from "state/selectors";
@@ -81,54 +81,6 @@ export class Character {
         }
     }
 
-    private updateHumanoidProps() {
-        if (RunService.IsServer()) return;
-
-        const statuses: StatusEffect[] = [];
-        this.statusEffects.forEach((Status) => {
-            if (Status.GetHumanoidData() && Status.GetState().IsActive) {
-                statuses.push(Status);
-            }
-        });
-
-        if (statuses.isEmpty()) return;
-        const propsToApply = this.GetDefaultsProps();
-        const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
-            WalkSpeed: 0,
-            JumpPower: 0,
-            AutoRotate: 0,
-            JumpHeight: 0,
-        };
-
-        let previousSetMPriority: number | undefined = undefined;
-        statuses.forEach((StatusEffect) => {
-            const humanoidData = StatusEffect.GetHumanoidData();
-            if (!humanoidData) return;
-
-            const mode = humanoidData.Mode;
-            const priority = humanoidData.Priority;
-            if (mode === "Increment" && !previousSetMPriority) {
-                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
-                    if (typeIs(Value, "number")) {
-                        propsToApply[PropertyName] = (Value + propsToApply[PropertyName as never]) as never;
-                    } else if (priority > incPriorityList[PropertyName]) {
-                        propsToApply[PropertyName as never] = Value as never;
-                        incPriorityList[PropertyName] = priority;
-                    }
-                }
-            } else if (mode === "Set" && (!previousSetMPriority || priority > previousSetMPriority)) {
-                previousSetMPriority = priority;
-                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
-                    propsToApply[PropertyName as never] = Value as never;
-                }
-            }
-        });
-
-        for (const [PropertyName, Value] of pairs(propsToApply)) {
-            this.Humanoid[PropertyName as never] = Value as never;
-        }
-    }
-
     public Destroy() {
         Character.currentCharMap.delete(this.Instance);
 
@@ -166,6 +118,52 @@ export class Character {
             statusEffects: packedStatusEffect,
             defaultProps: this.defaultsProps,
         };
+    }
+
+    public SetDefaultProps(Props: AffectableHumanoidProps) {
+        this.defaultsProps = Props;
+        if (RunService.IsServer()) {
+            rootProducer.patchCharacterData(this.Instance, {
+                defaultProps: Props,
+            });
+        }
+    }
+
+    public GetDefaultsProps() {
+        return table.clone(this.defaultsProps);
+    }
+
+    public static GetCharacterMap() {
+        return table.clone(this.currentCharMap) as ReadonlyMap<Instance, Character>;
+    }
+
+    public static GetCharacterFromInstance(Instance: Instance) {
+        return this.currentCharMap.get(Instance);
+    }
+
+    public GetAllStatusEffects() {
+        return mapToArray(this.statusEffects);
+    }
+
+    public GetAllActiveStatusEffects() {
+        return mapToArray(this.statusEffects).filter((T) => T.GetState().IsActive);
+    }
+
+    public GetAllStatusEffectsOfType<T extends object>(Constructor: Constructor<T>) {
+        return mapToArray(this.statusEffects).filter((T) => tostring(getmetatable(T)) === tostring(Constructor));
+    }
+
+    public GetAllActiveStatusEffectsOfType<T extends object>(Constructor: Constructor<T>) {
+        return mapToArray(this.statusEffects).filter(
+            (T) => tostring(getmetatable(T)) === tostring(Constructor) && T.GetState().IsActive,
+        );
+    }
+
+    public HasStatusEffects(Constructors: Constructor<StatusEffect>[]) {
+        for (const [_, Effect] of pairs(this.statusEffects)) {
+            if (Constructors.find((T) => tostring(T) === tostring(getmetatable(Effect)))) return true;
+        }
+        return false;
     }
 
     private setupReplication_Client() {
@@ -225,24 +223,51 @@ export class Character {
         this.updateHumanoidProps();
     }
 
-    public SetDefaultProps(Props: AffectableHumanoidProps) {
-        this.defaultsProps = Props;
-        if (RunService.IsServer()) {
-            rootProducer.patchCharacterData(this.Instance, {
-                defaultProps: Props,
-            });
+    private updateHumanoidProps() {
+        if (RunService.IsServer()) return;
+
+        const statuses: StatusEffect[] = [];
+        this.statusEffects.forEach((Status) => {
+            if (Status.GetHumanoidData() && Status.GetState().IsActive) {
+                statuses.push(Status);
+            }
+        });
+
+        if (statuses.isEmpty()) return;
+        const propsToApply = this.GetDefaultsProps();
+        const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
+            WalkSpeed: 0,
+            JumpPower: 0,
+            AutoRotate: 0,
+            JumpHeight: 0,
+        };
+
+        let previousSetMPriority: number | undefined = undefined;
+        statuses.forEach((StatusEffect) => {
+            const humanoidData = StatusEffect.GetHumanoidData();
+            if (!humanoidData) return;
+
+            const mode = humanoidData.Mode;
+            const priority = humanoidData.Priority;
+            if (mode === "Increment" && !previousSetMPriority) {
+                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
+                    if (typeIs(Value, "number")) {
+                        propsToApply[PropertyName] = (Value + propsToApply[PropertyName as never]) as never;
+                    } else if (priority > incPriorityList[PropertyName]) {
+                        propsToApply[PropertyName as never] = Value as never;
+                        incPriorityList[PropertyName] = priority;
+                    }
+                }
+            } else if (mode === "Set" && (!previousSetMPriority || priority > previousSetMPriority)) {
+                previousSetMPriority = priority;
+                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
+                    propsToApply[PropertyName as never] = Value as never;
+                }
+            }
+        });
+
+        for (const [PropertyName, Value] of pairs(propsToApply)) {
+            this.Humanoid[PropertyName as never] = Value as never;
         }
-    }
-
-    public GetDefaultsProps() {
-        return table.clone(this.defaultsProps);
-    }
-
-    public static GetCharacterMap() {
-        return table.clone(this.currentCharMap) as ReadonlyMap<Instance, Character>;
-    }
-
-    public static GetCharacterFromInstance(Instance: Instance) {
-        return this.currentCharMap.get(Instance);
     }
 }

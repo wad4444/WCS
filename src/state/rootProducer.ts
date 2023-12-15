@@ -56,7 +56,7 @@ export const rootProducer = createProducer(initialState, {
         return Immut.produce(State, (Draft) => {
             const statusEffects = Draft.get(Character)?.statusEffects;
             const previous = statusEffects?.get(Id);
-            if (!previous) return Draft;
+            if (!previous) return;
 
             statusEffects?.set(Id, {
                 ...previous,

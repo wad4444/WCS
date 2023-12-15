@@ -245,7 +245,6 @@ export class StatusEffect<T extends Replicatable = object> {
                 this.metadata = StatusData.metadata as T | undefined;
             }
 
-            print(StatusData.humanoidData)
             if (StatusData.humanoidData !== this.humanoidData) {
                 this.HumanoidDataChanged.Fire(StatusData.humanoidData, this.humanoidData);
                 this.humanoidData = StatusData.humanoidData;
