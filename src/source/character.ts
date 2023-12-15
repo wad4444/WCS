@@ -6,9 +6,11 @@ import { SelectCharacterData } from "state/selectors";
 import { GetRegisteredStatusEffectConstructor, StatusData, StatusEffect } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
 import Signal from "@rbxts/rbx-better-signal";
+import { SkillData } from "./skill";
 
 export interface CharacterData {
     statusEffects: Map<string, StatusData>;
+    skills: Map<string, SkillData>;
     defaultProps: AffectableHumanoidProps;
 }
 
@@ -117,6 +119,7 @@ export class Character {
         return {
             statusEffects: packedStatusEffect,
             defaultProps: this.defaultsProps,
+            skills: new Map(),
         };
     }
 

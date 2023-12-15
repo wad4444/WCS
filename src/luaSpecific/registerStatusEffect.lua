@@ -2,10 +2,11 @@ local luaSpecific = script.Parent
 local source = luaSpecific.Parent.source
 
 local statusEffectLib = require(source.statusEffect)
+local utility = require(source.utility)
 
 function RegisterStatusEffect(Name)
     if typeof(Name) ~= "string" then
-        error("Not provided a valid name for RegisterStatusEffect")
+        utility.logError("Not provided a valid name for RegisterStatusEffect")
     end
 
     local super = statusEffectLib.StatusEffect
