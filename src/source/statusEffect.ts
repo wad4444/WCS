@@ -1,9 +1,9 @@
 import type { AffectableHumanoidProps, Character } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
-import { Constructor, ReadonlyDeep, getActiveHandler, logError } from "./utility";
+import { Constructor, ReadonlyDeep, getActiveHandler, logError, logWarning } from "./utility";
 import { FlagWithData, Flags } from "./flags";
-import { Timer } from "@rbxts/timer";
+import { Timer, TimerState } from "@rbxts/timer";
 import { rootProducer } from "state/rootProducer";
 import { SelectStatusData } from "state/selectors";
 import Signal from "@rbxts/rbx-better-signal";
@@ -27,7 +27,7 @@ export interface HumanoidData {
 }
 
 type ReadonlyState = ReadonlyDeep<StatusEffectState>;
-type Replicatable = object | number | string | boolean;
+type Replicatable = object | number | string | boolean | unknown;
 
 const registeredStatuses: Map<string, Constructor<StatusEffect>> = new Map();
 let nextId = 0;
@@ -40,13 +40,22 @@ function generateId() {
     return tostring(nextId);
 }
 
-export class StatusEffect<T extends Replicatable = object> {
-    public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>();
-    public readonly StateChanged = new Signal<(State: ReadonlyState, PreviousState: ReadonlyState) => void>();
+export class StatusEffect<T extends Replicatable = unknown> {
+    private readonly janitor = new Janitor();
+
+    public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>(
+        this.janitor,
+    );
+    public readonly StateChanged = new Signal<(State: ReadonlyState, PreviousState: ReadonlyState) => void>(
+        this.janitor,
+    );
     public readonly HumanoidDataChanged = new Signal<
         (Data: HumanoidData | undefined, PreviousData: HumanoidData | undefined) => void
-    >();
-    public readonly Destroyed = new Signal();
+    >(this.janitor);
+    public readonly Destroyed = new Signal(this.janitor);
+    public readonly Started = new Signal(this.janitor);
+    public readonly Ended = new Signal(this.janitor);
+
     public DestroyOnEnd = true;
 
     private state: StatusEffectState = {
@@ -56,7 +65,6 @@ export class StatusEffect<T extends Replicatable = object> {
     private humanoidData?: HumanoidData;
 
     private isDestroyed = false;
-    private readonly janitor = new Janitor();
     private readonly timer = new Timer(1);
     private readonly id;
     private readonly isReplicated: boolean;
@@ -88,9 +96,25 @@ export class StatusEffect<T extends Replicatable = object> {
 
         this.startReplicationClient();
 
-        this.janitor.Add(this.Destroyed);
-        this.janitor.Add(this.StateChanged);
-        this.janitor.Add(this.MetadataChanged);
+        this.janitor.Add(
+            this.StateChanged.Connect((State, PreviousState) => {
+                if (!PreviousState.IsActive && State.IsActive) {
+                    this.Started.Fire();
+                    this.OnStartClient();
+                } else if (PreviousState.IsActive && !State.IsActive) {
+                    this.Ended.Fire();
+                    this.OnEndClient();
+                }
+            }),
+        );
+
+        this.janitor.Add(
+            this.timer.stopped.Connect(() => {
+                this.SetState({
+                    IsActive: false,
+                });
+            }),
+        );
 
         if (RunService.IsServer()) {
             rootProducer.setStatusData(this.Character.Instance, this.id, this._packData());
@@ -99,11 +123,72 @@ export class StatusEffect<T extends Replicatable = object> {
     }
 
     public Start(Time?: number) {
+        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+
+        if (this.timer.getState() === TimerState.Running) {
+            logWarning(`Can't start an already active StatusEffect`);
+            return;
+        }
+
+        if (this.timer.getState() === TimerState.Paused) {
+            this.timer.resume();
+            this.timer.stop();
+        }
+
         this.SetState({
             IsActive: true,
         });
 
-        if (!Time) return;
+        if (!Time || Time <= 0) return;
+        this.timer.setLength(Time);
+        this.timer.start();
+    }
+
+    public Pause() {
+        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+
+        if (this.timer.getState() !== TimerState.Running) {
+            logWarning(`Can't pause a non active status effect`);
+            return;
+        }
+
+        this.timer.pause();
+    }
+
+    public Resume() {
+        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+
+        if (this.timer.getState() !== TimerState.Paused) {
+            logWarning(`Can't resume a non paused status effect`);
+            return;
+        }
+
+        this.timer.resume();
+    }
+
+    public Stop() {
+        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+
+        if (!this.GetState().IsActive) {
+            logWarning(`Can't stop a non active status effect`);
+            return;
+        }
+
+        this.SetState({
+            IsActive: false,
+        });
+
+        if (this.timer.getState() === TimerState.NotRunning) {
+            return;
+        }
+
+        if (this.timer.getState() === TimerState.Paused) {
+            this.timer.resume();
+            this.timer.stop();
+            return;
+        }
+
+        this.timer.stop();
     }
 
     public SetHumanoidData(Mode: "Set" | "Increment", Props: Partial<AffectableHumanoidProps>, Priority = 1) {
@@ -232,7 +317,7 @@ export class StatusEffect<T extends Replicatable = object> {
     private startReplicationClient() {
         if (!this.isReplicated) return;
 
-        const processDataUpdate = (StatusData?: StatusData) => {
+        const proccessDataUpdate = (StatusData?: StatusData) => {
             if (!StatusData) return;
 
             if (StatusData.state !== this.state) {
@@ -250,22 +335,11 @@ export class StatusEffect<T extends Replicatable = object> {
                 this.humanoidData = StatusData.humanoidData;
             }
         };
-        const subscription = rootProducer.subscribe(
-            SelectStatusData(this.Character.Instance, this.id),
-            processDataUpdate,
-        );
 
-        this.janitor.Add(
-            this.StateChanged.Connect((State, PreviousState) => {
-                if (!PreviousState.IsActive && State.IsActive) {
-                    this.OnStartClient();
-                } else if (PreviousState.IsActive && !State.IsActive) {
-                    this.OnEndClient();
-                }
-            }),
-        );
+        const dataSelector = SelectStatusData(this.Character.Instance, this.id);
 
-        processDataUpdate(SelectStatusData(this.Character.Instance, this.id)(rootProducer.getState()));
+        const subscription = rootProducer.subscribe(dataSelector, proccessDataUpdate);
+        proccessDataUpdate(dataSelector(rootProducer.getState()));
 
         this.janitor.Add(subscription);
     }

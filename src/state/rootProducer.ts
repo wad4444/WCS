@@ -69,29 +69,29 @@ export const rootProducer = createProducer(initialState, {
             statusEffects?.set(Id, patchedData);
         });
     },
-    setSkillData: (State, Character: Instance, Id: string, Data: SkillData) => {
+    setSkillData: (State, Character: Instance, Name: string, Data: SkillData) => {
         const characterData = State.get(Character);
         if (!characterData) return State;
 
         return Immut.produce(State, (Draft) => {
             const skills = Draft.get(Character)?.skills;
-            skills?.set(Id, Data);
+            skills?.set(Name, Data);
         });
     },
-    deleteSkillData: (State, Character: Instance, Id: string) => {
+    deleteSkillData: (State, Character: Instance, Name: string) => {
         const characterData = State.get(Character);
         if (!characterData) return State;
 
         return Immut.produce(State, (Draft) => {
             const skills = Draft.get(Character)?.skills;
-            skills?.delete(Id);
+            skills?.delete(Name);
         });
     },
-    patchSkillData: (State, Character: Instance, Id: string, Patch: Partial<SkillData>) => {
+    patchSkillData: (State, Character: Instance, Name: string, Patch: Partial<SkillData>) => {
         const characterData = State.get(Character);
         if (!characterData) return State;
 
-        const previous = characterData.skills.get(Id);
+        const previous = characterData.skills.get(Name);
         if (!previous) return State;
 
         const patchedData = {
@@ -101,8 +101,7 @@ export const rootProducer = createProducer(initialState, {
 
         return Immut.produce(State, (Draft) => {
             const skills = Draft.get(Character)?.skills;
-
-            skills?.set(Id, patchedData);
+            skills?.set(Name, patchedData);
         });
     },
 });

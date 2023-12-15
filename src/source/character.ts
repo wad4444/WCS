@@ -219,8 +219,9 @@ export class Character {
             if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
         };
 
-        const disconnect = rootProducer.subscribe(SelectCharacterData(this.Instance), proccessDataUpdate);
-        proccessDataUpdate(SelectCharacterData(this.Instance)(rootProducer.getState()));
+        const dataSelector = SelectCharacterData(this.Instance);
+        const disconnect = rootProducer.subscribe(dataSelector, proccessDataUpdate);
+        proccessDataUpdate(dataSelector(rootProducer.getState()));
 
         this.janitor.Add(disconnect);
         this.updateHumanoidProps();
