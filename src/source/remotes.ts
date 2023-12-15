@@ -12,4 +12,9 @@ export const remotes = createRemotes({
         ),
     ),
     _start: remote<Server, []>(),
+    _startSkill: remote<Server, [Character: Instance, Name: string, StarterParams: unknown]>(
+        t.Instance,
+        t.string,
+        t.any,
+    ),
 });

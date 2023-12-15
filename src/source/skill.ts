@@ -1,24 +1,28 @@
 import { RunService } from "@rbxts/services";
 import { Character } from "./character";
 import { Flags } from "./flags";
-import { Constructor, getActiveHandler, logError } from "./utility";
+import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
 import { rootProducer } from "state/rootProducer";
 import Signal from "@rbxts/rbx-better-signal";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
+import { remotes } from "./remotes";
 
 export interface SkillState {
     IsActive: boolean;
     Debounce: boolean;
     TimerEndTimestamp?: number;
+    StarterParams?: Replicatable;
 }
+
+type ReadonlyState = ReadonlyDeep<SkillState>;
 
 export interface SkillData {
     state: SkillState;
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
-export class Skill {
+export class Skill<T extends Replicatable | unknown = unknown> {
     private readonly janitor = new Janitor();
 
     public readonly Started = new Signal(this.janitor);
@@ -57,7 +61,7 @@ export class Skill {
             this.StateChanged.Connect((State, PreviousState) => {
                 if (!PreviousState.IsActive && State.IsActive) {
                     this.Started.Fire();
-                    this.OnStartClient();
+                    this.OnStartClient(State.StarterParams as T);
                 } else if (PreviousState.IsActive && !State.IsActive) {
                     this.Ended.Fire();
                     this.OnEndClient();
@@ -67,6 +71,22 @@ export class Skill {
 
         this.isReplicated = RunService.IsClient();
         rootProducer.setSkillData(this.Character.Instance, this.name, this.packData());
+    }
+
+    public Start(StarterParams: T) {
+        if (this.GetState().IsActive) {
+            logWarning("Can't start an active skill");
+            return;
+        }
+
+        if (RunService.IsClient()) {
+            remotes._startSkill.fire(this.Character.Instance, this.name, StarterParams);
+            return;
+        }
+    }
+
+    public GetState() {
+        return table.clone(this.state) as ReadonlyState;
     }
 
     protected SetState(Patch: Partial<SkillState>) {
@@ -115,8 +135,8 @@ export class Skill {
     }
 
     public Construct() {}
-    public OnStartServer() {}
-    public OnStartClient() {}
+    public OnStartServer(StarterParams: T) {}
+    public OnStartClient(StarterParams: T) {}
     public OnEndClient() {}
     public OnEndServer() {}
 }

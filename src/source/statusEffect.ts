@@ -1,7 +1,7 @@
 import type { AffectableHumanoidProps, Character } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
-import { Constructor, ReadonlyDeep, getActiveHandler, logError, logWarning } from "./utility";
+import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
 import { rootProducer } from "state/rootProducer";
@@ -12,7 +12,7 @@ import { deepCopy } from "@rbxts/deepcopy";
 export interface StatusData {
     className: string;
     state: StatusEffectState;
-    metadata?: Replicatable;
+    metadata?: Replicatable | unknown;
     humanoidData?: HumanoidData;
 }
 
@@ -27,7 +27,6 @@ export interface HumanoidData {
 }
 
 type ReadonlyState = ReadonlyDeep<StatusEffectState>;
-type Replicatable = object | number | string | boolean | unknown;
 
 const registeredStatuses: Map<string, Constructor<StatusEffect>> = new Map();
 let nextId = 0;
@@ -40,7 +39,7 @@ function generateId() {
     return tostring(nextId);
 }
 
-export class StatusEffect<T extends Replicatable = unknown> {
+export class StatusEffect<T extends Replicatable | unknown = unknown> {
     private readonly janitor = new Janitor();
 
     public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>(
