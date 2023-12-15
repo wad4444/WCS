@@ -88,10 +88,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         }
 
         this.isReplicated = RunService.IsClient() && tonumber(this.id)! > 0;
-
-        if (!this.isReplicated) {
-            Character._addStatus(this as StatusEffect);
-        }
+        Character._addStatus(this as StatusEffect);
 
         this.startReplicationClient();
 
@@ -113,6 +110,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
                     IsActive: false,
                 });
             }),
+            "Disconnect",
         );
 
         if (RunService.IsServer()) {

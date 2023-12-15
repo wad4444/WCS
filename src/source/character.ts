@@ -102,7 +102,13 @@ export class Character {
         this.statusEffects.set(Status.GetId(), Status);
         this.StatusEffectAdded.Fire(Status);
 
+        const humanoidDataChanged = Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
+        const stateChanged = Status.StateChanged.Connect(() => this.updateHumanoidProps());
+
         Status.Destroyed.Once(() => {
+            humanoidDataChanged?.Disconnect();
+            stateChanged?.Disconnect();
+
             this.statusEffects.delete(Status.GetId());
             this.StatusEffectRemoved.Fire(Status);
             this.updateHumanoidProps();
@@ -181,23 +187,13 @@ export class Character {
                 );
             }
 
-            const newStatus = new constructor!(
+            new constructor!(
                 this as never,
                 {
                     flag: Flags.CanAssignCustomId,
                     data: Id,
                 } as never,
             );
-            this.statusEffects.set(Id, newStatus);
-            this.StatusEffectAdded.Fire(newStatus);
-
-            const humanoidDataChanged = newStatus.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
-            const stateChanged = newStatus.StateChanged.Connect(() => this.updateHumanoidProps());
-
-            newStatus.Destroyed.Once(() => {
-                humanoidDataChanged.Disconnect();
-                stateChanged.Disconnect();
-            });
         };
 
         const proccessDataUpdate = (CharacterData: CharacterData | undefined) => {
