@@ -10,8 +10,8 @@ export function logWarning(Message: string, DisplayTraceback = true) {
     warn(`[${consolePrefix}]: ${Message} \n \n ${DisplayTraceback ?? debug.traceback()}`);
 }
 
-export function logError(Message: string, DisplayTraceback = true) {
-    error(`\n ${errorString} \n ${Message} \n \n ${DisplayTraceback ?? debug.traceback()}`);
+export function logError(Message: string, DisplayTraceback = true): never {
+    return error(`\n ${errorString} \n ${Message} \n \n ${DisplayTraceback ?? debug.traceback()}`);
 }
 
 export function mapToArray<T extends defined, K extends defined>(Map: Map<T, K>) {

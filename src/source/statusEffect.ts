@@ -4,10 +4,10 @@ import { RunService } from "@rbxts/services";
 import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
-import { rootProducer } from "state/rootProducer";
 import { SelectStatusData } from "state/selectors";
 import Signal from "@rbxts/rbx-better-signal";
 import { deepCopy } from "@rbxts/deepcopy";
+import { rootProducer } from "state/rootProducer";
 
 export interface StatusData {
     className: string;
@@ -107,16 +107,14 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd ?? this.Destroy()));
 
         this.janitor.Add(
-            this.timer.stopped.Connect(() => {
-                this.SetState({
-                    IsActive: false,
-                });
+            this.timer.completed.Connect(() => {
+                this.End();
             }),
             "Disconnect",
         );
 
         if (RunService.IsServer()) {
-            rootProducer.setStatusData(this.Character.Instance, this.id, this._packData());
+            rootProducer.setStatusData(this.Character.GetId(), this.id, this._packData());
         }
         this.Construct();
     }
@@ -138,9 +136,13 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
             IsActive: true,
         });
 
-        if (!Time || Time <= 0) return;
+        if (Time === undefined || Time <= 0) return;
         this.timer.setLength(Time);
         this.timer.start();
+    }
+
+    public End() {
+        this.Stop();
     }
 
     public Pause() {
@@ -201,7 +203,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.humanoidData = newData;
 
         if (RunService.IsServer()) {
-            rootProducer.patchStatusData(this.Character.Instance, this.id, {
+            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: this.humanoidData,
             });
         }
@@ -212,7 +214,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.humanoidData = undefined;
 
         if (RunService.IsServer()) {
-            rootProducer.patchStatusData(this.Character.Instance, this.id, {
+            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: undefined,
             });
         }
@@ -229,7 +231,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.metadata = undefined;
 
         if (RunService.IsServer()) {
-            rootProducer.patchStatusData(this.Character.Instance, this.id, {
+            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 metadata: undefined,
             });
         }
@@ -249,7 +251,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.state = newState;
 
         if (RunService.IsServer()) {
-            rootProducer.patchStatusData(this.Character.Instance, this.id, {
+            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 state: newState,
             });
         }
@@ -266,7 +268,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.metadata = NewMeta;
 
         if (RunService.IsServer()) {
-            rootProducer.patchStatusData(this.Character.Instance, this.id, {
+            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 metadata: NewMeta,
             });
         }
@@ -299,7 +301,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
 
     public Destroy() {
         this.janitor.Cleanup();
-        rootProducer.deleteStatusData(this.Character.Instance, this.id);
+        rootProducer.deleteStatusData(this.Character.GetId(), this.id);
         this.Destroyed.Fire();
     }
 
@@ -320,22 +322,22 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
             if (!StatusData) return;
 
             if (StatusData.state !== this.state) {
-                this.StateChanged.Fire(StatusData.state, this.state);
                 this.state = StatusData.state;
+                this.StateChanged.Fire(StatusData.state, this.state);
             }
 
             if (StatusData.metadata !== this.metadata) {
-                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, this.metadata);
                 this.metadata = StatusData.metadata as T | undefined;
+                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, this.metadata);
             }
 
             if (StatusData.humanoidData !== this.humanoidData) {
-                this.HumanoidDataChanged.Fire(StatusData.humanoidData, this.humanoidData);
                 this.humanoidData = StatusData.humanoidData;
+                this.HumanoidDataChanged.Fire(StatusData.humanoidData, this.humanoidData);
             }
         };
 
-        const dataSelector = SelectStatusData(this.Character.Instance, this.id);
+        const dataSelector = SelectStatusData(this.Character.GetId(), this.id);
 
         const subscription = rootProducer.subscribe(dataSelector, proccessDataUpdate);
         proccessDataUpdate(dataSelector(rootProducer.getState()));
@@ -343,6 +345,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.janitor.Add(subscription);
     }
 
+    /**
+     * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor)
+     */
     public Construct() {}
     public OnStartServer() {}
     public OnStartClient() {}

@@ -2,8 +2,9 @@ import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { rootProducer } from "state/rootProducer";
 import { remotes } from "./remotes";
+import { slices } from "state/slices";
+import { rootProducer } from "state/rootProducer";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -15,12 +16,15 @@ class Server {
     constructor() {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         currentInstance = this;
+
         this.broadcaster = createBroadcaster({
-            producers: { rootProducer },
+            producers: slices,
             dispatch: (Player, Actions) => {
                 remotes._dispatch.fire(Player, Actions);
             },
         });
+        rootProducer.applyMiddleware(this.broadcaster.middleware);
+        remotes._start.connect((Player) => this.broadcaster.start(Player));
     }
 
     public RegisterDirectory(Directory: Instance) {
@@ -50,12 +54,13 @@ class Server {
         table.clear(this.registeredModules);
 
         setActiveHandler(this);
-
-        remotes._start.connect((Player) => this.broadcaster.start(Player));
-        rootProducer.applyMiddleware(this.broadcaster.middleware);
         this.isActive = true;
 
-        logMessage(`Started server successfully`);
+        logMessage(`Started Server successfully`);
+    }
+
+    public IsActive() {
+        return this.isActive;
     }
 }
 

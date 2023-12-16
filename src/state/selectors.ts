@@ -1,19 +1,19 @@
 import { RootState } from "./rootProducer";
 
-export function SelectCharacterData(Character: Instance) {
+export function SelectCharacterData(CharacterId: string) {
     return function (State: RootState) {
-        return State.get(Character);
+        return State.replication.get(CharacterId);
     };
 }
 
-export function SelectStatusData(Character: Instance, Id: string) {
+export function SelectStatusData(CharacterId: string, Id: string) {
     return function (State: RootState) {
-        return State.get(Character)?.statusEffects.get(Id);
+        return State.replication.get(CharacterId)?.statusEffects.get(Id);
     };
 }
 
-export function SelectSkillData(Character: Instance, Name: string) {
+export function SelectSkillData(CharacterId: string, Name: string) {
     return function (State: RootState) {
-        return State.get(Character)?.skills.get(Name);
+        return State.replication.get(CharacterId)?.skills.get(Name);
     };
 }

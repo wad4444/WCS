@@ -1,20 +1,27 @@
 import { Players, RunService } from "@rbxts/services";
 import { Constructor, getActiveHandler, logError, logMessage, mapToArray } from "./utility";
 import { Janitor } from "@rbxts/janitor";
-import { rootProducer } from "state/rootProducer";
 import { SelectCharacterData } from "state/selectors";
 import { GetRegisteredStatusEffectConstructor, StatusData, StatusEffect } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
 import Signal from "@rbxts/rbx-better-signal";
-import { GetRegisteredSkillConstructor, SkillData } from "./skill";
+import { GetRegisteredSkillConstructor, Skill, SkillData } from "./skill";
+import { rootProducer } from "state/rootProducer";
 
 export interface CharacterData {
+    instance: Instance;
     statusEffects: Map<string, StatusData>;
     skills: Map<string, SkillData>;
     defaultProps: AffectableHumanoidProps;
 }
 
 export type AffectableHumanoidProps = Pick<Humanoid, "WalkSpeed" | "JumpPower" | "AutoRotate" | "JumpHeight">;
+let nextId = 0;
+function generateId() {
+    if (RunService.IsClient()) logError(`Why are you trying to call this on client?`);
+    nextId++;
+    return tostring(nextId);
+}
 
 export class Character {
     private static readonly currentCharMap = new Map<Instance, Character>();
@@ -33,20 +40,22 @@ export class Character {
     public readonly Destroyed = new Signal(this.janitor);
 
     private readonly statusEffects: Map<string, StatusEffect> = new Map();
+    private readonly skills: Map<string, Skill> = new Map();
     private defaultsProps: AffectableHumanoidProps = {
         WalkSpeed: 16,
         JumpPower: 100,
         AutoRotate: true,
         JumpHeight: 7.2,
     };
+    private id;
 
     constructor(Instance: Instance);
     /**
      * @internal Reserved for internal usage
      */
-    constructor(Instance: Instance, canCreateClient: (typeof Flags)["CanCreateCharacterClient"]);
-    constructor(Instance: Instance, canCreateClient?: (typeof Flags)["CanCreateCharacterClient"]) {
-        if (RunService.IsClient() && canCreateClient !== Flags.CanCreateCharacterClient) {
+    constructor(Instance: Instance, canCreateClient: FlagWithData<string>);
+    constructor(Instance: Instance, canCreateClient?: FlagWithData<string>) {
+        if (RunService.IsClient() && canCreateClient?.flag !== Flags.CanCreateCharacterClient) {
             logError(
                 `Attempted to manually create a character on client. \n On client side character are created by the handler automatically, \n doing this manually can lead to a possible desync`,
             );
@@ -69,6 +78,7 @@ export class Character {
         this.Instance = Instance;
         this.Humanoid = humanoid;
         this.Player = Players.GetPlayerFromCharacter(this.Instance);
+        this.id = canCreateClient?.data || generateId();
 
         Character.currentCharMap.set(Instance, this);
         Character.CharacterCreated.Fire(this);
@@ -79,15 +89,19 @@ export class Character {
         this.janitor.Add(this.StatusEffectRemoved.Connect(() => this.updateHumanoidProps()));
 
         if (RunService.IsServer()) {
-            rootProducer.setCharacterData(this.Instance, this._packData());
+            rootProducer.setCharacterData(this.id, this._packData());
         }
+    }
+
+    public GetId() {
+        return this.id;
     }
 
     public Destroy() {
         Character.currentCharMap.delete(this.Instance);
 
         if (RunService.IsServer()) {
-            rootProducer.deleteCharacterData(this.Instance);
+            rootProducer.deleteCharacterData(this.id);
         }
 
         Character.CharacterDestroyed.Fire(this);
@@ -103,7 +117,9 @@ export class Character {
         this.StatusEffectAdded.Fire(Status);
 
         const humanoidDataChanged = Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
-        const stateChanged = Status.StateChanged.Connect(() => this.updateHumanoidProps());
+        const stateChanged = Status.StateChanged.Connect(() => {
+            this.updateHumanoidProps();
+        });
 
         Status.Destroyed.Once(() => {
             humanoidDataChanged?.Disconnect();
@@ -118,11 +134,27 @@ export class Character {
     /**
      * @internal Reserved for internal usage
      */
+    public _addSkill(Skill: Skill) {
+        const name = Skill.GetName();
+        if (this.skills.has(name)) {
+            logError(`Skill with name ${name} is already registered for character ${this.Instance}`);
+        }
+
+        this.skills.set(name, Skill);
+        Skill.Destroyed.Once(() => {
+            this.skills.delete(name);
+        });
+    }
+
+    /**
+     * @internal Reserved for internal usage
+     */
     public _packData(): CharacterData {
         const packedStatusEffect = new Map<string, StatusData>();
         this.statusEffects.forEach((Status, Id) => packedStatusEffect.set(Id, Status._packData()));
 
         return {
+            instance: this.Instance,
             statusEffects: packedStatusEffect,
             defaultProps: this.defaultsProps,
             skills: new Map(),
@@ -132,7 +164,7 @@ export class Character {
     public SetDefaultProps(Props: AffectableHumanoidProps) {
         this.defaultsProps = Props;
         if (RunService.IsServer()) {
-            rootProducer.patchCharacterData(this.Instance, {
+            rootProducer.patchCharacterData(this.id, {
                 defaultProps: Props,
             });
         }
@@ -173,6 +205,14 @@ export class Character {
             if (Constructors.find((T) => tostring(T) === tostring(getmetatable(Effect)))) return true;
         }
         return false;
+    }
+
+    public GetSkillByString(Name: string) {
+        return this.skills.get(Name);
+    }
+
+    public GetSkillByConstructor<T extends Constructor<Skill>>(Constructor: T) {
+        return this.skills.get(tostring(Constructor));
     }
 
     private setupReplication_Client() {
@@ -226,7 +266,7 @@ export class Character {
             if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
         };
 
-        const dataSelector = SelectCharacterData(this.Instance);
+        const dataSelector = SelectCharacterData(this.GetId());
         const disconnect = rootProducer.subscribe(dataSelector, proccessDataUpdate);
         proccessDataUpdate(dataSelector(rootProducer.getState()));
 
@@ -244,7 +284,6 @@ export class Character {
             }
         });
 
-        if (statuses.isEmpty()) return;
         const propsToApply = this.GetDefaultsProps();
         const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
             WalkSpeed: 0,

@@ -1,12 +1,14 @@
+/* eslint-disable roblox-ts/no-array-pairs */
 import { Players, RunService } from "@rbxts/services";
 import { Character } from "./character";
 import { Flags } from "./flags";
 import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
-import { rootProducer } from "state/rootProducer";
 import Signal from "@rbxts/rbx-better-signal";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
 import { remotes } from "./remotes";
+import { rootProducer } from "state/rootProducer";
+import { StatusEffect } from "./statusEffect";
 
 export interface SkillState {
     IsActive: boolean;
@@ -34,6 +36,12 @@ export class Skill<
     public readonly Started = new Signal(this.janitor);
     public readonly Ended = new Signal(this.janitor);
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>(this.janitor);
+    public readonly Destroyed = new Signal(this.janitor);
+
+    protected StartCondition: () => boolean = () => true;
+    protected MutualExclusives: Constructor<StatusEffect>[] = [];
+    protected Requirements: Constructor<StatusEffect>[] = [];
+
     public Player?: Player;
 
     private isReplicated: boolean;
@@ -103,7 +111,7 @@ export class Skill<
         );
 
         this.isReplicated = RunService.IsClient();
-        rootProducer.setSkillData(this.Character.Instance, this.name, this.packData());
+        rootProducer.setSkillData(this.Character.GetId(), this.name, this.packData());
     }
 
     public Start(StarterParams: StarterParams) {
@@ -116,6 +124,17 @@ export class Skill<
             remotes._startSkill.fire(this.Character.Instance, this.name, StarterParams);
             return;
         }
+
+        const activeEffects = this.Character.GetAllActiveStatusEffects();
+        for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
+            if (activeEffects.find((T) => tostring(getmetatable(T)) === tostring(Exclusive))) return;
+        }
+
+        for (const [_, Requirement] of pairs(this.Requirements)) {
+            if (!activeEffects.find((T) => tostring(getmetatable(T)) === tostring(Requirement))) return;
+        }
+
+        if (!this.StartCondition()) return;
 
         this.SetState({
             IsActive: true,
@@ -136,6 +155,10 @@ export class Skill<
         return table.clone(this.state) as ReadonlyState;
     }
 
+    public GetName() {
+        return this.name;
+    }
+
     protected SetState(Patch: Partial<SkillState>) {
         if (this.isReplicated) {
             logError(`Cannot :SetState() of replicated status effect on client! \n This can lead to a possible desync`);
@@ -152,7 +175,7 @@ export class Skill<
         this.isReplicated ?? this.startReplication();
 
         if (RunService.IsServer()) {
-            rootProducer.patchSkillData(this.Character.Instance, this.name, {
+            rootProducer.patchSkillData(this.Character.GetId(), this.name, {
                 state: newState,
             });
         }
@@ -170,7 +193,7 @@ export class Skill<
             }
         };
 
-        const dataSelector = SelectSkillData(this.Character.Instance, this.name);
+        const dataSelector = SelectSkillData(this.Character.GetId(), this.name);
         proccessDataUpdate(dataSelector(rootProducer.getState()));
         rootProducer.subscribe(dataSelector, proccessDataUpdate);
     }

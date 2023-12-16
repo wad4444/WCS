@@ -1,5 +1,5 @@
-import { rootProducer } from "./rootProducer";
+import { replicationSlice } from "./slicesContainer/replication";
 
 export const slices = {
-    root: rootProducer,
+    replication: replicationSlice,
 };

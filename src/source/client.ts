@@ -4,10 +4,10 @@ import { t } from "@rbxts/t";
 import { logError, logMessage, logWarning, setActiveHandler } from "source/utility";
 import { remotes } from "./remotes";
 import { slices } from "state/slices";
-import { RootState, rootProducer } from "state/rootProducer";
 import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
 import { Flags } from "./flags";
+import { RootState, rootProducer } from "state/rootProducer";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -19,11 +19,17 @@ class Client {
     constructor() {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         currentInstance = this;
+
         this.receiver = createBroadcastReceiver({
             start: () => {
                 remotes._start.fire();
             },
         });
+
+        remotes._dispatch.connect((Actions) => {
+            this.receiver.dispatch(Actions);
+        });
+        rootProducer.applyMiddleware(this.receiver.middleware, devToolsMiddleware);
     }
 
     public RegisterDirectory(Directory: Instance) {
@@ -52,8 +58,6 @@ class Client {
         this.registeredModules.forEach((v) => require(v));
         table.clear(this.registeredModules);
 
-        remotes._dispatch.connect((Actions) => this.receiver.dispatch(Actions));
-        rootProducer.applyMiddleware(this.receiver.middleware, devToolsMiddleware);
         this.isActive = true;
 
         setActiveHandler(this);
@@ -66,20 +70,23 @@ class Client {
         let previousSize = 0;
 
         const stateUpdated = (State: RootState) => {
-            const amount = State.size();
+            const amount = State.replication.size();
             if (previousSize === amount) {
                 return;
             }
 
-            State.forEach((_, Instance) => {
-                if (Character.GetCharacterFromInstance(Instance)) {
+            State.replication.forEach((Data, Id) => {
+                if (Character.GetCharacterFromInstance(Data.instance)) {
                     return;
                 }
 
-                new Character(Instance, Flags.CanCreateCharacterClient);
+                new Character(Data.instance, {
+                    flag: Flags.CanCreateCharacterClient,
+                    data: Id,
+                });
             });
-            Character.GetCharacterMap().forEach((Character, Instance) => {
-                if (State.has(Instance)) {
+            Character.GetCharacterMap().forEach((Character, Id) => {
+                if (State.replication.has(Character.GetId())) {
                     return;
                 }
 
