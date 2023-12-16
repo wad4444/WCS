@@ -1,17 +1,73 @@
+type void = nil;
+
+export type Callback = () -> void;
+
 export type Handler = {
-    Start: (Handler) -> nil;
-    RegisterDirectory: (Handler, Instance) -> nil;
+    Start: (Handler) -> void;
+    RegisterDirectory: (Handler, Instance) -> void;
     IsActive: () -> boolean;
 }
 
-export type ReadonlySignal<T> = {
+export type ReadonlySignal<T = Callback> = {
     Connect: (ReadonlySignal<T>, T) -> RBXScriptConnection;
     Once: (ReadonlySignal<T>, T) -> RBXScriptConnection;
-    Wait: (ReadonlySignal<T>) -> nil;
+    Wait: (ReadonlySignal<T>) -> void;
 }
 
-export type StatusEffect = {}
-export type StatusEffectConstructor = {}
+type StatusEffectState = {
+    IsActive: boolean;
+}
+type Partial_StatusEffectState = {
+    IsActive: boolean?;
+}
+
+type HumanoidData = {
+    Mode: "Set" | "Increment";
+    Props: Partial_AffectableHumanoidProps;
+    Priority: number;
+}
+type Partial_HumanoidData = {
+    Mode: ("Set" | "Increment")?;
+    Props: Partial_AffectableHumanoidProps?;
+    Priority: number?;
+}
+
+export type StatusEffect<T = any> = {
+    MetadataChanged: ReadonlySignal<(T?, T?) -> void>;
+    StateChanged: ReadonlySignal<(StatusEffectState, StatusEffectState) -> void>;
+    HumanoidDataChanged: ReadonlySignal<(HumanoidData?, HumanoidData?) -> void>;
+    Destroyed: ReadonlySignal;
+    Started: ReadonlySignal;
+    Ended: ReadonlySignal;
+
+    DestroyOnEnd: boolean;
+    
+    Start: (StatusEffect, number?) -> void;
+    End: (StatusEffect) -> void;
+    Pause: (StatusEffect) -> void;
+    Resume: (StatusEffect) -> void;
+    Stop: (StatusEffect) -> void;
+    SetHumanoidData: (StatusEffect, Partial_HumanoidData) -> void;
+    ClearHumanoidData: (StatusEffect) -> void;
+    ClearMetadata: (StatusEffect) -> void;
+    SetState: (StatusEffect, Partial_StatusEffectState) -> void;
+    SetMetadata: (StatusEffect, T) -> void;
+    GetState: (StatusEffect) -> StatusEffectState;
+    GetHumanoidData: (StatusEffect) -> HumanoidData;
+    GetMetadata: (StatusEffect) -> T;
+    IsDestroyed: (StatusEffect) -> boolean;
+    GetId: (StatusEffect) -> string;
+    Destroy: (StatusEffect) -> void;
+    Construct: (StatusEffect) -> void;
+    OnStartServer: (StatusEffect) -> void;
+    OnStartClient: (StatusEffect) -> void;
+    OnEndClient: (StatusEffect) -> void;
+    OnEndServer: (StatusEffect) -> void;
+}
+
+export type StatusEffectConstructor = {
+    new: (Character) -> StatusEffect
+}
 
 export type Skill = {}
 export type SkillConstructor = {}
@@ -22,21 +78,27 @@ type AffectableHumanoidProps = {
     JumpHeight: number;
     AutoRotate: boolean;
 }
+type Partial_AffectableHumanoidProps = {
+    WalkSpeed: number?;
+    JumpPower: number?;
+    JumpHeight: number?;
+    AutoRotate: boolean?;
+}
 
 export type Character = {
     Instance: Instance;
     Humanoid: Humanoid;
     Player: Player?;
 
-    StatusEffectAdded: ReadonlySignal<(StatusEffect) -> nil>;
-    StatusEffectRemoved: ReadonlySignal<(StatusEffect) -> nil>;
-    DamageTaken: ReadonlySignal<(number) -> nil>;
-    Destroyed: ReadonlySignal<() -> nil>;
+    StatusEffectAdded: ReadonlySignal<(StatusEffect) -> void>;
+    StatusEffectRemoved: ReadonlySignal<(StatusEffect) -> void>;
+    DamageTaken: ReadonlySignal<(number) -> void>;
+    Destroyed: ReadonlySignal;
 
-    Destroy: () -> nil;
+    Destroy: () -> void;
     GetId: () -> string;
 
-    SetDefaultProps: (Character, AffectableHumanoidProps) -> nil;
+    SetDefaultProps: (Character, AffectableHumanoidProps) -> void;
     GetDefaultProps: (Character) -> AffectableHumanoidProps;
     GetAllStatusEffects: (Character) -> {StatusEffect};
     GetAllActiveStatusEffects: (Character) -> {StatusEffect};
@@ -48,8 +110,8 @@ export type Character = {
 }
 
 export type CharacterClass = {
-    CharacterCreated: ReadonlySignal<(Character) -> nil>;
-    CharacterDestroyed: ReadonlySignal<(Character) -> nil>;
+    CharacterCreated: ReadonlySignal<(Character) -> void>;
+    CharacterDestroyed: ReadonlySignal<(Character) -> void>;
 
     new: (Instance) -> Character;
     GetCharacterMap: () -> {[Instance]: Character};
@@ -60,6 +122,7 @@ export type WCS = {
     CreateServer: () -> Handler;
     CreateClient: () -> Handler;
     Character: CharacterClass;
+    StatusEffect: StatusEffectConstructor;
 }
 
 return nil

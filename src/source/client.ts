@@ -32,6 +32,9 @@ class Client {
         rootProducer.applyMiddleware(this.receiver.middleware, devToolsMiddleware);
     }
 
+    /**
+     * Requires all module scripts in a directory when client starts
+     */
     public RegisterDirectory(Directory: Instance) {
         if (this.isActive) {
             logWarning(`Cannot register directory after :Start()`);
@@ -49,6 +52,10 @@ class Client {
         });
     }
 
+    /**
+     * Starts the client
+     * @warns if used twice
+     */
     public Start() {
         if (this.isActive) {
             logWarning(`Attempted to :Start() Client twice!`);
@@ -76,7 +83,7 @@ class Client {
             }
 
             State.replication.forEach((Data, Id) => {
-                if (Character.GetCharacterFromInstance(Data.instance)) {
+                if (Character.GetCharacterFromInstance_TS(Data.instance)) {
                     return;
                 }
 
@@ -85,7 +92,7 @@ class Client {
                     data: Id,
                 });
             });
-            Character.GetCharacterMap().forEach((Character, Id) => {
+            Character.GetCharacterMap_TS().forEach((Character, Id) => {
                 if (State.replication.has(Character.GetId())) {
                     return;
                 }

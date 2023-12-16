@@ -12,19 +12,19 @@ export const remotes = createRemotes({
         ),
     ),
     _start: remote<Server, []>(),
-    _startSkill: remote<Server, [Character: Instance, Name: string, StarterParams: unknown]>(
-        t.Instance,
+    _startSkill: remote<Server, [CharacterId: string, Name: string, StarterParams: unknown]>(
         t.string,
-        t.any,
+        t.string,
+        t.optional(t.any),
     ),
     _messageToServer: remote<Server, [Character: Instance, Name: string, Message: unknown]>(
         t.Instance,
         t.string,
-        t.any,
+        t.optional(t.any),
     ),
     _messageToClient: remote<Client, [Character: Instance, Name: string, Message: unknown]>(
         t.Instance,
         t.string,
-        t.any,
+        t.optional(t.any),
     ),
 });

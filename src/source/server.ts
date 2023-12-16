@@ -5,9 +5,12 @@ import { logError, logMessage, logWarning, setActiveHandler } from "source/utili
 import { remotes } from "./remotes";
 import { slices } from "state/slices";
 import { rootProducer } from "state/rootProducer";
+import { Character } from "./character";
+import { SelectCharacterData } from "state/selectors";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
+
 class Server {
     private isActive = false;
     private registeredModules: ModuleScript[] = [];
@@ -27,6 +30,9 @@ class Server {
         remotes._start.connect((Player) => this.broadcaster.start(Player));
     }
 
+    /**
+     * Requires all module scripts in a directory when server starts
+     */
     public RegisterDirectory(Directory: Instance) {
         if (this.isActive) {
             logWarning(`Cannot register directory after :Start()`);
@@ -44,6 +50,10 @@ class Server {
         });
     }
 
+    /**
+     * Starts the server
+     * @warns if used twice
+     */
     public Start() {
         if (this.isActive) {
             logWarning(`Attempted to :Start() server twice!`);
@@ -52,6 +62,19 @@ class Server {
 
         this.registeredModules.forEach((v) => require(v));
         table.clear(this.registeredModules);
+
+        remotes._startSkill.connect((Player, CharacterId, SkillName, Params) => {
+            const characterData = SelectCharacterData(CharacterId)(rootProducer.getState());
+            if (!characterData) return;
+
+            const character = Character.GetCharacterFromInstance_TS(characterData.instance);
+            if (!character) return;
+
+            const skill = character.GetSkillFromString(SkillName);
+            if (!skill) return;
+
+            skill.Start(Params as never);
+        });
 
         setActiveHandler(this);
         this.isActive = true;

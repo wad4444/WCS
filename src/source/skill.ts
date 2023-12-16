@@ -1,6 +1,6 @@
 /* eslint-disable roblox-ts/no-array-pairs */
 import { Players, RunService } from "@rbxts/services";
-import { Character } from "./character";
+import { Character, DamageContainer } from "./character";
 import { Flags } from "./flags";
 import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
 import Signal from "@rbxts/rbx-better-signal";
@@ -102,26 +102,32 @@ export class Skill<
                         ? this.OnStartClient(State.StarterParams as StarterParams)
                         : this.OnStartServer(State.StarterParams as StarterParams);
                     this.Started.Fire();
-                    RunService.IsServer() ?? this.End();
+                    if (RunService.IsServer()) this.End();
                 } else if (PreviousState.IsActive && !State.IsActive) {
+                    print("reg end");
+
                     RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
                     this.Ended.Fire();
                 }
             }),
         );
 
+        this.Character._addSkill(this as Skill);
         this.isReplicated = RunService.IsClient();
-        rootProducer.setSkillData(this.Character.GetId(), this.name, this.packData());
-    }
-
-    public Start(StarterParams: StarterParams) {
-        if (this.GetState().IsActive) {
-            logWarning("Can't start an active skill");
-            return;
+        if (!this.isReplicated) {
+            rootProducer.setSkillData(this.Character.GetId(), this.name, this.packData());
         }
 
+        this.Construct();
+    }
+
+    /**
+     * Server: Starts the skill
+     * Client: Sends a request to server that will call :Start() on server
+     */
+    public Start(StarterParams: StarterParams) {
         if (RunService.IsClient()) {
-            remotes._startSkill.fire(this.Character.Instance, this.name, StarterParams);
+            remotes._startSkill.fire(this.Character.GetId(), this.name, StarterParams);
             return;
         }
 
@@ -143,12 +149,23 @@ export class Skill<
         });
     }
 
+    /**
+     * Force end the skill. This is automatically called after OnStartServer() is completed
+     */
     public End() {
         this.SetState({
             IsActive: false,
             StarterParams: undefined,
         });
         this.Janitor.Cleanup();
+    }
+
+    /**
+     * Destroys the skill and removes it from the character
+     */
+    public Destroy() {
+        rootProducer.deleteSkillData(this.Character.GetId(), this.name);
+        this.janitor.Cleanup();
     }
 
     public GetState() {
@@ -159,6 +176,20 @@ export class Skill<
         return this.name;
     }
 
+    /**
+     * A shortcut for creating a damage container
+     */
+    public CreateDamageContainer(Damage: number): DamageContainer {
+        return {
+            Damage: Damage,
+            Source: this as Skill,
+        };
+    }
+
+    /**
+     * Set the state of the skill.
+     * @param Patch The patch to apply to the state
+     */
     protected SetState(Patch: Partial<SkillState>) {
         if (this.isReplicated) {
             logError(`Cannot :SetState() of replicated status effect on client! \n This can lead to a possible desync`);
@@ -198,6 +229,9 @@ export class Skill<
         rootProducer.subscribe(dataSelector, proccessDataUpdate);
     }
 
+    /**
+     * Sends a message from the server to the client.
+     */
     protected SendMessageToClient(Message: ServerToClientMessage) {
         if (!this.Player) return;
 
@@ -209,6 +243,9 @@ export class Skill<
         remotes._messageToClient.fire(this.Player, this.Character.Instance, this.name, Message);
     }
 
+    /**
+     * Sends a message to the server.
+     */
     protected SendMessageToServer(Message: ClientToServerMessage) {
         if (!this.Player) return;
 
@@ -226,6 +263,9 @@ export class Skill<
         };
     }
 
+    /**
+     * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor).
+     */
     public Construct() {}
     public OnStartServer(StarterParams: StarterParams) {}
     public OnStartClient(StarterParams: StarterParams) {}
@@ -235,6 +275,9 @@ export class Skill<
     public OnEndServer() {}
 }
 
+/**
+ * A decorator function that registers a skill.
+ */
 export function SkillDecorator<T extends Constructor<Skill>>(Constructor: T) {
     const name = tostring(Constructor);
     if (registeredSkills.has(name)) {
@@ -244,6 +287,9 @@ export function SkillDecorator<T extends Constructor<Skill>>(Constructor: T) {
     registeredSkills.set(name, Constructor);
 }
 
+/**
+ * Retrieves the constructor function of a registered skill by name.
+ */
 export function GetRegisteredSkillConstructor(Name: string) {
     return registeredSkills.get(Name);
 }

@@ -10,5 +10,8 @@
 		"editor.formatOnSave": true
 	},
 	"eslint.run": "onType",
-	"eslint.format.enable": true
+	"eslint.format.enable": true,
+	"robloxLsp.diagnostics.disable": [
+		"undefined-type"
+	]
 }

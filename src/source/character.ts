@@ -15,6 +15,11 @@ export interface CharacterData {
     defaultProps: AffectableHumanoidProps;
 }
 
+export interface DamageContainer {
+    Damage: number;
+    Source: StatusEffect | Skill | undefined;
+}
+
 export type AffectableHumanoidProps = Pick<Humanoid, "WalkSpeed" | "JumpPower" | "AutoRotate" | "JumpHeight">;
 let nextId = 0;
 function generateId() {
@@ -36,7 +41,13 @@ export class Character {
 
     public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>(this.janitor);
     public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>(this.janitor);
-    public readonly DamageTaken = new Signal<(Damage: number) => void>(this.janitor);
+    /**
+     * Fires only on client
+     */
+    public readonly HumanoidPropertiesUpdated = new Signal<(NewProperties: AffectableHumanoidProps) => void>(
+        this.janitor,
+    );
+    public readonly DamageTaken = new Signal<(Container: DamageContainer) => void>(this.janitor);
     public readonly Destroyed = new Signal(this.janitor);
 
     private readonly statusEffects: Map<string, StatusEffect> = new Map();
@@ -97,6 +108,10 @@ export class Character {
         return this.id;
     }
 
+    /**
+     * Destroys the object and performs necessary cleanup tasks.
+     * You usually suppost to fire this manually when your humanoid dies.
+     */
     public Destroy() {
         Character.currentCharMap.delete(this.Instance);
 
@@ -107,6 +122,25 @@ export class Character {
         Character.CharacterDestroyed.Fire(this);
         this.Destroyed.Fire();
         this.janitor.Cleanup();
+    }
+
+    /**
+     * @returns The damage that was actually taken.
+     */
+    public TakeDamage(Container: DamageContainer) {
+        const originalDamage = Container.Damage;
+        let modifiedDamage = originalDamage;
+        this.statusEffects.forEach((Status) => {
+            modifiedDamage = Status.HandleDamage(modifiedDamage, originalDamage);
+        });
+
+        const container = {
+            ...Container,
+            Damage: modifiedDamage,
+        };
+
+        this.DamageTaken.Fire(container);
+        return container;
     }
 
     /**
@@ -170,48 +204,93 @@ export class Character {
         }
     }
 
+    /**
+     * This function returns the default humanoid properties of the character.
+     */
     public GetDefaultsProps() {
         return table.clone(this.defaultsProps);
     }
 
-    public static GetCharacterMap() {
-        return table.clone(this.currentCharMap) as ReadonlyMap<Instance, Character>;
+    /**
+     * Returns the map of all characters to their instances.
+     */
+    public static GetCharacterMap_TS() {
+        return table.clone(Character.currentCharMap) as ReadonlyMap<Instance, Character>;
     }
 
-    public static GetCharacterFromInstance(Instance: Instance) {
-        return this.currentCharMap.get(Instance);
+    /**
+     * Retrieves the character associated with the given instance.
+     */
+    public static GetCharacterFromInstance_TS(Instance: Instance) {
+        return Character.currentCharMap.get(Instance);
     }
 
+    /**
+     * @internal Reserved for LuaU usage
+     */
+    public GetCharacterMap(this: void) {
+        return table.clone(Character.currentCharMap) as ReadonlyMap<Instance, Character>;
+    }
+
+    /**
+     * @internal Reserved for LuaU usage
+     */
+    public GetCharacterFromInstance(this: void, Instance: Instance) {
+        return Character.currentCharMap.get(Instance);
+    }
+
+    /**
+     * Retrieves all status effects.
+     */
     public GetAllStatusEffects() {
         return mapToArray(this.statusEffects);
     }
 
+    /**
+     * Retrieves all active status effects.
+     */
     public GetAllActiveStatusEffects() {
         return mapToArray(this.statusEffects).filter((T) => T.GetState().IsActive);
     }
 
+    /**
+     * Retrieves all status effects of a given type.
+     */
     public GetAllStatusEffectsOfType<T extends object>(Constructor: Constructor<T>) {
         return mapToArray(this.statusEffects).filter((T) => tostring(getmetatable(T)) === tostring(Constructor));
     }
 
+    /**
+     * Retrieves all active status effects of a specific type.
+     */
     public GetAllActiveStatusEffectsOfType<T extends object>(Constructor: Constructor<T>) {
         return mapToArray(this.statusEffects).filter(
             (T) => tostring(getmetatable(T)) === tostring(Constructor) && T.GetState().IsActive,
         );
     }
 
+    /**
+     * Checks if character has any active status effects of the speicified type.
+     */
     public HasStatusEffects(Constructors: Constructor<StatusEffect>[]) {
         for (const [_, Effect] of pairs(this.statusEffects)) {
+            if (!Effect.GetState().IsActive) return;
             if (Constructors.find((T) => tostring(T) === tostring(getmetatable(Effect)))) return true;
         }
         return false;
     }
 
-    public GetSkillByString(Name: string) {
+    /**
+     * Retrieves a skill from the skills map based on a given name.
+     */
+    public GetSkillFromString(Name: string) {
         return this.skills.get(Name);
     }
 
-    public GetSkillByConstructor<T extends Constructor<Skill>>(Constructor: T) {
+    /**
+     * Retrieves a skill instance from the skills map based on the provided constructor.
+     */
+    public GetSkillFromConstructor<T extends Constructor<Skill>>(Constructor: T) {
         return this.skills.get(tostring(Constructor));
     }
 
@@ -260,6 +339,18 @@ export class Character {
                 if (!CharacterData.statusEffects.has(Id)) {
                     Status.Destroy();
                     this.StatusEffectRemoved.Fire(Status);
+                }
+            });
+
+            CharacterData.skills.forEach((SkillData, Name) => {
+                if (!this.skills.has(Name)) {
+                    proccessSkillAddition(SkillData, Name);
+                }
+            });
+
+            this.skills.forEach((Skill, Name) => {
+                if (!CharacterData.skills.has(Name)) {
+                    Skill.Destroy();
                 }
             });
 
@@ -316,6 +407,7 @@ export class Character {
             }
         });
 
+        this.HumanoidPropertiesUpdated.Fire(propsToApply);
         for (const [PropertyName, Value] of pairs(propsToApply)) {
             this.Humanoid[PropertyName as never] = Value as never;
         }

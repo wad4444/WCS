@@ -1,4 +1,4 @@
-import type { AffectableHumanoidProps, Character } from "./character";
+import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
 import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
@@ -119,6 +119,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.Construct();
     }
 
+    /**
+     * Starts the status effect.
+     */
     public Start(Time?: number) {
         if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
 
@@ -141,10 +144,16 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.timer.start();
     }
 
+    /**
+     * Stops the status effect.
+     */
     public End() {
         this.Stop();
     }
 
+    /**
+     * Paused the status effect.
+     */
     public Pause() {
         if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
 
@@ -156,6 +165,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.timer.pause();
     }
 
+    /**
+     * Resumes the status effect.
+     */
     public Resume() {
         if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
 
@@ -167,6 +179,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.timer.resume();
     }
 
+    /**
+     * Stops the status effect.
+     */
     public Stop() {
         if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
 
@@ -192,6 +207,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.timer.stop();
     }
 
+    /**
+     * Sets the humanoid data that is going to be applied to the character while the status effect is active.
+     */
     public SetHumanoidData(Mode: "Set" | "Increment", Props: Partial<AffectableHumanoidProps>, Priority = 1) {
         const newData = {
             Mode: Mode,
@@ -209,6 +227,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         }
     }
 
+    /**
+     * Clear the humanoid data.
+     */
     public ClearHumanoidData() {
         this.HumanoidDataChanged.Fire(undefined, this.humanoidData);
         this.humanoidData = undefined;
@@ -220,6 +241,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         }
     }
 
+    /**
+     * Clears the metadata
+     */
     public ClearMetadata() {
         if (this.isReplicated) {
             logError(
@@ -237,6 +261,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         }
     }
 
+    /**
+     * Sets the state of the status effect.
+     */
     protected SetState(Patch: Partial<StatusEffectState>) {
         if (this.isReplicated) {
             logError(`Cannot :SetState() of replicated status effect on client! \n This can lead to a possible desync`);
@@ -257,6 +284,9 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         }
     }
 
+    /**
+     * Sets the metadata of the status effect.
+     */
     protected SetMetadata(NewMeta: T) {
         if (this.isReplicated) {
             logError(
@@ -274,14 +304,23 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         }
     }
 
+    /**
+     * Gets the state of the status effect
+     * */
     public GetState() {
         return table.clone(this.state) as ReadonlyState;
     }
 
+    /**
+     * Gets the humanoid data of the status effect
+     */
     public GetHumanoidData() {
         return this.humanoidData !== undefined ? deepCopy(this.humanoidData) : undefined;
     }
 
+    /**
+     * Gets the metadata of the status effect
+     */
     public GetMetadata() {
         let cloned: T | undefined = this.metadata;
         if (typeIs(this.metadata, "table")) {
@@ -291,18 +330,44 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         return cloned;
     }
 
+    /**
+     * Returns true if the status effect is destroyed
+     */
     public IsDestroyed() {
         return this.isDestroyed;
     }
 
+    /**
+     * Gets the id of the status effect
+     */
     public GetId() {
         return this.id;
     }
 
+    /**
+     * A method that is used to modify damage applied to a character
+     */
+    public HandleDamage(Modified: number, Original: number) {
+        return Modified;
+    }
+
+    /**
+     * Destroys the status effect and removes it from the character
+     */
     public Destroy() {
         this.janitor.Cleanup();
         rootProducer.deleteStatusData(this.Character.GetId(), this.id);
         this.Destroyed.Fire();
+    }
+
+    /**
+     * A shortcut for creating a damage container
+     */
+    public CreateDamageContainer(Damage: number): DamageContainer {
+        return {
+            Damage: Damage,
+            Source: this as StatusEffect,
+        };
     }
 
     /**
