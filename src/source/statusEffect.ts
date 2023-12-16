@@ -95,14 +95,16 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
         this.janitor.Add(
             this.StateChanged.Connect((State, PreviousState) => {
                 if (!PreviousState.IsActive && State.IsActive) {
+                    RunService.IsClient() ? this.OnStartClient() : this.OnStartServer();
                     this.Started.Fire();
-                    this.OnStartClient();
+                    RunService.IsServer() ?? this.OnEndServer();
                 } else if (PreviousState.IsActive && !State.IsActive) {
+                    RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
                     this.Ended.Fire();
-                    this.OnEndClient();
                 }
             }),
         );
+        this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd ?? this.Destroy()));
 
         this.janitor.Add(
             this.timer.stopped.Connect(() => {

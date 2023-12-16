@@ -1,4 +1,4 @@
-import { RunService } from "@rbxts/services";
+import { Players, RunService } from "@rbxts/services";
 import { Character } from "./character";
 import { Flags } from "./flags";
 import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
@@ -16,18 +16,25 @@ export interface SkillState {
 }
 
 type ReadonlyState = ReadonlyDeep<SkillState>;
+type ReplicatableQM = Replicatable | undefined;
 
 export interface SkillData {
     state: SkillState;
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
-export class Skill<T extends Replicatable | unknown = unknown> {
+export class Skill<
+    StarterParams extends ReplicatableQM = undefined,
+    ServerToClientMessage extends ReplicatableQM = undefined,
+    ClientToServerMessage extends ReplicatableQM = undefined,
+> {
     private readonly janitor = new Janitor();
+    protected readonly Janitor = new Janitor();
 
     public readonly Started = new Signal(this.janitor);
     public readonly Ended = new Signal(this.janitor);
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>(this.janitor);
+    public Player?: Player;
 
     private isReplicated: boolean;
     private state: SkillState = {
@@ -57,14 +64,40 @@ export class Skill<T extends Replicatable | unknown = unknown> {
             logError(`Attempted to instantiate a skill on client`);
         }
 
+        this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
+
+        if (RunService.IsServer()) {
+            this.janitor.Add(
+                remotes._messageToServer.connect((Player, Character, SkillName, Message) => {
+                    if (Player !== this.Player) return;
+                    if (SkillName !== this.name) return;
+                    if (Character !== this.Character.Instance) return;
+
+                    this.HandleClientMessage(Message as ClientToServerMessage);
+                }),
+            );
+        } else {
+            this.janitor.Add(
+                remotes._messageToClient.connect((Character, SkillName, Message) => {
+                    if (SkillName !== this.name) return;
+                    if (Character !== this.Character.Instance) return;
+
+                    this.HandleServerMessage(Message as ServerToClientMessage);
+                }),
+            );
+        }
+
         this.janitor.Add(
             this.StateChanged.Connect((State, PreviousState) => {
                 if (!PreviousState.IsActive && State.IsActive) {
+                    RunService.IsClient()
+                        ? this.OnStartClient(State.StarterParams as StarterParams)
+                        : this.OnStartServer(State.StarterParams as StarterParams);
                     this.Started.Fire();
-                    this.OnStartClient(State.StarterParams as T);
+                    RunService.IsServer() ?? this.End();
                 } else if (PreviousState.IsActive && !State.IsActive) {
+                    RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
                     this.Ended.Fire();
-                    this.OnEndClient();
                 }
             }),
         );
@@ -73,7 +106,7 @@ export class Skill<T extends Replicatable | unknown = unknown> {
         rootProducer.setSkillData(this.Character.Instance, this.name, this.packData());
     }
 
-    public Start(StarterParams: T) {
+    public Start(StarterParams: StarterParams) {
         if (this.GetState().IsActive) {
             logWarning("Can't start an active skill");
             return;
@@ -83,6 +116,20 @@ export class Skill<T extends Replicatable | unknown = unknown> {
             remotes._startSkill.fire(this.Character.Instance, this.name, StarterParams);
             return;
         }
+
+        this.SetState({
+            IsActive: true,
+            StarterParams: StarterParams,
+            Debounce: false,
+        });
+    }
+
+    public End() {
+        this.SetState({
+            IsActive: false,
+            StarterParams: undefined,
+        });
+        this.Janitor.Cleanup();
     }
 
     public GetState() {
@@ -128,6 +175,28 @@ export class Skill<T extends Replicatable | unknown = unknown> {
         rootProducer.subscribe(dataSelector, proccessDataUpdate);
     }
 
+    protected SendMessageToClient(Message: ServerToClientMessage) {
+        if (!this.Player) return;
+
+        if (!RunService.IsServer()) {
+            logWarning(`Tried to send a message from client to client`);
+            return;
+        }
+
+        remotes._messageToClient.fire(this.Player, this.Character.Instance, this.name, Message);
+    }
+
+    protected SendMessageToServer(Message: ClientToServerMessage) {
+        if (!this.Player) return;
+
+        if (!RunService.IsClient()) {
+            logWarning(`Tried to send a message from server to server`);
+            return;
+        }
+
+        remotes._messageToServer.fire(this.Character.Instance, this.name, Message);
+    }
+
     private packData(): SkillData {
         return {
             state: this.state,
@@ -135,8 +204,10 @@ export class Skill<T extends Replicatable | unknown = unknown> {
     }
 
     public Construct() {}
-    public OnStartServer(StarterParams: T) {}
-    public OnStartClient(StarterParams: T) {}
+    public OnStartServer(StarterParams: StarterParams) {}
+    public OnStartClient(StarterParams: StarterParams) {}
+    public HandleClientMessage(Message: ClientToServerMessage) {}
+    public HandleServerMessage(Message: ServerToClientMessage) {}
     public OnEndClient() {}
     public OnEndServer() {}
 }

@@ -1,4 +1,4 @@
-import { RunService } from "@rbxts/services";
+import { Players, RunService } from "@rbxts/services";
 import { Constructor, getActiveHandler, logError, logMessage, mapToArray } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { rootProducer } from "state/rootProducer";
@@ -6,7 +6,7 @@ import { SelectCharacterData } from "state/selectors";
 import { GetRegisteredStatusEffectConstructor, StatusData, StatusEffect } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
 import Signal from "@rbxts/rbx-better-signal";
-import { SkillData } from "./skill";
+import { GetRegisteredSkillConstructor, SkillData } from "./skill";
 
 export interface CharacterData {
     statusEffects: Map<string, StatusData>;
@@ -23,13 +23,15 @@ export class Character {
 
     public readonly Instance: Instance;
     public readonly Humanoid: Humanoid;
-
-    public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>();
-    public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>();
-    public readonly DamageTaken = new Signal<(Damage: number) => void>();
-    public readonly Destroyed = new Signal();
+    public readonly Player?: Player;
 
     private readonly janitor = new Janitor();
+
+    public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>(this.janitor);
+    public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>(this.janitor);
+    public readonly DamageTaken = new Signal<(Damage: number) => void>(this.janitor);
+    public readonly Destroyed = new Signal(this.janitor);
+
     private readonly statusEffects: Map<string, StatusEffect> = new Map();
     private defaultsProps: AffectableHumanoidProps = {
         WalkSpeed: 16,
@@ -66,20 +68,18 @@ export class Character {
 
         this.Instance = Instance;
         this.Humanoid = humanoid;
+        this.Player = Players.GetPlayerFromCharacter(this.Instance);
 
         Character.currentCharMap.set(Instance, this);
         Character.CharacterCreated.Fire(this);
 
         this.setupReplication_Client();
 
-        this.janitor.Add(this.DamageTaken);
-        this.janitor.Add(this.Destroyed);
+        this.janitor.Add(this.StatusEffectAdded.Connect(() => this.updateHumanoidProps()));
+        this.janitor.Add(this.StatusEffectRemoved.Connect(() => this.updateHumanoidProps()));
 
         if (RunService.IsServer()) {
             rootProducer.setCharacterData(this.Instance, this._packData());
-        } else {
-            this.janitor.Add(this.StatusEffectAdded.Connect(() => this.updateHumanoidProps()));
-            this.janitor.Add(this.StatusEffectRemoved.Connect(() => this.updateHumanoidProps()));
         }
     }
 
@@ -183,7 +183,7 @@ export class Character {
             const constructor = GetRegisteredStatusEffectConstructor(Data.className);
             if (!constructor) {
                 logError(
-                    `Replication Error: Could not find a registered StatusEffect with name {statusData.className}. \n Try doing :RegisterDirectory() on the file directory.`,
+                    `Replication Error: Could not find a registered StatusEffect with name ${Data.className}. \n Try doing :RegisterDirectory() on the file directory.`,
                 );
             }
 
@@ -194,6 +194,17 @@ export class Character {
                     data: Id,
                 } as never,
             );
+        };
+
+        const proccessSkillAddition = (Data: SkillData, Name: string) => {
+            const constructor = GetRegisteredSkillConstructor(Name);
+            if (!constructor) {
+                logError(
+                    `Replication Error: Could not find a registered Skill with name ${Name}. \n Try doing :RegisterDirectory() on the file directory.`,
+                );
+            }
+
+            new constructor!(this as never, Flags.CanInstantiateSkillClient as never);
         };
 
         const proccessDataUpdate = (CharacterData: CharacterData | undefined) => {
@@ -224,7 +235,7 @@ export class Character {
     }
 
     private updateHumanoidProps() {
-        if (RunService.IsServer()) return;
+        if (RunService.IsServer() && this.Player) return;
 
         const statuses: StatusEffect[] = [];
         this.statusEffects.forEach((Status) => {

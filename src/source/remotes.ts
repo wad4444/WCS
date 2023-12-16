@@ -17,4 +17,14 @@ export const remotes = createRemotes({
         t.string,
         t.any,
     ),
+    _messageToServer: remote<Server, [Character: Instance, Name: string, Message: unknown]>(
+        t.Instance,
+        t.string,
+        t.any,
+    ),
+    _messageToClient: remote<Client, [Character: Instance, Name: string, Message: unknown]>(
+        t.Instance,
+        t.string,
+        t.any,
+    ),
 });
