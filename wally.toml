@@ -1,11 +1,11 @@
 [package]
 name = "cheetiedotpy/wcs"
 description = "Extensible framework that allows you create fully customizable combat systems easily by providing useful abstraction"
-version = "0.0.11"
+version = "0.0.12"
 license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
-exclude = ["include", "node_modules", ".vscode", "src"]
-include = ["out", "default.project.json", "LICENSE"]
+exclude = [".vscode", "src"]
+include = ["include", "node_modules", "out", "default.project.json", "LICENSE"]
 
 [dependencies]
