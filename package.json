@@ -1,15 +1,15 @@
 {
-  "name": "wcstypescript",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@rbxts/WCS",
+  "version": "0.0.1",
+  "description": "WCS is an extensible framework that allows you to make fully custom combat systems easily, by providing useful abstraction",
   "main": "index.js",
   "scripts": {
     "build": "rbxtsc",
     "watch": "rbxtsc -w"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["WCS", "Combat", "CombatSystem", "CombatHandler"],
+  "author": "g1mmethemoney",
+  "license": "MIT",
   "devDependencies": {
     "@rbxts/compiler-types": "^2.2.0-types.0",
     "@rbxts/types": "^1.0.737",
@@ -32,7 +32,6 @@
     "@rbxts/remo": "^1.3.1",
     "@rbxts/services": "^1.5.1",
     "@rbxts/t": "^3.1.0",
-    "@rbxts/timer": "^0.0.9",
-    "rbxts-transformer-private": "^1.0.1"
+    "@rbxts/timer": "^0.0.9"
   }
 }
