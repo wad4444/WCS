@@ -49,6 +49,9 @@ export class Character {
     public readonly HumanoidPropertiesUpdated = new Signal<(NewProperties: AffectableHumanoidProps) => void>(
         this.janitor,
     );
+    /**
+     * Container's source will always be nil on client
+     */
     public readonly DamageTaken = new Signal<(Container: DamageContainer) => void>(this.janitor);
     public readonly Destroyed = new Signal(this.janitor);
 
