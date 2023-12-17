@@ -1,5 +1,5 @@
 {
-	"name": "wcs",
+	"name": "roblox-ts-model",
 	"globIgnorePaths": [
 		"**/package.json",
 		"**/tsconfig.json"

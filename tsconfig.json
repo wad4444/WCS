@@ -16,9 +16,6 @@
 		"strict": true,
 		"target": "ESNext",
 		"typeRoots": ["node_modules/@rbxts"],
-		"plugins": [
-			{"transform": "rbxts-transformer-private"}
-		],
 
 		// configurable
 		"rootDir": "src",
@@ -26,6 +23,5 @@
 		"baseUrl": "src",
 		"incremental": true,
 		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo",
-		"declaration": false
 	}
 }
