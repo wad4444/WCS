@@ -6,7 +6,6 @@ import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
 import { SelectStatusData } from "state/selectors";
 import Signal from "@rbxts/rbx-better-signal";
-import { deepCopy } from "@rbxts/deepcopy";
 import { rootProducer } from "state/rootProducer";
 import { t } from "@rbxts/t";
 
@@ -318,7 +317,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Gets the humanoid data of the status effect
      */
     public GetHumanoidData() {
-        return this.humanoidData !== undefined ? deepCopy(this.humanoidData) : undefined;
+        return this.humanoidData;
     }
 
     /**
