@@ -123,10 +123,10 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Starts the status effect.
      */
     public Start(Time?: number) {
-        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() === TimerState.Running) {
-            logWarning(`Can't start an already active StatusEffect`);
+            logWarning(`Cannot start an already active StatusEffect`);
             return;
         }
 
@@ -155,10 +155,10 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Paused the status effect.
      */
     public Pause() {
-        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() !== TimerState.Running) {
-            logWarning(`Can't pause a non active status effect`);
+            logWarning(`Cannot pause a non active status effect`);
             return;
         }
 
@@ -169,10 +169,10 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Resumes the status effect.
      */
     public Resume() {
-        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() !== TimerState.Paused) {
-            logWarning(`Can't resume a non paused status effect`);
+            logWarning(`Cannot resume a non paused status effect`);
             return;
         }
 
@@ -183,10 +183,10 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Stops the status effect.
      */
     public Stop() {
-        if (this.isReplicated) return logWarning(`Can't perform this action on a replicated status`);
+        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (!this.GetState().IsActive) {
-            logWarning(`Can't stop a non active status effect`);
+            logWarning(`Cannot stop a non active status effect`);
             return;
         }
 

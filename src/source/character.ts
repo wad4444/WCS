@@ -9,6 +9,7 @@ import { GetRegisteredSkillConstructor, Skill, SkillData } from "./skill";
 import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
 import { remotes } from "./remotes";
+import { Moveset } from "./moveset";
 
 export interface CharacterData {
     instance: Instance;
@@ -64,6 +65,7 @@ export class Character {
         JumpHeight: 7.2,
     };
     private id;
+    private moveset?: Moveset;
 
     constructor(Instance: Instance);
     /**
@@ -146,7 +148,7 @@ export class Character {
      */
     public TakeDamage(Container: DamageContainer) {
         if (RunService.IsClient()) {
-            logWarning(`Can't use :TakeDamage() on client`);
+            logWarning(`Cannot use :TakeDamage() on client`);
             return;
         }
 
@@ -325,6 +327,68 @@ export class Character {
      */
     public GetSkillFromConstructor<T extends Constructor<Skill>>(Constructor: T) {
         return this.skills.get(tostring(Constructor));
+    }
+
+    /**
+     * Apply a moveset to the character.
+     */
+    public ApplyMoveset(Moveset: Moveset) {
+        if (!RunService.IsServer()) {
+            logWarning(`Attempted to apply moveset on client`);
+            return;
+        }
+
+        if (this.moveset) {
+            this.moveset.Skills.forEach((SkillConstructor) => {
+                const name = tostring(SkillConstructor);
+                this.skills.get(name)?.Destroy();
+            });
+        }
+
+        Moveset.Skills.forEach((SkillConstructor) => {
+            const name = tostring(SkillConstructor);
+            this.skills.get(name)?.Destroy();
+
+            new SkillConstructor(this as never);
+        });
+        this.moveset = Moveset;
+    }
+
+    /**
+     * Retrieves the moveset.
+     */
+    public GetMoveset() {
+        return this.moveset;
+    }
+
+    /**
+     * Clears the moveset and destroys all skills.
+     */
+    public ClearMoveset() {
+        if (!RunService.IsServer()) {
+            logWarning(`Attempted to clear moveset on client`);
+            return;
+        }
+        if (!this.moveset) return;
+
+        this.moveset.Skills.forEach((SkillConstructor) => {
+            const name = tostring(SkillConstructor);
+            this.skills.get(name)?.Destroy();
+        });
+        this.moveset = undefined;
+    }
+
+    /**
+     * Apply the skills from a given Moveset.
+     * Does not set the moveset and just applies the skills.
+     */
+    public ApplySkillsFromMoveset(Moveset: Moveset) {
+        Moveset.Skills.forEach((SkillConstructor) => {
+            const name = tostring(SkillConstructor);
+            this.skills.get(name)?.Destroy();
+
+            new SkillConstructor(this as never);
+        });
     }
 
     private setupReplication_Client() {
