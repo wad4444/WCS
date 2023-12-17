@@ -2,10 +2,11 @@
   "name": "@rbxts/WCS",
   "version": "0.0.1",
   "description": "WCS is an extensible framework that allows you create fully customizable combat systems easily by providing useful abstraction",
-  "main": "index.js",
+  "main": "out/init.lua",
   "scripts": {
     "build": "rbxtsc",
-    "watch": "rbxtsc -w"
+    "watch": "rbxtsc -w",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "WCS",
@@ -29,6 +30,9 @@
     "typescript": "^5.3.3"
   },
   "repository": "https://github.com/g1mmethemoney/WCSTypescript",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@rbxts/immut": "^0.4.4-ts.0",
     "@rbxts/janitor": "^1.15.4-ts.0",
