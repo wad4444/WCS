@@ -28,6 +28,11 @@ type Partial_StatusEffectState = {
     IsActive: boolean?;
 }
 
+type Moveset = {
+    Name: string;
+    Skills: {SkillConstructor};
+}
+
 type HumanoidData = {
     Mode: "Set" | "Increment";
     Props: Partial_AffectableHumanoidProps;
@@ -70,14 +75,85 @@ export type StatusEffect<T = any> = {
     OnStartClient: (StatusEffect) -> void;
     OnEndClient: (StatusEffect) -> void;
     OnEndServer: (StatusEffect) -> void;
+    CreateDamageContainer: (StatusEffect, number) -> DamageContainer,
 }
 
 export type StatusEffectConstructor = {
     new: (Character) -> StatusEffect
 }
 
-export type Skill = {}
-export type SkillConstructor = {}
+type Replicatable = table | number | string | boolean | CFrame | Vector3;
+
+type SkillState = {
+    IsActive: boolean,
+    Debounce: boolean,
+    TimerEndTimestamp: number?,
+    StarterParams: Replicatable?,
+}
+
+type SkillData = {
+    state: SkillState,
+}
+
+type BooleanOrString = boolean | string;
+type Janitor = {
+	ClassName: "Janitor",
+	CurrentlyCleaning: boolean,
+	SuppressInstanceReDestroy: boolean,
+
+	Add: <T>(self: Janitor, Object: T, MethodName: BooleanOrString?, Index: any?) -> T,
+	AddPromise: <T>(self: Janitor, PromiseObject: T) -> T,
+
+	Remove: (self: Janitor, Index: any) -> Janitor,
+	RemoveNoClean: (self: Janitor, Index: any) -> Janitor,
+
+	RemoveList: (self: Janitor, ...any) -> Janitor,
+	RemoveListNoClean: (self: Janitor, ...any) -> Janitor,
+
+	Get: (self: Janitor, Index: any) -> any?,
+	GetAll: (self: Janitor) -> {[any]: any},
+
+	Cleanup: (self: Janitor) -> (),
+	Destroy: (self: Janitor) -> (),
+
+	LinkToInstance: (self: Janitor, Object: Instance, AllowMultiple: boolean?) -> RBXScriptConnection,
+	LegacyLinkToInstance: (self: Janitor, Object: Instance, AllowMultiple: boolean?) -> RbxScriptConnection,
+
+	LinkToInstances: (self: Janitor, ...Instance) -> Janitor,
+}
+
+type DamageContainer = {
+    Damage: number;
+    Source: Skill | StatusEffect | void;
+}
+
+type Skill = {
+    Janitor: Janitor,
+    Started: ReadonlySignal,
+    Ended: ReadonlySignal,
+    StateChanged: ReadonlySignal<(NewState: SkillState, OldState: SkillState) -> ()>,
+    Destroyed: ReadonlySignal,
+    StartCondition: () -> boolean,
+    MutualExclusives: {StatusEffectConstructor},
+    Requirements: {StatusEffectConstructor},
+    Player: Player?,
+    Character: Character,
+    HandleClientMessage: (Skill, ClientToServerMessage) -> void,
+    HandleServerMessage: (Skill, ServerToClientMessage) -> void,
+    GetName: (Skill) -> string,
+    OnStartServer: (Skill, StarterParams) -> void,
+    OnStartClient: (Skill, StarterParams) -> void,
+    OnEndServer: (Skill) -> void,
+    OnEndClient: (Skill) -> void,
+    GetState: (Skill) -> SkillState,
+    End: (Skill) -> void,
+    CreateDamageContainer: (Skill, number) -> DamageContainer,
+    Destroy: (Skill) -> void,
+}
+
+export type SkillConstructor = {
+    new: (Character) -> Skill
+}
 
 type AffectableHumanoidProps = {
     WalkSpeed: number;
@@ -114,6 +190,11 @@ export type Character = {
     HasStatusEffects: (Character, {StatusEffectConstructor}) -> boolean;
     GetSkillByString: (Character, string) -> Skill?;
     GetSkillByConstructor: (Character, SkillConstructor) -> Skill?;
+    ApplyMoveset: (Character, Moveset) -> void;
+    GetMoveset: (Character) -> Moveset;
+    ClearMoveset: (Character) -> void;
+    ApplySkillsFromMoveset: (Character, Moveset) -> void;
+    TakeDamage: (DamageContainer) -> DamageContainer;
 }
 
 export type CharacterClass = {
@@ -128,8 +209,11 @@ export type CharacterClass = {
 export type WCS = {
     CreateServer: () -> Handler;
     CreateClient: () -> Handler;
+    CreateMoveset: (string) -> Moveset;
+    RegisterStatusEffect: (string) -> StatusEffect;
+    RegisterSkill: (string) -> Skill;
     Character: CharacterClass;
-    StatusEffect: StatusEffectConstructor;
+    Types: {}
 }
 
 return nil
