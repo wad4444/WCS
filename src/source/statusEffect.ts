@@ -355,15 +355,15 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Destroys the status effect and removes it from the character
      */
     public Destroy() {
-        this.janitor.Cleanup();
         rootProducer.deleteStatusData(this.Character.GetId(), this.id);
         this.Destroyed.Fire();
+        this.janitor.Cleanup();
     }
 
     /**
      * A shortcut for creating a damage container
      */
-    public CreateDamageContainer(Damage: number): DamageContainer {
+    protected CreateDamageContainer(Damage: number): DamageContainer {
         return {
             Damage: Damage,
             Source: this as StatusEffect,

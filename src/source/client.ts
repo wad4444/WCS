@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { BroadcastReceiver, Broadcaster, createBroadcastReceiver, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
@@ -17,7 +18,6 @@ class Client {
     private receiver: BroadcastReceiver<typeof slices>;
 
     constructor() {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         currentInstance = this;
 
         this.receiver = createBroadcastReceiver({

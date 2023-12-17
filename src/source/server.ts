@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
@@ -7,23 +8,49 @@ import { slices } from "state/slices";
 import { rootProducer } from "state/rootProducer";
 import { Character } from "./character";
 import { SelectCharacterData } from "state/selectors";
+import Immut from "@rbxts/immut";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
 
 class Server {
+    /**
+     * A function that decides whether or not character should be replicated to the given player.
+     */
+    public FilterReplicatedCharacters = (Player: Player, Character: Character) =>
+        Character.Instance === Player.Character;
+
     private isActive = false;
     private registeredModules: ModuleScript[] = [];
     private broadcaster: Broadcaster;
 
     constructor() {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         currentInstance = this;
 
         this.broadcaster = createBroadcaster({
             producers: slices,
             dispatch: (Player, Actions) => {
                 remotes._dispatch.fire(Player, Actions);
+            },
+            beforeHydrate: (Player, State) => {
+                return Immut.produce(State, (Draft) => {
+                    for (const [Id, _] of State.replication) {
+                        const character = Character.GetCharacterFromId_TS(Id);
+                        if (!character) continue;
+
+                        if (!this.FilterReplicatedCharacters(Player, character)) Draft.replication.delete(Id);
+                    }
+                });
+            },
+            beforeDispatch: (Player, Action) => {
+                if (!t.string(Action.arguments[0])) return Action;
+
+                const character = Character.GetCharacterFromId_TS(Action.arguments[0]);
+                if (!character) return Action;
+
+                if (!this.FilterReplicatedCharacters(Player, character)) return;
+
+                return Action;
             },
         });
         rootProducer.applyMiddleware(this.broadcaster.middleware);

@@ -114,12 +114,14 @@ export class Character {
      */
     public Destroy() {
         Character.currentCharMap.delete(this.Instance);
-
         if (RunService.IsServer()) {
             rootProducer.deleteCharacterData(this.id);
         }
 
         Character.CharacterDestroyed.Fire(this);
+        this.skills.forEach((Skill) => Skill.Destroy());
+        this.statusEffects.forEach((Status) => Status.Destroy());
+
         this.Destroyed.Fire();
         this.janitor.Cleanup();
     }
@@ -216,6 +218,17 @@ export class Character {
      */
     public static GetCharacterMap_TS() {
         return table.clone(Character.currentCharMap) as ReadonlyMap<Instance, Character>;
+    }
+
+    /**
+     * @internal Reserved for internal usage
+     */
+    public static GetCharacterFromId_TS(Id: string) {
+        for (const [_, Character] of pairs(this.currentCharMap)) {
+            if (Character.GetId() === Id) {
+                return Character;
+            }
+        }
     }
 
     /**

@@ -23,6 +23,7 @@
 	],
 	"rules": {
 		"prettier/prettier": "warn",
-		"roblox-ts/lua-truthiness": "off"
+		"roblox-ts/lua-truthiness": "off",
+		"no-this-alias": "off"
 	}
 }

@@ -104,8 +104,6 @@ export class Skill<
                     this.Started.Fire();
                     if (RunService.IsServer()) this.End();
                 } else if (PreviousState.IsActive && !State.IsActive) {
-                    print("reg end");
-
                     RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
                     this.Ended.Fire();
                 }
@@ -114,6 +112,8 @@ export class Skill<
 
         this.Character._addSkill(this as Skill);
         this.isReplicated = RunService.IsClient();
+
+        this.startReplication();
         if (!this.isReplicated) {
             rootProducer.setSkillData(this.Character.GetId(), this.name, this.packData());
         }
@@ -179,7 +179,7 @@ export class Skill<
     /**
      * A shortcut for creating a damage container
      */
-    public CreateDamageContainer(Damage: number): DamageContainer {
+    protected CreateDamageContainer(Damage: number): DamageContainer {
         return {
             Damage: Damage,
             Source: this as Skill,
@@ -203,8 +203,6 @@ export class Skill<
         this.StateChanged.Fire(newState, this.state);
         this.state = newState;
 
-        this.isReplicated ?? this.startReplication();
-
         if (RunService.IsServer()) {
             rootProducer.patchSkillData(this.Character.GetId(), this.name, {
                 state: newState,
@@ -213,14 +211,15 @@ export class Skill<
     }
 
     private startReplication() {
-        if (!RunService.IsClient()) return;
+        if (!this.isReplicated) return;
 
         const proccessDataUpdate = (NewData?: SkillData) => {
             if (!NewData) return;
 
             if (NewData.state !== this.state) {
-                this.StateChanged.Fire(NewData.state, this.state);
+                const previousState = this.state;
                 this.state = NewData.state;
+                this.StateChanged.Fire(NewData.state, previousState);
             }
         };
 
