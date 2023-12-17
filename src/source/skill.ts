@@ -169,7 +169,7 @@ export class Skill<
     }
 
     public GetState() {
-        return table.clone(this.state) as ReadonlyState;
+        return this.state as ReadonlyState;
     }
 
     public GetName() {
@@ -199,6 +199,7 @@ export class Skill<
             ...this.state,
             ...Patch,
         };
+        table.freeze(newState);
 
         this.StateChanged.Fire(newState, this.state);
         this.state = newState;
@@ -218,6 +219,7 @@ export class Skill<
 
             if (NewData.state !== this.state) {
                 const previousState = this.state;
+                table.freeze(NewData.state);
                 this.state = NewData.state;
                 this.StateChanged.Fire(NewData.state, previousState);
             }

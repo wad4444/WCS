@@ -8,6 +8,7 @@ import { SelectStatusData } from "state/selectors";
 import Signal from "@rbxts/rbx-better-signal";
 import { deepCopy } from "@rbxts/deepcopy";
 import { rootProducer } from "state/rootProducer";
+import { t } from "@rbxts/t";
 
 export interface StatusData {
     className: string;
@@ -273,6 +274,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
             ...this.state,
             ...Patch,
         };
+        table.freeze(newState);
 
         this.StateChanged.Fire(newState, this.state);
         this.state = newState;
@@ -293,6 +295,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
                 `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
             );
         }
+        if (t.table(NewMeta)) table.freeze(NewMeta);
 
         this.MetadataChanged.Fire(NewMeta, this.metadata);
         this.metadata = NewMeta;
@@ -308,7 +311,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Gets the state of the status effect
      * */
     public GetState() {
-        return table.clone(this.state) as ReadonlyState;
+        return this.state as ReadonlyState;
     }
 
     /**
@@ -322,12 +325,7 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
      * Gets the metadata of the status effect
      */
     public GetMetadata() {
-        let cloned: T | undefined = this.metadata;
-        if (typeIs(this.metadata, "table")) {
-            cloned = table.clone(this.metadata);
-        }
-
-        return cloned;
+        return this.metadata;
     }
 
     /**
@@ -387,11 +385,13 @@ export class StatusEffect<T extends Replicatable | unknown = unknown> {
             if (!StatusData) return;
 
             if (StatusData.state !== this.state) {
+                table.freeze(StatusData.state);
                 this.state = StatusData.state;
                 this.StateChanged.Fire(StatusData.state, this.state);
             }
 
             if (StatusData.metadata !== this.metadata) {
+                if (t.table(StatusData.metadata)) table.freeze(StatusData.metadata);
                 this.metadata = StatusData.metadata as T | undefined;
                 this.MetadataChanged.Fire(StatusData.metadata as T | undefined, this.metadata);
             }
