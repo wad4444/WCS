@@ -17,14 +17,15 @@ export const remotes = createRemotes({
         t.string,
         t.optional(t.any),
     ),
-    _messageToServer: remote<Server, [Character: Instance, Name: string, Message: unknown]>(
-        t.Instance,
+    _messageToServer: remote<Server, [CharacterId: string, Name: string, Message: unknown]>(
+        t.string,
         t.string,
         t.optional(t.any),
     ),
-    _messageToClient: remote<Client, [Character: Instance, Name: string, Message: unknown]>(
-        t.Instance,
+    _messageToClient: remote<Client, [CharacterId: string, Name: string, Message: unknown]>(
+        t.string,
         t.string,
         t.optional(t.any),
     ),
+    _damageTaken: remote<Client, [CharacterId: string, Damage: number]>(t.string, t.number),
 });

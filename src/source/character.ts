@@ -1,5 +1,5 @@
 import { Players, RunService } from "@rbxts/services";
-import { Constructor, getActiveHandler, logError, logMessage, mapToArray } from "./utility";
+import { Constructor, getActiveHandler, logError, logMessage, logWarning, mapToArray } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectCharacterData } from "state/selectors";
 import { GetRegisteredStatusEffectConstructor, StatusData, StatusEffect } from "./statusEffect";
@@ -7,6 +7,8 @@ import { FlagWithData, Flags } from "./flags";
 import Signal from "@rbxts/rbx-better-signal";
 import { GetRegisteredSkillConstructor, Skill, SkillData } from "./skill";
 import { rootProducer } from "state/rootProducer";
+import { WCS_Server } from "./server";
+import { remotes } from "./remotes";
 
 export interface CharacterData {
     instance: Instance;
@@ -101,6 +103,16 @@ export class Character {
 
         if (RunService.IsServer()) {
             rootProducer.setCharacterData(this.id, this._packData());
+
+            const server = getActiveHandler<WCS_Server>()!;
+            this.janitor.Add(
+                this.DamageTaken.Connect((Container) => {
+                    Players.GetPlayers().forEach((Player) => {
+                        if (!server.FilterReplicatedCharacters(Player, this)) return;
+                        remotes._damageTaken.fire(Player, this.id, Container.Damage);
+                    });
+                }),
+            );
         }
     }
 
@@ -130,6 +142,11 @@ export class Character {
      * @returns The damage that was actually taken.
      */
     public TakeDamage(Container: DamageContainer) {
+        if (RunService.IsClient()) {
+            logWarning(`Can't use :TakeDamage() on client`);
+            return;
+        }
+
         const originalDamage = Container.Damage;
         let modifiedDamage = originalDamage;
         this.statusEffects.forEach((Status) => {

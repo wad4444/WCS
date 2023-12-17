@@ -76,19 +76,19 @@ export class Skill<
 
         if (RunService.IsServer()) {
             this.janitor.Add(
-                remotes._messageToServer.connect((Player, Character, SkillName, Message) => {
+                remotes._messageToServer.connect((Player, CharacterId, SkillName, Message) => {
                     if (Player !== this.Player) return;
                     if (SkillName !== this.name) return;
-                    if (Character !== this.Character.Instance) return;
+                    if (CharacterId !== this.Character.GetId()) return;
 
                     this.HandleClientMessage(Message as ClientToServerMessage);
                 }),
             );
         } else {
             this.janitor.Add(
-                remotes._messageToClient.connect((Character, SkillName, Message) => {
+                remotes._messageToClient.connect((CharacterId, SkillName, Message) => {
                     if (SkillName !== this.name) return;
-                    if (Character !== this.Character.Instance) return;
+                    if (CharacterId !== this.Character.GetId()) return;
 
                     this.HandleServerMessage(Message as ServerToClientMessage);
                 }),
@@ -239,7 +239,7 @@ export class Skill<
             return;
         }
 
-        remotes._messageToClient.fire(this.Player, this.Character.Instance, this.name, Message);
+        remotes._messageToClient.fire(this.Player, this.Character.GetId(), this.name, Message);
     }
 
     /**
@@ -253,7 +253,7 @@ export class Skill<
             return;
         }
 
-        remotes._messageToServer.fire(this.Character.Instance, this.name, Message);
+        remotes._messageToServer.fire(this.Character.GetId(), this.name, Message);
     }
 
     private packData(): SkillData {

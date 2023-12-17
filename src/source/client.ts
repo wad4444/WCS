@@ -70,6 +70,16 @@ class Client {
         setActiveHandler(this);
         this.setupCharacterReplication();
 
+        remotes._damageTaken.connect((CharacterId, Damage) => {
+            const character = Character.GetCharacterFromId_TS(CharacterId);
+            if (character) {
+                character.DamageTaken.Fire({
+                    Damage: Damage,
+                    Source: undefined,
+                });
+            }
+        });
+
         logMessage(`Started Client successfully`);
     }
 
