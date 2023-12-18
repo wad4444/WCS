@@ -163,7 +163,9 @@ export class Skill<
      * Destroys the skill and removes it from the character
      */
     public Destroy() {
-        rootProducer.deleteSkillData(this.Character.GetId(), this.name);
+        if (RunService.IsServer()) {
+            rootProducer.deleteSkillData(this.Character.GetId(), this.name);
+        }
         this.janitor.Cleanup();
     }
 
@@ -213,14 +215,13 @@ export class Skill<
     private startReplication() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (NewData?: SkillData) => {
+        const proccessDataUpdate = (NewData?: SkillData, OldData: SkillData = this.packData()) => {
             if (!NewData) return;
 
-            if (NewData.state !== this.state) {
-                const previousState = this.state;
+            if (NewData.state !== OldData.state) {
                 table.freeze(NewData.state);
                 this.state = NewData.state;
-                this.StateChanged.Fire(NewData.state, previousState);
+                this.StateChanged.Fire(NewData.state, OldData.state);
             }
         };
 

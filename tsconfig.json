@@ -24,5 +24,8 @@
 		"incremental": true,
 		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo",
 		"declaration": true,
+		"plugins": [
+			{"transform": "rbxts-transformer-private"},
+		],
 	}
 }

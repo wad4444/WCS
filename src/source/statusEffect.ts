@@ -352,7 +352,9 @@ export class StatusEffect<T extends ReplicatableValue = void> {
      * Destroys the status effect and removes it from the character
      */
     public Destroy() {
-        rootProducer.deleteStatusData(this.Character.GetId(), this.id);
+        if (RunService.IsServer()) {
+            rootProducer.deleteStatusData(this.Character.GetId(), this.id);
+        }
         this.Destroyed.Fire();
         this.janitor.Cleanup();
     }
@@ -380,24 +382,25 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     private startReplicationClient() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (StatusData?: StatusData) => {
+        const proccessDataUpdate = (StatusData?: StatusData, PreviousData: StatusData = this._packData()) => {
             if (!StatusData) return;
 
-            if (StatusData.state !== this.state) {
+            if (StatusData.state !== PreviousData.state) {
                 table.freeze(StatusData.state);
                 this.state = StatusData.state;
-                this.StateChanged.Fire(StatusData.state, this.state);
+                this.StateChanged.Fire(StatusData.state, PreviousData.state);
             }
 
-            if (StatusData.metadata !== this.metadata) {
+            if (StatusData.metadata !== PreviousData.metadata) {
                 if (t.table(StatusData.metadata)) table.freeze(StatusData.metadata);
                 this.metadata = StatusData.metadata as T | undefined;
-                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, this.metadata);
+                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, PreviousData.metadata as T | undefined);
             }
 
-            if (StatusData.humanoidData !== this.humanoidData) {
+            if (StatusData.humanoidData !== PreviousData.humanoidData) {
+                if (StatusData.humanoidData) table.freeze(StatusData.humanoidData);
                 this.humanoidData = StatusData.humanoidData;
-                this.HumanoidDataChanged.Fire(StatusData.humanoidData, this.humanoidData);
+                this.HumanoidDataChanged.Fire(StatusData.humanoidData, PreviousData.humanoidData);
             }
         };
 

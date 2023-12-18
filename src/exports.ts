@@ -6,3 +6,4 @@ export * from "./luaSpecific/registerStatusEffect";
 export * from "./luaSpecific/registerSkill";
 export * from "./source/moveset";
 export * from "./source/skill";
+export * from "./source/holdableSkill";
