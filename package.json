@@ -14,8 +14,6 @@
     "CombatSystem",
     "CombatHandler"
   ],
-  "types": "out/index.d.ts",
-  "files": ["include","out"],
   "author": "g1mmethemoney",
   "license": "MIT",
   "devDependencies": {
