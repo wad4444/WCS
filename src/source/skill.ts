@@ -266,13 +266,13 @@ export class Skill<
     /**
      * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor).
      */
-    public Construct() {}
-    public OnStartServer(StarterParams: StarterParams) {}
-    public OnStartClient(StarterParams: StarterParams) {}
-    public HandleClientMessage(Message: ClientToServerMessage) {}
-    public HandleServerMessage(Message: ServerToClientMessage) {}
-    public OnEndClient() {}
-    public OnEndServer() {}
+    protected Construct() {}
+    protected OnStartServer(StarterParams: StarterParams) {}
+    protected OnStartClient(StarterParams: StarterParams) {}
+    protected HandleClientMessage(Message: ClientToServerMessage) {}
+    protected HandleServerMessage(Message: ServerToClientMessage) {}
+    protected OnEndClient() {}
+    protected OnEndServer() {}
 }
 
 /**

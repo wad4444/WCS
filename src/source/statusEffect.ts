@@ -412,11 +412,11 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     /**
      * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor)
      */
-    public Construct() {}
-    public OnStartServer() {}
-    public OnStartClient() {}
-    public OnEndClient() {}
-    public OnEndServer() {}
+    protected Construct() {}
+    protected OnStartServer() {}
+    protected OnStartClient() {}
+    protected OnEndClient() {}
+    protected OnEndServer() {}
 }
 
 export function StatusEffectDecorator<T extends Constructor<StatusEffect>>(Constructor: T) {
