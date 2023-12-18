@@ -1,2 +1,9 @@
 local Types = require(script.types)
-return require(script.exports) :: Types.WCS
+local TS = _G[script]
+
+local exports = {}
+for _k, _v in TS.import(script, script, "exports") or {} do
+	exports[_k] = _v
+end
+
+return exports :: Types.WCS
