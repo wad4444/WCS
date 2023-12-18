@@ -82,7 +82,7 @@ export type StatusEffectConstructor<T = any> = {
     new: (Character) -> StatusEffect<T>
 }
 
-type Replicatable = table | number | string | boolean | CFrame | Vector3;
+type Replicatable = table | number | string | boolean | CFrame | Vector3 | nil;
 
 type SkillState = {
     IsActive: boolean,
