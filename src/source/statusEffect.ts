@@ -1,7 +1,7 @@
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
-import { Constructor, ReadonlyDeep, Replicatable, getActiveHandler, logError, logWarning } from "./utility";
+import { Constructor, ReadonlyDeep, ReplicatableValue, getActiveHandler, logError, logWarning } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
 import { SelectStatusData } from "state/selectors";
@@ -12,7 +12,7 @@ import { t } from "@rbxts/t";
 export interface StatusData {
     className: string;
     state: StatusEffectState;
-    metadata?: Replicatable | unknown;
+    metadata?: ReplicatableValue | unknown;
     humanoidData?: HumanoidData;
 }
 
@@ -39,7 +39,7 @@ function generateId() {
     return tostring(nextId);
 }
 
-export class StatusEffect<T extends Replicatable | unknown = unknown> {
+export class StatusEffect<T extends ReplicatableValue = void> {
     private readonly janitor = new Janitor();
 
     public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>(
