@@ -51,6 +51,7 @@ export type StatusEffect<T = any> = {
     Destroyed: ReadonlySignal<Callback>;
     Started: ReadonlySignal<Callback>;
     Ended: ReadonlySignal<Callback>;
+    Character: Character;
 
     DestroyOnEnd: boolean;
     
