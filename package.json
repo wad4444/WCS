@@ -1,6 +1,6 @@
 {
-  "name": "wcs",
-  "version": "0.0.1",
+  "name": "@rbxts/wcs",
+  "version": "0.0.12",
   "description": "WCS is an extensible framework that allows you create fully customizable combat systems easily by providing useful abstraction",
   "main": "out/init.lua",
   "scripts": {
@@ -13,6 +13,10 @@
     "Combat",
     "CombatSystem",
     "CombatHandler"
+  ],
+  "files": [
+    "out",
+    "!**/*.tsbuildinfo"
   ],
   "author": "g1mmethemoney",
   "license": "MIT",
@@ -29,6 +33,7 @@
     "roblox-ts": "^2.2.0",
     "typescript": "^5.3.3"
   },
+  "types": "out/index.d.ts",
   "repository": "https://github.com/g1mmethemoney/WCSTypescript",
   "publishConfig": {
     "access": "public"
