@@ -107,6 +107,8 @@ export class Skill<
 
         this.janitor.Add(
             this.internal_stateChanged.Connect((State, PreviousState) => {
+                this.StateChanged.Fire(this.doStateConversion(State), this.doStateConversion(PreviousState));
+
                 if (PreviousState.IsActive === State.IsActive) return;
                 if (!PreviousState.IsActive.value && State.IsActive.value) {
                     RunService.IsClient()
@@ -193,12 +195,15 @@ export class Skill<
         this.janitor.Cleanup();
     }
 
-    public GetState() {
-        const state = {
-            ...this.state,
-            IsActive: this.state.IsActive.value,
+    private doStateConversion(State: internal_skillState = this.state): SkillState {
+        return {
+            ...State,
+            IsActive: State.IsActive.value,
         };
-        return state as ReadonlyState;
+    }
+
+    public GetState() {
+        return this.doStateConversion() as ReadonlyState;
     }
 
     public GetName() {
