@@ -120,9 +120,11 @@ export class Skill<
                     RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
                     this.Ended.Fire();
                 }
-                if (PreviousState.IsActive.value === this.state.IsActive.value && this.isReplicated) {
+                if (PreviousState.IsActive.value === State.IsActive.value && this.isReplicated) {
                     this.OnStartClient(State.StarterParams as StarterParams);
+                    this.Started.Fire();
                     this.OnEndClient();
+                    this.Ended.Fire();
                 }
             }),
         );
@@ -196,10 +198,12 @@ export class Skill<
     }
 
     private doStateConversion(State: internal_skillState = this.state): SkillState {
-        return {
+        const converted = {
             ...State,
             IsActive: State.IsActive.value,
         };
+        table.freeze(converted);
+        return converted;
     }
 
     public GetState() {
