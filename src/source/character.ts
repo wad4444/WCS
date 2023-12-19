@@ -4,12 +4,12 @@ import { Janitor } from "@rbxts/janitor";
 import { SelectCharacterData } from "state/selectors";
 import { GetRegisteredStatusEffectConstructor, StatusData, StatusEffect } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
-import Signal from "@rbxts/rbx-better-signal";
 import { GetRegisteredSkillConstructor, Skill, SkillData } from "./skill";
 import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
 import { remotes } from "./remotes";
 import { Moveset } from "./moveset";
+import Signal from "@rbxts/signal";
 
 export interface CharacterData {
     instance: Instance;
@@ -42,19 +42,17 @@ export class Character {
 
     private readonly janitor = new Janitor();
 
-    public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>(this.janitor);
-    public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>(this.janitor);
+    public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>();
+    public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>();
     /**
      * Fires only on client
      */
-    public readonly HumanoidPropertiesUpdated = new Signal<(NewProperties: AffectableHumanoidProps) => void>(
-        this.janitor,
-    );
+    public readonly HumanoidPropertiesUpdated = new Signal<(NewProperties: AffectableHumanoidProps) => void>();
     /**
      * Container's source will always be nil on client
      */
-    public readonly DamageTaken = new Signal<(Container: DamageContainer) => void>(this.janitor);
-    public readonly Destroyed = new Signal(this.janitor);
+    public readonly DamageTaken = new Signal<(Container: DamageContainer) => void>();
+    public readonly Destroyed = new Signal();
 
     private readonly statusEffects: Map<string, StatusEffect> = new Map();
     private readonly skills: Map<string, Skill> = new Map();
@@ -105,6 +103,11 @@ export class Character {
 
         this.janitor.Add(this.StatusEffectAdded.Connect(() => this.updateHumanoidProps()));
         this.janitor.Add(this.StatusEffectRemoved.Connect(() => this.updateHumanoidProps()));
+        this.janitor.Add(() => {
+            this.StatusEffectAdded.Destroy();
+            this.StatusEffectRemoved.Destroy();
+            this.HumanoidPropertiesUpdated.Destroy();
+        });
 
         if (RunService.IsServer()) {
             rootProducer.setCharacterData(this.id, this._packData());

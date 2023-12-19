@@ -3,12 +3,12 @@ import { Players, RunService } from "@rbxts/services";
 import { Character, DamageContainer } from "./character";
 import { Flags } from "./flags";
 import { Constructor, ReadonlyDeep, ReplicatableValue, getActiveHandler, logError, logWarning } from "./utility";
-import Signal from "@rbxts/rbx-better-signal";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
 import { remotes } from "./remotes";
 import { rootProducer } from "state/rootProducer";
 import { StatusEffect } from "./statusEffect";
+import Signal from "@rbxts/signal";
 
 export interface SkillState {
     IsActive: boolean;
@@ -32,10 +32,10 @@ export class Skill<
     private readonly janitor = new Janitor();
     protected readonly Janitor = new Janitor();
 
-    public readonly Started = new Signal(this.janitor);
-    public readonly Ended = new Signal(this.janitor);
-    public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>(this.janitor);
-    public readonly Destroyed = new Signal(this.janitor);
+    public readonly Started = new Signal();
+    public readonly Ended = new Signal();
+    public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>();
+    public readonly Destroyed = new Signal();
 
     protected StartCondition: () => boolean = () => true;
     protected MutualExclusives: Constructor<StatusEffect>[] = [];
@@ -108,6 +108,13 @@ export class Skill<
                 }
             }),
         );
+
+        this.janitor.Add(() => {
+            this.StateChanged.Destroy();
+            this.Destroyed.Destroy();
+            this.Started.Destroy();
+            this.Ended.Destroy();
+        });
 
         this.Character._addSkill(this as Skill);
         this.isReplicated = RunService.IsClient();
@@ -200,9 +207,9 @@ export class Skill<
             ...this.state,
             ...Patch,
         };
-        table.freeze(newState);
+        const oldState = this.state;
 
-        this.StateChanged.Fire(newState, this.state);
+        table.freeze(newState);
         this.state = newState;
 
         if (RunService.IsServer()) {
@@ -210,6 +217,8 @@ export class Skill<
                 state: newState,
             });
         }
+
+        this.StateChanged.Fire(newState, oldState);
     }
 
     private startReplication() {

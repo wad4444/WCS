@@ -5,9 +5,9 @@ import { Constructor, ReadonlyDeep, ReplicatableValue, getActiveHandler, logErro
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
 import { SelectStatusData } from "state/selectors";
-import Signal from "@rbxts/rbx-better-signal";
 import { rootProducer } from "state/rootProducer";
 import { t } from "@rbxts/t";
+import Signal from "@rbxts/signal";
 
 export interface StatusData {
     className: string;
@@ -42,18 +42,14 @@ function generateId() {
 export class StatusEffect<T extends ReplicatableValue = void> {
     private readonly janitor = new Janitor();
 
-    public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>(
-        this.janitor,
-    );
-    public readonly StateChanged = new Signal<(State: ReadonlyState, PreviousState: ReadonlyState) => void>(
-        this.janitor,
-    );
+    public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>();
+    public readonly StateChanged = new Signal<(State: ReadonlyState, PreviousState: ReadonlyState) => void>();
     public readonly HumanoidDataChanged = new Signal<
         (Data: HumanoidData | undefined, PreviousData: HumanoidData | undefined) => void
-    >(this.janitor);
-    public readonly Destroyed = new Signal(this.janitor);
-    public readonly Started = new Signal(this.janitor);
-    public readonly Ended = new Signal(this.janitor);
+    >();
+    public readonly Destroyed = new Signal();
+    public readonly Started = new Signal();
+    public readonly Ended = new Signal();
 
     public DestroyOnEnd = true;
 
@@ -112,6 +108,15 @@ export class StatusEffect<T extends ReplicatableValue = void> {
             }),
             "Disconnect",
         );
+
+        this.janitor.Add(() => {
+            this.StateChanged.Destroy();
+            this.MetadataChanged.Destroy();
+            this.HumanoidDataChanged.Destroy();
+            this.Destroyed.Destroy();
+            this.Started.Destroy();
+            this.Ended.Destroy();
+        });
 
         if (RunService.IsServer()) {
             rootProducer.setStatusData(this.Character.GetId(), this.id, this._packData());
