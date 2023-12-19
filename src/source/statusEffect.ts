@@ -8,6 +8,7 @@ import { SelectStatusData } from "state/selectors";
 import { rootProducer } from "state/rootProducer";
 import { t } from "@rbxts/t";
 import Signal from "@rbxts/signal";
+import { _internal_SkillState } from "./skill";
 
 export interface StatusData {
     className: string;
@@ -16,8 +17,8 @@ export interface StatusData {
     humanoidData?: HumanoidData;
 }
 
-interface internal_statusEffectState {
-    IsActive: { value: boolean };
+interface internal_statusEffectState extends StatusEffectState {
+    _isActive_counter: number;
 }
 
 export interface StatusEffectState {
@@ -51,9 +52,6 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     public readonly HumanoidDataChanged = new Signal<
         (Data: HumanoidData | undefined, PreviousData: HumanoidData | undefined) => void
     >();
-    private readonly internal_stateChanged = new Signal<
-        (State: internal_statusEffectState, PreviousState: internal_statusEffectState) => void
-    >();
     public readonly Destroyed = new Signal();
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
@@ -61,7 +59,8 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     public DestroyOnEnd = true;
 
     private state: internal_statusEffectState = {
-        IsActive: { value: false },
+        IsActive: false,
+        _isActive_counter: 0,
     };
     private metadata?: T;
     private humanoidData?: HumanoidData;
@@ -96,26 +95,9 @@ export class StatusEffect<T extends ReplicatableValue = void> {
         this.startReplicationClient();
 
         this.janitor.Add(
-            this.internal_stateChanged.Connect((State, PreviousState) => {
-                this.StateChanged.Fire(this.doStateConversion(State), this.doStateConversion(PreviousState));
-
-                if (PreviousState.IsActive === State.IsActive) return;
-                if (!PreviousState.IsActive && State.IsActive) {
-                    RunService.IsClient() ? this.OnStartClient() : this.OnStartServer();
-                    this.Started.Fire();
-                    RunService.IsServer() ?? this.OnEndServer();
-                } else if (PreviousState.IsActive && !State.IsActive) {
-                    RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
-                    this.Ended.Fire();
-                }
-
-                if (PreviousState.IsActive.value === this.state.IsActive.value && this.isReplicated) {
-                    this.OnStartClient();
-                    this.Started.Fire();
-                    this.OnEndClient();
-                    this.Ended.Fire();
-                }
-            }),
+            this.StateChanged.Connect((New, Old) =>
+                this.stateDependentCallbacks(New as _internal_SkillState, Old as _internal_SkillState),
+            ),
         );
         this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd ?? this.Destroy()));
 
@@ -133,7 +115,6 @@ export class StatusEffect<T extends ReplicatableValue = void> {
             this.Destroyed.Destroy();
             this.Started.Destroy();
             this.Ended.Destroy();
-            this.internal_stateChanged.Destroy();
         });
 
         if (RunService.IsServer()) {
@@ -295,8 +276,9 @@ export class StatusEffect<T extends ReplicatableValue = void> {
         const newState = {
             ...this.state,
             ...Patch,
-        } as internal_statusEffectState;
-        if (Patch.IsActive !== undefined) newState.IsActive = { value: Patch.IsActive };
+        };
+        if (Patch.IsActive !== undefined) newState._isActive_counter++;
+
         const oldState = this.state;
 
         table.freeze(newState);
@@ -308,7 +290,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
             });
         }
 
-        this.internal_stateChanged.Fire(newState, oldState);
+        this.StateChanged.Fire(newState, oldState);
     }
 
     /**
@@ -332,20 +314,11 @@ export class StatusEffect<T extends ReplicatableValue = void> {
         }
     }
 
-    private doStateConversion(State: internal_statusEffectState = this.state): StatusEffectState {
-        const converted = {
-            ...State,
-            IsActive: State.IsActive.value,
-        };
-        table.freeze(converted);
-        return converted;
-    }
-
     /**
      * Gets the state of the status effect
      * */
     public GetState() {
-        return this.doStateConversion() as ReadonlyState;
+        return this.state as ReadonlyState;
     }
 
     /**
@@ -414,6 +387,25 @@ export class StatusEffect<T extends ReplicatableValue = void> {
         };
     }
 
+    private stateDependentCallbacks(State: internal_statusEffectState, PreviousState: internal_statusEffectState) {
+        if (PreviousState.IsActive === State.IsActive) return;
+        if (!PreviousState.IsActive && State.IsActive) {
+            RunService.IsClient() ? this.OnStartClient() : this.OnStartServer();
+            this.Started.Fire();
+            RunService.IsServer() ?? this.OnEndServer();
+        } else if (PreviousState.IsActive && !State.IsActive) {
+            RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
+            this.Ended.Fire();
+        }
+
+        if (PreviousState.IsActive === this.state.IsActive && this.isReplicated) {
+            this.OnStartClient();
+            this.Started.Fire();
+            this.OnEndClient();
+            this.Ended.Fire();
+        }
+    }
+
     private startReplicationClient() {
         if (!this.isReplicated) return;
 
@@ -424,7 +416,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
             if (StatusData.state !== PreviousData.state) {
                 table.freeze(StatusData.state);
                 this.state = StatusData.state;
-                this.internal_stateChanged.Fire(StatusData.state, PreviousData.state);
+                this.StateChanged.Fire(StatusData.state, PreviousData.state);
             }
 
             if (StatusData.metadata !== PreviousData.metadata) {
