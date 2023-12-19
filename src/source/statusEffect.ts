@@ -296,7 +296,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
             ...this.state,
             ...Patch,
         } as internal_statusEffectState;
-        if (Patch.IsActive) newState.IsActive = { value: Patch.IsActive };
+        if (Patch.IsActive !== undefined) newState.IsActive = { value: Patch.IsActive };
         const oldState = this.state;
 
         table.freeze(newState);
@@ -417,8 +417,9 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     private startReplicationClient() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (StatusData?: StatusData, PreviousData: StatusData = this._packData()) => {
+        const proccessDataUpdate = (StatusData?: StatusData, PreviousData?: StatusData) => {
             if (!StatusData) return;
+            if (!PreviousData) return;
 
             if (StatusData.state !== PreviousData.state) {
                 table.freeze(StatusData.state);

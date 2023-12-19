@@ -237,7 +237,7 @@ export class Skill<
             ...this.state,
             ...Patch,
         } as internal_skillState;
-        if (Patch.IsActive) newState.IsActive = { value: Patch.IsActive };
+        if (Patch.IsActive !== undefined) newState.IsActive = { value: Patch.IsActive };
         const oldState = this.state;
 
         table.freeze(newState);
@@ -255,8 +255,9 @@ export class Skill<
     private startReplication() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (NewData?: SkillData, OldData: SkillData = this.packData()) => {
+        const proccessDataUpdate = (NewData?: SkillData, OldData?: SkillData) => {
             if (!NewData) return;
+            if (!OldData) return;
 
             if (NewData.state !== OldData.state) {
                 table.freeze(NewData.state);
