@@ -9,6 +9,7 @@ import { remotes } from "./remotes";
 import { rootProducer } from "state/rootProducer";
 import { StatusEffect } from "./statusEffect";
 import Signal from "@rbxts/signal";
+import { Timer, TimerState } from "@rbxts/timer";
 
 export interface SkillState {
     IsActive: boolean;
@@ -34,8 +35,10 @@ export class Skill<
     ServerToClientMessage extends ReplicatableValue = void,
     ClientToServerMessage extends ReplicatableValue = void,
 > {
-    private readonly janitor = new Janitor();
+    /** @internal */
+    protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();
+    protected readonly CooldownTimer = new Timer(1);
 
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
@@ -48,13 +51,14 @@ export class Skill<
 
     public Player?: Player;
 
-    private isReplicated: boolean;
+    /** @internal */
+    protected readonly isReplicated: boolean;
     private state: _internal_SkillState = {
         _isActive_counter: 0,
         IsActive: false,
         Debounce: false,
     };
-    private name = tostring(getmetatable(this));
+    protected readonly Name = tostring(getmetatable(this));
 
     constructor(Character: Character);
     /**
@@ -80,19 +84,19 @@ export class Skill<
         this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
 
         if (RunService.IsServer()) {
-            this.janitor.Add(
+            this._janitor.Add(
                 remotes._messageToServer.connect((Player, CharacterId, SkillName, Message) => {
                     if (Player !== this.Player) return;
-                    if (SkillName !== this.name) return;
+                    if (SkillName !== this.Name) return;
                     if (CharacterId !== this.Character.GetId()) return;
 
                     this.HandleClientMessage(Message as ClientToServerMessage);
                 }),
             );
         } else {
-            this.janitor.Add(
+            this._janitor.Add(
                 remotes._messageToClient.connect((CharacterId, SkillName, Message) => {
-                    if (SkillName !== this.name) return;
+                    if (SkillName !== this.Name) return;
                     if (CharacterId !== this.Character.GetId()) return;
 
                     this.HandleServerMessage(Message as ServerToClientMessage);
@@ -100,16 +104,26 @@ export class Skill<
             );
         }
 
-        this.janitor.Add(() => {
+        this._janitor.Add(
+            this.CooldownTimer.completed.Connect(() => {
+                if (!this.GetState().Debounce) return;
+                this.SetState({
+                    Debounce: false,
+                });
+            }),
+        );
+
+        this._janitor.Add(() => {
             this.StateChanged.Destroy();
             this.Destroyed.Destroy();
             this.Started.Destroy();
             this.Ended.Destroy();
+            this.CooldownTimer.destroy();
         });
 
-        this.janitor.Add(
+        this._janitor.Add(
             this.StateChanged.Connect((New, Old) =>
-                this.stateDependentCallbacks(New as _internal_SkillState, Old as _internal_SkillState),
+                this._stateDependentCallbacks(New as _internal_SkillState, Old as _internal_SkillState),
             ),
         );
 
@@ -118,7 +132,7 @@ export class Skill<
 
         this.startReplication();
         if (!this.isReplicated) {
-            rootProducer.setSkillData(this.Character.GetId(), this.name, this.packData());
+            rootProducer.setSkillData(this.Character.GetId(), this.Name, this.packData());
         }
 
         this.Construct();
@@ -130,7 +144,7 @@ export class Skill<
      */
     public Start(StarterParams: StarterParams) {
         if (RunService.IsClient()) {
-            remotes._startSkill.fire(this.Character.GetId(), this.name, StarterParams);
+            remotes._startSkill.fire(this.Character.GetId(), this.Name, StarterParams);
             return;
         }
 
@@ -168,12 +182,13 @@ export class Skill<
      */
     public Destroy() {
         if (RunService.IsServer()) {
-            rootProducer.deleteSkillData(this.Character.GetId(), this.name);
+            rootProducer.deleteSkillData(this.Character.GetId(), this.Name);
         }
-        this.janitor.Cleanup();
+        this._janitor.Cleanup();
     }
 
-    private stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
+    /** @internal */
+    protected _stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
         if (PreviousState._isActive_counter === State._isActive_counter) return;
 
         if (!PreviousState.IsActive && State.IsActive) {
@@ -199,7 +214,7 @@ export class Skill<
     }
 
     public GetName() {
-        return this.name;
+        return this.Name;
     }
 
     /**
@@ -212,9 +227,31 @@ export class Skill<
         };
     }
 
+    protected ApplyCooldown(Duration: number) {
+        if (!RunService.IsServer()) {
+            logWarning(`Cannot :ApplyCooldown() on client.`);
+            return;
+        }
+
+        this.SetState({
+            Debounce: true,
+        });
+
+        if (this.CooldownTimer.getState() === TimerState.Running) {
+            this.CooldownTimer.stop();
+        }
+
+        if (this.CooldownTimer.getState() === TimerState.Paused) {
+            this.CooldownTimer.resume();
+            this.CooldownTimer.stop();
+        }
+
+        this.CooldownTimer.setLength(Duration);
+        this.CooldownTimer.start();
+    }
+
     /**
-     * Set the state of the skill.
-     * @param Patch The patch to apply to the state
+     * @internal Reserved for internal usage
      */
     protected SetState(Patch: Partial<SkillState>) {
         if (this.isReplicated) {
@@ -233,7 +270,7 @@ export class Skill<
         this.state = newState;
 
         if (RunService.IsServer()) {
-            rootProducer.patchSkillData(this.Character.GetId(), this.name, {
+            rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
                 state: newState,
             });
         }
@@ -255,7 +292,7 @@ export class Skill<
             }
         };
 
-        const dataSelector = SelectSkillData(this.Character.GetId(), this.name);
+        const dataSelector = SelectSkillData(this.Character.GetId(), this.Name);
         proccessDataUpdate(dataSelector(rootProducer.getState()));
         rootProducer.subscribe(dataSelector, proccessDataUpdate);
     }
@@ -271,7 +308,7 @@ export class Skill<
             return;
         }
 
-        remotes._messageToClient.fire(this.Player, this.Character.GetId(), this.name, Message);
+        remotes._messageToClient.fire(this.Player, this.Character.GetId(), this.Name, Message);
     }
 
     /**
@@ -285,7 +322,7 @@ export class Skill<
             return;
         }
 
-        remotes._messageToServer.fire(this.Character.GetId(), this.name, Message);
+        remotes._messageToServer.fire(this.Character.GetId(), this.Name, Message);
     }
 
     private packData(): SkillData {
