@@ -10,6 +10,14 @@ import { rootProducer } from "state/rootProducer";
 import { StatusEffect } from "./statusEffect";
 import Signal from "@rbxts/signal";
 
+/** @internal */
+export interface internal_skillState {
+    IsActive: { value: boolean };
+    Debounce: boolean;
+    TimerEndTimestamp?: number;
+    StarterParams?: ReplicatableValue;
+}
+
 export interface SkillState {
     IsActive: boolean;
     Debounce: boolean;
@@ -20,7 +28,7 @@ export interface SkillState {
 type ReadonlyState = ReadonlyDeep<SkillState>;
 
 export interface SkillData {
-    state: SkillState;
+    state: internal_skillState;
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
@@ -34,6 +42,9 @@ export class Skill<
 
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
+    private readonly internal_stateChanged = new Signal<
+        (NewState: internal_skillState, OldState: internal_skillState) => void
+    >();
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>();
     public readonly Destroyed = new Signal();
 
@@ -44,8 +55,8 @@ export class Skill<
     public Player?: Player;
 
     private isReplicated: boolean;
-    private state: SkillState = {
-        IsActive: false,
+    private state: internal_skillState = {
+        IsActive: { value: false },
         Debounce: false,
     };
     private name = tostring(getmetatable(this));
@@ -95,21 +106,27 @@ export class Skill<
         }
 
         this.janitor.Add(
-            this.StateChanged.Connect((State, PreviousState) => {
-                if (!PreviousState.IsActive && State.IsActive) {
+            this.internal_stateChanged.Connect((State, PreviousState) => {
+                if (PreviousState.IsActive === State.IsActive) return;
+                if (!PreviousState.IsActive.value && State.IsActive.value) {
                     RunService.IsClient()
                         ? this.OnStartClient(State.StarterParams as StarterParams)
                         : this.OnStartServer(State.StarterParams as StarterParams);
                     this.Started.Fire();
                     if (RunService.IsServer()) this.End();
-                } else if (PreviousState.IsActive && !State.IsActive) {
+                } else if (PreviousState.IsActive.value && !State.IsActive.value) {
                     RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
                     this.Ended.Fire();
+                }
+                if (PreviousState.IsActive.value === this.state.IsActive.value && this.isReplicated) {
+                    this.OnStartClient(State.StarterParams as StarterParams);
+                    this.OnEndClient();
                 }
             }),
         );
 
         this.janitor.Add(() => {
+            this.internal_stateChanged.Destroy();
             this.StateChanged.Destroy();
             this.Destroyed.Destroy();
             this.Started.Destroy();
@@ -177,7 +194,11 @@ export class Skill<
     }
 
     public GetState() {
-        return this.state as ReadonlyState;
+        const state = {
+            ...this.state,
+            IsActive: this.state.IsActive.value,
+        };
+        return state as ReadonlyState;
     }
 
     public GetName() {
@@ -206,7 +227,8 @@ export class Skill<
         const newState = {
             ...this.state,
             ...Patch,
-        };
+        } as internal_skillState;
+        if (Patch.IsActive) newState.IsActive = { value: Patch.IsActive };
         const oldState = this.state;
 
         table.freeze(newState);
@@ -218,7 +240,7 @@ export class Skill<
             });
         }
 
-        this.StateChanged.Fire(newState, oldState);
+        this.internal_stateChanged.Fire(newState, oldState);
     }
 
     private startReplication() {
@@ -230,7 +252,7 @@ export class Skill<
             if (NewData.state !== OldData.state) {
                 table.freeze(NewData.state);
                 this.state = NewData.state;
-                this.StateChanged.Fire(NewData.state, OldData.state);
+                this.internal_stateChanged.Fire(NewData.state, OldData.state);
             }
         };
 
