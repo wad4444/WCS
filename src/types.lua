@@ -145,6 +145,8 @@ type Skill<StarterParams, ClientToServerMessage, ServerToClientMessage> = {
     Character: Character,
     HandleClientMessage: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ClientToServerMessage) -> void,
     HandleServerMessage: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ServerToClientMessage) -> void,
+    SendMessageToClient: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ServerToClientMessage) -> void,
+    SendMessageToServer: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ClientToServerMessage) -> void,
     GetName: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> string,
     OnStartServer: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, StarterParams) -> void,
     OnStartClient: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, StarterParams) -> void,
