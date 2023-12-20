@@ -195,8 +195,8 @@ export type Character = {
     GetAllStatusStatusEffectsOfType: (Character, StatusEffectConstructor<any>) -> {StatusEffect<any>};
     GetAllActiveStatusStatusEffectsOfType: (Character, StatusEffectConstructor<any>) -> {StatusEffect<any>};
     HasStatusEffects: (Character, {StatusEffectConstructor<any>}) -> boolean;
-    GetSkillByString: (Character, string) -> Skill<any, any, any>?;
-    GetSkillByConstructor: (Character, SkillConstructor<any, any, any>) -> Skill<any, any, any>?;
+    GetSkillFromString: (Character, string) -> Skill<any, any, any>?;
+    GetSkillFromConstructor: (Character, SkillConstructor<any, any, any>) -> Skill<any, any, any>?;
     ApplyMoveset: (Character, Moveset) -> void;
     GetMoveset: (Character) -> Moveset;
     ClearMoveset: (Character) -> void;

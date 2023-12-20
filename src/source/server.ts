@@ -90,17 +90,17 @@ class Server {
         this.registeredModules.forEach((v) => require(v));
         table.clear(this.registeredModules);
 
-        remotes._startSkill.connect((Player, CharacterId, SkillName, Params) => {
+        remotes._requestSkill.connect((Player, CharacterId, SkillName, Action, Params) => {
             const characterData = SelectCharacterData(CharacterId)(rootProducer.getState());
             if (!characterData) return;
 
             const character = Character.GetCharacterFromInstance_TS(characterData.instance);
-            if (!character) return;
+            if (!character || character.Player !== Player) return;
 
             const skill = character.GetSkillFromString(SkillName);
             if (!skill) return;
 
-            skill.Start(Params as never);
+            Action === "Start" ? skill.Start(Params as never) : skill.End();
         });
 
         setActiveHandler(this);

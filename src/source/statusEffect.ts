@@ -130,7 +130,6 @@ export class StatusEffect<T extends ReplicatableValue = void> {
         if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() === TimerState.Running) {
-            logWarning(`Cannot start an already active StatusEffect`);
             return;
         }
 

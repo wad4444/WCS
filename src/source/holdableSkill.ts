@@ -23,7 +23,10 @@ export class HoldableSkill<
     constructor(Character: Character, AllowClientInstantiation?: (typeof Flags)["CanInstantiateSkillClient"]) {
         super(Character, AllowClientInstantiation as never);
         if (RunService.IsServer()) {
-            this._janitor.Add(this.HoldTimer.completed.Connect(() => this.End()));
+            this._janitor.Add(
+                this.HoldTimer.completed.Connect(() => this.End()),
+                "Disconnect",
+            );
         }
     }
 

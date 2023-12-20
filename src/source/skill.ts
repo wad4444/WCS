@@ -111,6 +111,7 @@ export class Skill<
                     Debounce: false,
                 });
             }),
+            "Disconnect",
         );
 
         this._janitor.Add(() => {
@@ -143,8 +144,11 @@ export class Skill<
      * Client: Sends a request to server that will call :Start() on server
      */
     public Start(StarterParams: StarterParams) {
+        const state = this.GetState();
+        if (state.IsActive || state.Debounce) return;
+
         if (RunService.IsClient()) {
-            remotes._startSkill.fire(this.Character.GetId(), this.Name, StarterParams);
+            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "Start", StarterParams);
             return;
         }
 
@@ -170,6 +174,11 @@ export class Skill<
      * Force end the skill. This is automatically called after OnStartServer() is completed
      */
     public End() {
+        if (RunService.IsClient()) {
+            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "End", undefined);
+            return;
+        }
+
         this.SetState({
             IsActive: false,
             StarterParams: undefined,
