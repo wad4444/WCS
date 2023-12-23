@@ -44,10 +44,10 @@ function generateId() {
     return tostring(nextId);
 }
 
-export class StatusEffect<Metadata = unknown> {
+export class StatusEffect<T = unknown> {
     private readonly janitor = new Janitor();
 
-    public readonly MetadataChanged = new Signal<(NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void>();
+    public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>();
     public readonly StateChanged = new Signal<(State: ReadonlyState, PreviousState: ReadonlyState) => void>();
     public readonly HumanoidDataChanged = new Signal<
         (Data: HumanoidData | undefined, PreviousData: HumanoidData | undefined) => void
@@ -62,7 +62,7 @@ export class StatusEffect<Metadata = unknown> {
         IsActive: false,
         _isActive_counter: 0,
     };
-    private metadata?: Metadata;
+    private metadata?: T;
     private humanoidData?: HumanoidData;
 
     private isDestroyed = false;
@@ -126,7 +126,7 @@ export class StatusEffect<Metadata = unknown> {
     /**
      * Starts the status effect.
      */
-    public Start(Metadataime?: number) {
+    public Start(Time?: number) {
         if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() === TimerState.Running) {
@@ -142,8 +142,8 @@ export class StatusEffect<Metadata = unknown> {
             IsActive: true,
         });
 
-        if (Metadataime === undefined || Metadataime <= 0) return;
-        this.timer.setLength(Metadataime);
+        if (Time === undefined || Time <= 0) return;
+        this.timer.setLength(Time);
         this.timer.start();
     }
 
@@ -250,7 +250,7 @@ export class StatusEffect<Metadata = unknown> {
     public ClearMetadata() {
         if (this.isReplicated) {
             logError(
-                `Cannot :ClearMetadata() of replicated status effect on client! \n Metadatahis can lead to a possible desync`,
+                `Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
             );
         }
 
@@ -269,7 +269,7 @@ export class StatusEffect<Metadata = unknown> {
      */
     protected SetState(Patch: Partial<StatusEffectState>) {
         if (this.isReplicated) {
-            logError(`Cannot :SetState() of replicated status effect on client! \n Metadatahis can lead to a possible desync`);
+            logError(`Cannot :SetState() of replicated status effect on client! \n This can lead to a possible desync`);
         }
 
         const newState = {
@@ -295,10 +295,10 @@ export class StatusEffect<Metadata = unknown> {
     /**
      * Sets the metadata of the status effect.
      */
-    protected SetMetadata(NewMeta: Metadata) {
+    protected SetMetadata(NewMeta: T) {
         if (this.isReplicated) {
             logError(
-                `Cannot :SetMetadata() of replicated status effect on client! \n Metadatahis can lead to a possible desync`,
+                `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
             );
         }
         if (t.table(NewMeta)) table.freeze(NewMeta);
@@ -420,8 +420,8 @@ export class StatusEffect<Metadata = unknown> {
 
             if (StatusData.metadata !== PreviousData.metadata) {
                 if (t.table(StatusData.metadata)) table.freeze(StatusData.metadata);
-                this.metadata = StatusData.metadata as Metadata | undefined;
-                this.MetadataChanged.Fire(StatusData.metadata as Metadata | undefined, PreviousData.metadata as Metadata | undefined);
+                this.metadata = StatusData.metadata as T | undefined;
+                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, PreviousData.metadata as T | undefined);
             }
 
             if (StatusData.humanoidData !== PreviousData.humanoidData) {
@@ -440,7 +440,7 @@ export class StatusEffect<Metadata = unknown> {
     }
 
     /**
-     * @deprecated Should not be used in Metadataypescript: Specificly for LuaU Usage (functionality replaced by class constructor)
+     * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor)
      */
     protected Construct() {}
     protected OnStartServer() {}
@@ -449,7 +449,7 @@ export class StatusEffect<Metadata = unknown> {
     protected OnEndServer() {}
 }
 
-export function StatusEffectDecorator<Metadata extends Constructor<StatusEffect>>(Constructor: Metadata) {
+export function StatusEffectDecorator<T extends Constructor<StatusEffect>>(Constructor: T) {
     const name = tostring(Constructor);
     if (registeredStatuses.has(name)) {
         logError(`StatusEffect with name ${name} was already registered before`);
