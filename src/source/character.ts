@@ -312,7 +312,7 @@ export class Character {
      */
     public HasStatusEffects(Constructors: Constructor<StatusEffect>[]) {
         for (const [_, Effect] of pairs(this.statusEffects)) {
-            if (!Effect.GetState().IsActive) return;
+            if (!Effect.GetState().IsActive) continue;
             if (Constructors.find((T) => tostring(T) === tostring(getmetatable(Effect)))) return true;
         }
         return false;
