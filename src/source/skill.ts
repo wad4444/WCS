@@ -286,9 +286,8 @@ export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, Cli
     private startReplication() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (NewData?: SkillData, OldData?: SkillData) => {
+        const proccessDataUpdate = (NewData?: SkillData, OldData: SkillData = this.packData()) => {
             if (!NewData) return;
-            if (!OldData) return;
 
             if (NewData.state !== OldData.state) {
                 table.freeze(NewData.state);

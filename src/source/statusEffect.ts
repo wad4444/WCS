@@ -408,9 +408,8 @@ export class StatusEffect<T = unknown> {
     private startReplicationClient() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (StatusData?: StatusData, PreviousData?: StatusData) => {
+        const proccessDataUpdate = (StatusData?: StatusData, PreviousData: StatusData = this._packData()) => {
             if (!StatusData) return;
-            if (!PreviousData) return;
 
             if (StatusData.state !== PreviousData.state) {
                 table.freeze(StatusData.state);

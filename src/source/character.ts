@@ -58,7 +58,7 @@ export class Character {
     private readonly skills: Map<string, Skill> = new Map();
     private defaultsProps: AffectableHumanoidProps = {
         WalkSpeed: 16,
-        JumpPower: 100,
+        JumpPower: 50,
         AutoRotate: true,
         JumpHeight: 7.2,
     };
