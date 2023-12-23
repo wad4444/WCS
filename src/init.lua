@@ -83,13 +83,11 @@ type StatusEffectConstructor<T = any> = {
     new: (Character) -> StatusEffect<T>
 }
 
-export type Replicatable = table | number | string | boolean | CFrame | Vector3 | nil;
-
 type SkillState = {
     IsActive: boolean,
     Debounce: boolean,
     TimerEndTimestamp: number?,
-    StarterParams: Replicatable?,
+    StarterParams: any?,
 }
 
 type SkillData = {

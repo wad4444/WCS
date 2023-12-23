@@ -2,7 +2,7 @@
 import { Players, RunService } from "@rbxts/services";
 import { Character, DamageContainer } from "./character";
 import { Flags } from "./flags";
-import { Constructor, ReadonlyDeep, ReplicatableValue, getActiveHandler, logError, logWarning } from "./utility";
+import { Constructor, ReadonlyDeep, getActiveHandler, logError, logWarning } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
 import { remotes } from "./remotes";
@@ -15,7 +15,7 @@ export interface SkillState {
     IsActive: boolean;
     Debounce: boolean;
     TimerEndTimestamp?: number;
-    StarterParams?: ReplicatableValue;
+    StarterParams?: unknown;
 }
 
 /** @internal */
@@ -30,11 +30,7 @@ export interface SkillData {
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
-export class Skill<
-    StarterParams extends ReplicatableValue = void,
-    ServerToClientMessage extends ReplicatableValue = void,
-    ClientToServerMessage extends ReplicatableValue = void,
-> {
+export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, ClientToServerMessage = unknown> {
     /** @internal */
     protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();

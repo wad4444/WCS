@@ -26,7 +26,6 @@ export function logMessage(Message: string) {
 
 export type Constructor<T extends object = object> = new (...args: never[]) => T;
 export type ReadonlyDeep<T extends object> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
-export type ReplicatableValue = object | number | string | boolean | void | undefined | CFrame | Vector3;
 
 export type Handler = WCS_Server | WCS_Client | undefined;
 let activeHandler: Handler = undefined;

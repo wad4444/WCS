@@ -1,7 +1,7 @@
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
-import { Constructor, ReadonlyDeep, ReplicatableValue, getActiveHandler, logError, logWarning } from "./utility";
+import { Constructor, ReadonlyDeep, getActiveHandler, logError, logWarning } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
 import { SelectStatusData } from "state/selectors";
@@ -13,7 +13,7 @@ import { _internal_SkillState } from "./skill";
 export interface StatusData {
     className: string;
     state: internal_statusEffectState;
-    metadata?: ReplicatableValue | unknown;
+    metadata?: unknown;
     humanoidData?: HumanoidData;
 }
 
@@ -44,10 +44,10 @@ function generateId() {
     return tostring(nextId);
 }
 
-export class StatusEffect<T extends ReplicatableValue = void> {
+export class StatusEffect<Metadata = unknown> {
     private readonly janitor = new Janitor();
 
-    public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>();
+    public readonly MetadataChanged = new Signal<(NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void>();
     public readonly StateChanged = new Signal<(State: ReadonlyState, PreviousState: ReadonlyState) => void>();
     public readonly HumanoidDataChanged = new Signal<
         (Data: HumanoidData | undefined, PreviousData: HumanoidData | undefined) => void
@@ -62,7 +62,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
         IsActive: false,
         _isActive_counter: 0,
     };
-    private metadata?: T;
+    private metadata?: Metadata;
     private humanoidData?: HumanoidData;
 
     private isDestroyed = false;
@@ -126,7 +126,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     /**
      * Starts the status effect.
      */
-    public Start(Time?: number) {
+    public Start(Metadataime?: number) {
         if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() === TimerState.Running) {
@@ -142,8 +142,8 @@ export class StatusEffect<T extends ReplicatableValue = void> {
             IsActive: true,
         });
 
-        if (Time === undefined || Time <= 0) return;
-        this.timer.setLength(Time);
+        if (Metadataime === undefined || Metadataime <= 0) return;
+        this.timer.setLength(Metadataime);
         this.timer.start();
     }
 
@@ -250,7 +250,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     public ClearMetadata() {
         if (this.isReplicated) {
             logError(
-                `Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
+                `Cannot :ClearMetadata() of replicated status effect on client! \n Metadatahis can lead to a possible desync`,
             );
         }
 
@@ -269,7 +269,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
      */
     protected SetState(Patch: Partial<StatusEffectState>) {
         if (this.isReplicated) {
-            logError(`Cannot :SetState() of replicated status effect on client! \n This can lead to a possible desync`);
+            logError(`Cannot :SetState() of replicated status effect on client! \n Metadatahis can lead to a possible desync`);
         }
 
         const newState = {
@@ -295,10 +295,10 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     /**
      * Sets the metadata of the status effect.
      */
-    protected SetMetadata(NewMeta: T) {
+    protected SetMetadata(NewMeta: Metadata) {
         if (this.isReplicated) {
             logError(
-                `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
+                `Cannot :SetMetadata() of replicated status effect on client! \n Metadatahis can lead to a possible desync`,
             );
         }
         if (t.table(NewMeta)) table.freeze(NewMeta);
@@ -420,8 +420,8 @@ export class StatusEffect<T extends ReplicatableValue = void> {
 
             if (StatusData.metadata !== PreviousData.metadata) {
                 if (t.table(StatusData.metadata)) table.freeze(StatusData.metadata);
-                this.metadata = StatusData.metadata as T | undefined;
-                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, PreviousData.metadata as T | undefined);
+                this.metadata = StatusData.metadata as Metadata | undefined;
+                this.MetadataChanged.Fire(StatusData.metadata as Metadata | undefined, PreviousData.metadata as Metadata | undefined);
             }
 
             if (StatusData.humanoidData !== PreviousData.humanoidData) {
@@ -440,7 +440,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     }
 
     /**
-     * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor)
+     * @deprecated Should not be used in Metadataypescript: Specificly for LuaU Usage (functionality replaced by class constructor)
      */
     protected Construct() {}
     protected OnStartServer() {}
@@ -449,7 +449,7 @@ export class StatusEffect<T extends ReplicatableValue = void> {
     protected OnEndServer() {}
 }
 
-export function StatusEffectDecorator<T extends Constructor<StatusEffect>>(Constructor: T) {
+export function StatusEffectDecorator<Metadata extends Constructor<StatusEffect>>(Constructor: Metadata) {
     const name = tostring(Constructor);
     if (registeredStatuses.has(name)) {
         logError(`StatusEffect with name ${name} was already registered before`);

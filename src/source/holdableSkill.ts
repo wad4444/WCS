@@ -1,16 +1,15 @@
 /* eslint-disable roblox-ts/no-array-pairs */
 import { RunService } from "@rbxts/services";
 import { Skill, _internal_SkillState } from "./skill";
-import { ReplicatableValue } from "./utility";
 import { remotes } from "./remotes";
 import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
 import { Flags } from "./flags";
 
 export class HoldableSkill<
-    StarterParams extends ReplicatableValue = void,
-    ServerToClientMessage extends ReplicatableValue = void,
-    ClientToServerMessage extends ReplicatableValue = void,
+    StarterParams = unknown,
+    ServerToClientMessage = unknown,
+    ClientToServerMessage = unknown,
 > extends Skill<StarterParams, ServerToClientMessage, ClientToServerMessage> {
     protected MaxHoldTime = 10;
     protected readonly HoldTimer = new Timer(this.MaxHoldTime);
