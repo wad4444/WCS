@@ -335,7 +335,7 @@ export class Character {
     /**
      * Retrieves a skill instance from the skills map based on the provided constructor.
      */
-    public GetSkillFromConstructor<T extends Constructor<Skill>>(Constructor: T) {
+    public GetSkillFromConstructor<T extends Skill>(Constructor: Constructor<T>) {
         return this.skills.get(tostring(Constructor)) as T | undefined;
     }
 
