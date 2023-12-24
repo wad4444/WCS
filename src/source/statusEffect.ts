@@ -26,8 +26,9 @@ export interface StatusEffectState {
 }
 
 export interface HumanoidData {
-    Mode: "Set" | "Increment";
-    Props: Partial<AffectableHumanoidProps>;
+    Props: Partial<{
+        [P in keyof AffectableHumanoidProps]: { Value: AffectableHumanoidProps[P]; Mode: "Set" | "Increment" };
+    }>;
     Priority: number;
 }
 
@@ -214,9 +215,8 @@ export class StatusEffect<T = unknown> {
     /**
      * Sets the humanoid data that is going to be applied to the character while the status effect is active.
      */
-    public SetHumanoidData(Mode: "Set" | "Increment", Props: Partial<AffectableHumanoidProps>, Priority = 1) {
+    public SetHumanoidData(Props: HumanoidData["Props"], Priority = 1) {
         const newData = {
-            Mode: Mode,
             Props: Props,
             Priority: Priority,
         };

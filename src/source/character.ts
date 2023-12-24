@@ -490,26 +490,17 @@ export class Character {
             JumpHeight: 0,
         };
 
-        let previousSetMPriority: number | undefined = undefined;
         statuses.forEach((StatusEffect) => {
             const humanoidData = StatusEffect.GetHumanoidData();
             if (!humanoidData) return;
 
-            const mode = humanoidData.Mode;
             const priority = humanoidData.Priority;
-            if (mode === "Increment" && !previousSetMPriority) {
-                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
-                    if (typeIs(Value, "number")) {
-                        propsToApply[PropertyName] = (Value + propsToApply[PropertyName as never]) as never;
-                    } else if (priority > incPriorityList[PropertyName]) {
-                        propsToApply[PropertyName as never] = Value as never;
-                        incPriorityList[PropertyName] = priority;
-                    }
-                }
-            } else if (mode === "Set" && (!previousSetMPriority || priority > previousSetMPriority)) {
-                previousSetMPriority = priority;
-                for (const [PropertyName, Value] of pairs(humanoidData.Props)) {
-                    propsToApply[PropertyName as never] = Value as never;
+            for (const [PropertyName, PropertyData] of pairs(humanoidData.Props)) {
+                if (PropertyData.Mode === "Increment") {
+                    propsToApply[PropertyName] = (PropertyData.Value + propsToApply[PropertyName as never]) as never;
+                } else if (priority > incPriorityList[PropertyName]) {
+                    propsToApply[PropertyName as never] = PropertyData.Value as never;
+                    incPriorityList[PropertyName] = priority;
                 }
             }
         });
