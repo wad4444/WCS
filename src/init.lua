@@ -33,15 +33,16 @@ export type Moveset = {
     Skills: {SkillConstructor<any, any, any>};
 }
 
-export type HumanoidData = {
-    Mode: "Set" | "Increment";
-    Props: Partial_AffectableHumanoidProps;
-    Priority: number;
+export type HumanoidDataProps = {
+    WalkSpeed: {Mode: ("Set" | "Increment"), Value: number}?;
+    JumpPower: {Mode: ("Set" | "Increment"), Value: number}?;
+    JumpHeight: {Mode: ("Set" | "Increment"), Value: number}?;
+    AutoRotate: {Mode: ("Set" | "Increment"), Value: boolean}?;
 }
-type Partial_HumanoidData = {
-    Mode: ("Set" | "Increment")?;
-    Props: Partial_AffectableHumanoidProps?;
-    Priority: number?;
+
+export type HumanoidData = {
+    Props: HumanoidDataProps;
+    Priority: number;
 }
 
 export type StatusEffect<T = any> = {
@@ -60,7 +61,7 @@ export type StatusEffect<T = any> = {
     Pause: (StatusEffect<T>) -> void;
     Resume: (StatusEffect<T>) -> void;
     Stop: (StatusEffect<T>) -> void;
-    SetHumanoidData: (StatusEffect<T>, Partial_HumanoidData) -> void;
+    SetHumanoidData: (StatusEffect<T>, HumanoidDataProps, number?) -> void;
     ClearHumanoidData: (StatusEffect<T>) -> void;
     ClearMetadata: (StatusEffect<T>) -> void;
     SetState: (StatusEffect<T>, Partial_StatusEffectState) -> void;
@@ -165,12 +166,6 @@ export type AffectableHumanoidProps = {
     JumpPower: number;
     JumpHeight: number;
     AutoRotate: boolean;
-}
-type Partial_AffectableHumanoidProps = {
-    WalkSpeed: number?;
-    JumpPower: number?;
-    JumpHeight: number?;
-    AutoRotate: boolean?;
 }
 
 export type HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage> = Skill<StarterParams, ClientToServerMessage, ServerToClientMessage> & {
