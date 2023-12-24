@@ -173,7 +173,10 @@ type Partial_AffectableHumanoidProps = {
     AutoRotate: boolean?;
 }
 
-export type HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage> = Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>
+export type HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage> = Skill<StarterParams, ClientToServerMessage, ServerToClientMessage> & {
+    SetMaxHoldTime: (HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage>, number) -> void,
+    GetMaxHoldTime: (HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> number,
+}
 
 export type Character = {
     Instance: Instance;
