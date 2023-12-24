@@ -45,6 +45,10 @@ function generateId() {
     return tostring(nextId);
 }
 
+/**
+ * A status effect class.
+ * @warning - If you override the constructor, you shall pass the second argument to the super constructor.
+ */
 export class StatusEffect<T = unknown> {
     private readonly janitor = new Janitor();
 
@@ -440,9 +444,7 @@ export class StatusEffect<T = unknown> {
         this.janitor.Add(subscription);
     }
 
-    /**
-     * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor)
-     */
+    /** Called after class gets instantiated */
     protected Construct() {}
     protected OnStartServer() {}
     protected OnStartClient() {}

@@ -31,6 +31,11 @@ export interface SkillData {
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
+
+/**
+ * A status effect class.
+ * @warning - If you override the constructor, you shall pass the second argument to the super constructor.
+ */
 export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unknown, ClientToServerMessage = unknown> {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
@@ -338,9 +343,7 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
         };
     }
 
-    /**
-     * @deprecated Should not be used in Typescript: Specificly for LuaU Usage (functionality replaced by class constructor).
-     */
+    /** Called after class gets instantiated */
     protected Construct() {}
     protected OnStartServer(StarterParams: StarterParams) {}
     protected OnStartClient(StarterParams: StarterParams) {}

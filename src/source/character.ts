@@ -179,15 +179,12 @@ export class Character {
         this.statusEffects.set(Status.GetId(), Status);
         this.StatusEffectAdded.Fire(Status);
 
-        const humanoidDataChanged = Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
-        const stateChanged = Status.StateChanged.Connect(() => {
+        Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
+        Status.StateChanged.Connect(() => {
             this.updateHumanoidProps();
         });
 
-        Status.Destroyed.Once(() => {
-            humanoidDataChanged?.Disconnect();
-            stateChanged?.Disconnect();
-
+        Status.Destroyed.Connect(() => {
             this.statusEffects.delete(Status.GetId());
             this.StatusEffectRemoved.Fire(Status);
             this.updateHumanoidProps();
