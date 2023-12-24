@@ -1,7 +1,8 @@
 local luaSpecific = script.Parent
 local source = luaSpecific.Parent.source
 
-local skillLib = require(source.holdableSkill)
+local holdableSkill = require(source.holdableSkill)
+local skillLib = require(source.skill)
 local utility = require(source.utility)
 
 function RegisterHoldableSkill(Name)
@@ -9,7 +10,7 @@ function RegisterHoldableSkill(Name)
         utility.logError("Not provided a valid name for RegisterSkill")
     end
 
-    local super = skillLib.HoldableSkill
+    local super = holdableSkill.HoldableSkill
     local class = setmetatable({}, {
         __tostring = function()
             return Name

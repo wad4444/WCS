@@ -68,6 +68,7 @@ export class Character {
     constructor(Instance: Instance);
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     constructor(Instance: Instance, canCreateClient: FlagWithData<string>);
     constructor(Instance: Instance, canCreateClient?: FlagWithData<string>) {
@@ -172,6 +173,7 @@ export class Character {
 
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     public _addStatus(Status: StatusEffect) {
         this.statusEffects.set(Status.GetId(), Status);
@@ -194,6 +196,7 @@ export class Character {
 
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     public _addSkill(Skill: Skill) {
         const name = Skill.GetName();
@@ -209,6 +212,7 @@ export class Character {
 
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     public _packData(): CharacterData {
         const packedStatusEffect = new Map<string, StatusData>();
@@ -247,6 +251,7 @@ export class Character {
 
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     public static GetCharacterFromId_TS(Id: string) {
         for (const [_, Character] of pairs(this.currentCharMap)) {
@@ -265,6 +270,7 @@ export class Character {
 
     /**
      * @internal Reserved for LuaU usage
+     * @hidden
      */
     public GetCharacterMap(this: void) {
         return table.clone(Character.currentCharMap) as ReadonlyMap<Instance, Character>;
@@ -272,6 +278,7 @@ export class Character {
 
     /**
      * @internal Reserved for LuaU usage
+     * @hidden
      */
     public GetCharacterFromInstance(this: void, Instance: Instance) {
         return Character.currentCharMap.get(Instance);

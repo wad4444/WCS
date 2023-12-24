@@ -73,6 +73,7 @@ export class StatusEffect<T = unknown> {
     constructor(Character: Character);
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     constructor(Character: Character, overrideID: FlagWithData<string>);
     constructor(
@@ -378,6 +379,7 @@ export class StatusEffect<T = unknown> {
 
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     public _packData(): StatusData {
         return {

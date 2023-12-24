@@ -17,6 +17,7 @@ export class HoldableSkill<
     constructor(Character: Character);
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     constructor(Character: Character, AllowClientInstantiation: (typeof Flags)["CanInstantiateSkillClient"]);
     constructor(Character: Character, AllowClientInstantiation?: (typeof Flags)["CanInstantiateSkillClient"]) {
@@ -29,7 +30,7 @@ export class HoldableSkill<
         }
     }
 
-    /** @internal */
+    /** @internal @hidden */
     protected _stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
         if (PreviousState._isActive_counter === State._isActive_counter) return;
 

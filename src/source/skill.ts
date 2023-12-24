@@ -18,7 +18,7 @@ export interface SkillState {
     StarterParams?: unknown;
 }
 
-/** @internal */
+/** @internal @hidden */
 export interface _internal_SkillState extends SkillState {
     _isActive_counter: number;
 }
@@ -31,7 +31,7 @@ export interface SkillData {
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
 export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, ClientToServerMessage = unknown> {
-    /** @internal */
+    /** @internal @hidden */
     protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();
     protected readonly CooldownTimer = new Timer(1);
@@ -47,7 +47,7 @@ export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, Cli
 
     public Player?: Player;
 
-    /** @internal */
+    /** @internal @hidden */
     protected readonly isReplicated: boolean;
     private state: _internal_SkillState = {
         _isActive_counter: 0,
@@ -59,6 +59,7 @@ export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, Cli
     constructor(Character: Character);
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     constructor(Character: Character, AllowClientInstantiation: (typeof Flags)["CanInstantiateSkillClient"]);
     constructor(
@@ -192,7 +193,7 @@ export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, Cli
         this._janitor.Cleanup();
     }
 
-    /** @internal */
+    /** @internal @hidden */
     protected _stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
         if (PreviousState._isActive_counter === State._isActive_counter) return;
 
@@ -257,6 +258,7 @@ export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, Cli
 
     /**
      * @internal Reserved for internal usage
+     * @hidden
      */
     protected SetState(Patch: Partial<SkillState>) {
         if (this.isReplicated) {
