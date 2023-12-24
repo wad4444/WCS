@@ -14,6 +14,7 @@ import { Timer, TimerState } from "@rbxts/timer";
 export interface SkillState {
     IsActive: boolean;
     Debounce: boolean;
+    MaxHoldTime?: number;
     TimerEndTimestamp?: number;
     StarterParams?: unknown;
 }
@@ -30,7 +31,7 @@ export interface SkillData {
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
-export class Skill<StarterParams = unknown, ServerToClientMessage = unknown, ClientToServerMessage = unknown> {
+export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unknown, ClientToServerMessage = unknown> {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();

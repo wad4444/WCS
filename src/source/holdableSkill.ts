@@ -5,14 +5,16 @@ import { remotes } from "./remotes";
 import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
 import { Flags } from "./flags";
+import { logError } from "./utility";
 
-export class HoldableSkill<
+export abstract class HoldableSkill<
     StarterParams = unknown,
     ServerToClientMessage = unknown,
     ClientToServerMessage = unknown,
-> extends Skill<StarterParams, ServerToClientMessage, ClientToServerMessage> {
-    protected MaxHoldTime = 10;
-    protected readonly HoldTimer = new Timer(this.MaxHoldTime);
+> extends Skill<StarterParams, ServerToClientMessage | { __setHoldTime: number | undefined }, ClientToServerMessage> {
+    private maxHoldTime?: number = undefined;
+    /** Manually starting or stopping the timer will break things */
+    protected readonly HoldTimer = new Timer(10);
 
     constructor(Character: Character);
     /**
@@ -45,11 +47,33 @@ export class HoldableSkill<
             RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
+        if (State.MaxHoldTime !== PreviousState.MaxHoldTime) {
+            if (State.MaxHoldTime) this.HoldTimer.setLength(State.MaxHoldTime);
+        }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
             this.OnStartClient(State.StarterParams as StarterParams);
             this.Started.Fire();
             this.OnEndClient();
             this.Ended.Fire();
         }
+    }
+
+    /**
+     * Sets the maximum hold time for the skill.
+     */
+    public SetMaxHoldTime(MaxHoldTime?: number) {
+        if (MaxHoldTime && MaxHoldTime <= 0) {
+            logError("Max Hold Time can't be lower or equal to zero");
+        }
+
+        this.SetState({ MaxHoldTime: MaxHoldTime });
+        if (this.maxHoldTime) this.HoldTimer.setLength(this.maxHoldTime);
+    }
+
+    /**
+     * Retrieves the maximum hold time.
+     */
+    public GetMaxHoldTime() {
+        return this.maxHoldTime;
     }
 }
