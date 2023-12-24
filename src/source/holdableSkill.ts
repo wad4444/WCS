@@ -36,7 +36,7 @@ export abstract class HoldableSkill<
         if (PreviousState._isActive_counter === State._isActive_counter) return;
 
         if (!PreviousState.IsActive && State.IsActive) {
-            this.HoldTimer.start();
+            if (this.GetState().MaxHoldTime !== undefined) this.HoldTimer.start();
             RunService.IsClient()
                 ? this.OnStartClient(State.StarterParams as StarterParams)
                 : this.OnStartServer(State.StarterParams as StarterParams);
