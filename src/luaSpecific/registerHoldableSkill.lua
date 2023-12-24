@@ -1,8 +1,8 @@
 local luaSpecific = script.Parent
 local source = luaSpecific.Parent.source
 
-local holdableSkill = require(source.holdableSkill)
 local skillLib = require(source.skill)
+local holdableSkill = require(source.holdableSkill)
 local utility = require(source.utility)
 
 function RegisterHoldableSkill(Name)

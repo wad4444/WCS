@@ -1,7 +1,6 @@
 /* eslint-disable roblox-ts/no-array-pairs */
 import { RunService } from "@rbxts/services";
 import { Skill, _internal_SkillState } from "./skill";
-import { remotes } from "./remotes";
 import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
 import { Flags } from "./flags";
