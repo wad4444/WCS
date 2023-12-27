@@ -142,6 +142,7 @@ export type Skill<StarterParams, ClientToServerMessage, ServerToClientMessage> =
     Requirements: {StatusEffectConstructor<any>},
     Player: Player?,
     Character: Character,
+    ApplyCooldown: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, number) -> void,
     HandleClientMessage: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ClientToServerMessage) -> void,
     HandleServerMessage: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ServerToClientMessage) -> void,
     SendMessageToClient: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ServerToClientMessage) -> void,
