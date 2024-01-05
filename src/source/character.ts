@@ -54,7 +54,9 @@ export class Character {
      */
     public readonly DamageTaken = new Signal<(Container: DamageContainer) => void>();
     public readonly Destroyed = new Signal();
-    public readonly MovesetChanged = new Signal<(NewMoveset: string | undefined, OldMoveset: string | undefined) => void>();
+    public readonly MovesetChanged = new Signal<
+        (NewMoveset: string | undefined, OldMoveset: string | undefined) => void
+    >();
 
     private readonly statusEffects: Map<string, StatusEffect> = new Map();
     private readonly skills: Map<string, Skill> = new Map();
