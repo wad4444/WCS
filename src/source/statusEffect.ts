@@ -87,9 +87,10 @@ export class StatusEffect<T = unknown> {
      */
     constructor(Character: StatusEffectProps);
     constructor(Props: Character | StatusEffectProps) {
-        const { Character, Flag } = typeIs(Props, "table")
-            ? (Props as StatusEffectProps)
-            : { Character: Props, Flag: undefined };
+        const { Character, Flag } =
+            tostring(getmetatable(Props)) !== "Character"
+                ? (Props as StatusEffectProps)
+                : { Character: Props as Character, Flag: undefined };
 
         this.id = Flag && Flag.flag === Flags.CanAssignCustomId ? Flag.data : generateId();
         this.Character = Character;

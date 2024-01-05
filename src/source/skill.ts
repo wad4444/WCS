@@ -78,9 +78,10 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
      */
     constructor(Props: SkillProps);
     constructor(Props: SkillProps | Character) {
-        const { Character, Flag } = typeIs(Props, "table")
-            ? (Props as SkillProps)
-            : { Character: Props, Flag: undefined };
+        const { Character, Flag } =
+            tostring(getmetatable(Props)) !== "Character"
+                ? (Props as SkillProps)
+                : { Character: Props as Character, Flag: undefined };
 
         this.Character = Character;
         if (!this.Character || tostring(getmetatable(this.Character)) !== "Character") {
