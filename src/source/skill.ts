@@ -47,7 +47,6 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>();
     public readonly Destroyed = new Signal();
 
-    protected StartCondition: () => boolean = () => true;
     protected MutualExclusives: Constructor<StatusEffect>[] = [];
     protected Requirements: Constructor<StatusEffect>[] = [];
 
@@ -164,7 +163,7 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
             if (!activeEffects.find((T) => tostring(getmetatable(T)) === tostring(Requirement))) return;
         }
 
-        if (!this.StartCondition()) return;
+        if (!this.ShouldStart()) return;
 
         this.SetState({
             IsActive: true,
@@ -289,6 +288,13 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
         }
 
         this.StateChanged.Fire(newState, oldState);
+    }
+
+    /**
+     * Determines whether the skill should start or not.
+     */
+    protected ShouldStart(): boolean {
+        return true;
     }
 
     private startReplication() {
