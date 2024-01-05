@@ -40,7 +40,6 @@ const registeredSkills = new Map<string, Constructor<Skill>>();
 
 /**
  * A status effect class.
- * @warning - If you override the constructor, you shall pass the second argument to the super constructor.
  */
 export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unknown, ClientToServerMessage = unknown> {
     /** @internal @hidden */

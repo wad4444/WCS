@@ -17,6 +17,11 @@ export interface StatusData {
     humanoidData?: HumanoidData;
 }
 
+interface StatusEffectProps {
+    Character: Character;
+    Flag: FlagWithData<string>;
+}
+
 interface internal_statusEffectState extends StatusEffectState {
     _isActive_counter: number;
 }
@@ -47,7 +52,6 @@ function generateId() {
 
 /**
  * A status effect class.
- * @warning - If you override the constructor, you shall pass the second argument to the super constructor.
  */
 export class StatusEffect<T = unknown> {
     private readonly janitor = new Janitor();
@@ -61,6 +65,7 @@ export class StatusEffect<T = unknown> {
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
 
+    protected readonly Character: Character;
     public DestroyOnEnd = true;
 
     private state: internal_statusEffectState = {
@@ -80,12 +85,14 @@ export class StatusEffect<T = unknown> {
      * @internal Reserved for internal usage
      * @hidden
      */
-    constructor(Character: Character, overrideID: FlagWithData<string>);
-    constructor(
-        protected readonly Character: Character,
-        overrideID?: FlagWithData<string>,
-    ) {
-        this.id = overrideID && overrideID.flag === Flags.CanAssignCustomId ? overrideID.data : generateId();
+    constructor(Character: StatusEffectProps);
+    constructor(Props: Character | StatusEffectProps) {
+        const { Character, Flag } = typeIs(Props, "table")
+            ? (Props as StatusEffectProps)
+            : { Character: Props, Flag: undefined };
+
+        this.id = Flag && Flag.flag === Flags.CanAssignCustomId ? Flag.data : generateId();
+        this.Character = Character;
 
         if (!this.Character || tostring(getmetatable(this.Character)) !== "Character") {
             logError(`Not provided a valid character for StatusEffect constructor`);
