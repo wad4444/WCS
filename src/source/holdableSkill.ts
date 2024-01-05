@@ -1,6 +1,6 @@
 /* eslint-disable roblox-ts/no-array-pairs */
 import { RunService } from "@rbxts/services";
-import { Skill, _internal_SkillState } from "./skill";
+import { Skill, SkillProps, _internal_SkillState } from "./skill";
 import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
 import { Flags } from "./flags";
@@ -20,9 +20,9 @@ export abstract class HoldableSkill<
      * @internal Reserved for internal usage
      * @hidden
      */
-    constructor(Character: Character, AllowClientInstantiation: (typeof Flags)["CanInstantiateSkillClient"]);
-    constructor(Character: Character, AllowClientInstantiation?: (typeof Flags)["CanInstantiateSkillClient"]) {
-        super(Character, AllowClientInstantiation as never);
+    constructor(Character: SkillProps);
+    constructor(Props: Character | SkillProps) {
+        super(Props as never);
         if (RunService.IsServer()) {
             this._janitor.Add(
                 this.HoldTimer.completed.Connect(() => this.End()),

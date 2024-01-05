@@ -19,6 +19,12 @@ export interface SkillState {
     StarterParams?: unknown;
 }
 
+/** @hidden @internal */
+export interface SkillProps {
+    Character: Character;
+    Flag: (typeof Flags)["CanInstantiateSkillClient"];
+}
+
 /** @internal @hidden */
 export interface _internal_SkillState extends SkillState {
     _isActive_counter: number;
@@ -41,6 +47,7 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
     protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();
     protected readonly CooldownTimer = new Timer(1);
+    protected readonly Character: Character;
 
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
@@ -70,11 +77,13 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
      * @internal Reserved for internal usage
      * @hidden
      */
-    constructor(Character: Character, AllowClientInstantiation: (typeof Flags)["CanInstantiateSkillClient"]);
-    constructor(
-        public readonly Character: Character,
-        AllowClientInstantiation?: (typeof Flags)["CanInstantiateSkillClient"],
-    ) {
+    constructor(Props: SkillProps);
+    constructor(Props: SkillProps | Character) {
+        const { Character, Flag } = typeIs(Props, "table")
+            ? (Props as SkillProps)
+            : { Character: Props, Flag: undefined };
+
+        this.Character = Character;
         if (!this.Character || tostring(getmetatable(this.Character)) !== "Character") {
             logError(`Not provided a valid character for Skill constructor`);
         }
@@ -83,7 +92,7 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
             logError(`Attempted to instantiate a skill before server has started.`);
         }
 
-        if (RunService.IsClient() && AllowClientInstantiation !== Flags.CanInstantiateSkillClient) {
+        if (RunService.IsClient() && Flag !== Flags.CanInstantiateSkillClient) {
             logError(`Attempted to instantiate a skill on client`);
         }
 
