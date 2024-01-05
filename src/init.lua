@@ -184,6 +184,7 @@ export type Character = {
     StatusEffectRemoved: ReadonlySignal<(StatusEffect<any>) -> void>;
     DamageTaken: ReadonlySignal<(number) -> void>;
     Destroyed: ReadonlySignal<Callback>;
+    MovesetChanged: ReadonlySignal<(string | void, string | void) -> void>;
 
     Destroy: () -> void;
     GetId: () -> string;
