@@ -47,6 +47,9 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>();
     public readonly Destroyed = new Signal();
 
+    /**
+     * Checks whenever other skills should be non active for :Start() to procceed.
+     */
     protected CheckOthersActive = true;
     protected MutualExclusives: Constructor<StatusEffect>[] = [];
     protected Requirements: Constructor<StatusEffect>[] = [];
