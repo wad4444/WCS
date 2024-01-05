@@ -21,8 +21,18 @@ export function CreateMoveset(Name: string, Skills: Constructor<Skill>[]): Moves
         Skills: Skills,
     } as const;
 
+    registeredMovesets.set(Name, moveset);
+
     setmetatable(moveset, { __tostring: () => Name });
     table.freeze(moveset);
+    table.freeze(moveset.Skills);
 
     return moveset;
+}
+
+/**
+ * Retrieves the moveset object by its name.
+ */
+export function GetMovesetObjectByName(Name: string) {
+    return registeredMovesets.get(Name);
 }

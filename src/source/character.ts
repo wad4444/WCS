@@ -8,13 +8,14 @@ import { GetRegisteredSkillConstructor, Skill, SkillData } from "./skill";
 import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
 import { remotes } from "./remotes";
-import { Moveset } from "./moveset";
+import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
 
 export interface CharacterData {
     instance: Instance;
     statusEffects: Map<string, StatusData>;
     skills: Map<string, SkillData>;
+    moveset: string | undefined;
     defaultProps: AffectableHumanoidProps;
 }
 
@@ -45,7 +46,7 @@ export class Character {
     public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>();
     public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>();
     /**
-     * Fires only on client
+     * Fires only on client if the character belongs to a player
      */
     public readonly HumanoidPropertiesUpdated = new Signal<(NewProperties: AffectableHumanoidProps) => void>();
     /**
@@ -53,6 +54,7 @@ export class Character {
      */
     public readonly DamageTaken = new Signal<(Container: DamageContainer) => void>();
     public readonly Destroyed = new Signal();
+    public readonly MovesetChanged = new Signal<(NewMoveset: string | undefined, OldMoveset: string | undefined) => void>();
 
     private readonly statusEffects: Map<string, StatusEffect> = new Map();
     private readonly skills: Map<string, Skill> = new Map();
@@ -63,7 +65,7 @@ export class Character {
         JumpHeight: 7.2,
     };
     private id;
-    private moveset?: Moveset;
+    private moveset?: string;
 
     constructor(Instance: Instance);
     /**
@@ -219,6 +221,7 @@ export class Character {
             instance: this.Instance,
             statusEffects: packedStatusEffect,
             defaultProps: this.defaultsProps,
+            moveset: this.moveset,
             skills: new Map(),
         };
     }
@@ -323,6 +326,20 @@ export class Character {
     }
 
     /**
+     * Retrieves the skills stored in the skills object and returns them as an array.
+     */
+    public GetSkills() {
+        return mapToArray(this.skills);
+    }
+
+    /**
+     * Retrieves all active skills.
+     */
+    public GetAllActiveSkills() {
+        return mapToArray(this.skills).filter((T) => T.GetState().IsActive);
+    }
+
+    /**
      * Retrieves a skill from the skills map based on a given name.
      */
     public GetSkillFromString(Name: string) {
@@ -339,33 +356,68 @@ export class Character {
     /**
      * Apply a moveset to the character.
      */
-    public ApplyMoveset(Moveset: Moveset) {
+    public ApplyMoveset(Moveset: string): void;
+    public ApplyMoveset(Moveset: Moveset): void;
+    public ApplyMoveset(Moveset: Moveset | string) {
         if (!RunService.IsServer()) {
             logWarning(`Attempted to apply moveset on client`);
             return;
         }
 
+        const movesetObject = typeIs(Moveset, "string") ? GetMovesetObjectByName(Moveset) : Moveset;
+        if (!movesetObject) {
+            logError(`The provided moveset is invalid`);
+        }
+
         if (this.moveset) {
-            this.moveset.Skills.forEach((SkillConstructor) => {
+            movesetObject.Skills.forEach((SkillConstructor) => {
                 const name = tostring(SkillConstructor);
                 this.skills.get(name)?.Destroy();
             });
         }
 
-        Moveset.Skills.forEach((SkillConstructor) => {
+        movesetObject.Skills.forEach((SkillConstructor) => {
             const name = tostring(SkillConstructor);
             this.skills.get(name)?.Destroy();
 
             new SkillConstructor(this as never);
         });
-        this.moveset = Moveset;
+
+        const oldMoveset = this.moveset;
+        this.moveset = movesetObject.Name;
+
+        this.MovesetChanged.Fire(movesetObject.Name, oldMoveset);
+
+        rootProducer.patchCharacterData(this.id, {
+            moveset: this.moveset,
+        });
     }
 
     /**
-     * Retrieves the moveset.
+     * Returns the current moveset name.
      */
     public GetMoveset() {
         return this.moveset;
+    }
+
+    /**
+     * Gets the skills that belong to a provided moveset.
+     * Default - Currently applied moveset
+     */
+    public GetMovesetSkills(Moveset: string | undefined = this.moveset) {
+        if (!Moveset) return;
+
+        const movesetObject = GetMovesetObjectByName(Moveset);
+        if (!movesetObject) return;
+
+        const skills: Skill[] = [];
+        this.skills.forEach((Skill) => {
+            if (movesetObject.Skills.find((T) => tostring(T) === tostring(getmetatable(Skill)))) {
+                skills.push(Skill);
+            }
+        });
+
+        return skills;
     }
 
     /**
@@ -373,16 +425,21 @@ export class Character {
      */
     public ClearMoveset() {
         if (!RunService.IsServer()) {
-            logWarning(`Attempted to clear moveset on client`);
-            return;
+            logError(`Attempted to clear moveset on client`);
         }
         if (!this.moveset) return;
 
-        this.moveset.Skills.forEach((SkillConstructor) => {
+        const movesetObject = GetMovesetObjectByName(this.moveset);
+        if (!movesetObject) return;
+
+        movesetObject.Skills.forEach((SkillConstructor) => {
             const name = tostring(SkillConstructor);
             this.skills.get(name)?.Destroy();
         });
+        const oldMoveset = this.moveset;
         this.moveset = undefined;
+
+        this.MovesetChanged.Fire(this.moveset, oldMoveset);
     }
 
     /**
@@ -417,6 +474,11 @@ export class Character {
                     data: Id,
                 } as never,
             );
+        };
+
+        const proccessMovesetChange = (New: string | undefined, Old: string | undefined) => {
+            this.moveset = New;
+            this.MovesetChanged.Fire(New, Old);
         };
 
         const proccessSkillAddition = (Data: SkillData, Name: string) => {
@@ -458,6 +520,7 @@ export class Character {
                 }
             });
 
+            if (CharacterData.moveset !== this.moveset) proccessMovesetChange(CharacterData.moveset, this.moveset);
             if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
         };
 
