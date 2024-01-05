@@ -196,8 +196,8 @@ export type Character = {
     HasStatusEffects: (Character, {StatusEffectConstructor<any>}) -> boolean;
     GetSkillFromString: (Character, string) -> Skill<any, any, any>?;
     GetSkillFromConstructor: (Character, SkillConstructor<any, any, any>) -> Skill<any, any, any>?;
-    ApplyMoveset: (Character, Moveset) -> void;
-    GetMoveset: (Character) -> Moveset;
+    ApplyMoveset: (Character, Moveset | string) -> void;
+    GetMoveset: (Character) -> string | void;
     ClearMoveset: (Character) -> void;
     ApplySkillsFromMoveset: (Character, Moveset) -> void;
     TakeDamage: (DamageContainer) -> DamageContainer;
@@ -219,6 +219,7 @@ export type WCS = {
     RegisterStatusEffect: (string) -> StatusEffect<any> & StatusEffectConstructor<any>;
     RegisterSkill: (string) -> Skill<any, any, any> & SkillConstructor<any, any, any>;
     RegisterHoldableSkill: (string) -> HoldableSkill<any, any, any> & SkillConstructor<any, any, any>;
+    GetMovesetObjectByName: (string) -> Moveset | void;
     Character: CharacterClass;
     Types: ModuleScript;
 }
