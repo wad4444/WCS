@@ -47,6 +47,7 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>();
     public readonly Destroyed = new Signal();
 
+    protected CheckOthersActive = true;
     protected MutualExclusives: Constructor<StatusEffect>[] = [];
     protected Requirements: Constructor<StatusEffect>[] = [];
 
@@ -163,6 +164,7 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
             if (!activeEffects.find((T) => tostring(getmetatable(T)) === tostring(Requirement))) return;
         }
 
+        if (this.CheckOthersActive && this.Character.GetAllActiveSkills().size() > 0) return;
         if (!this.ShouldStart()) return;
 
         this.SetState({
