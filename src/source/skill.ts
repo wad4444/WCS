@@ -10,6 +10,7 @@ import { rootProducer } from "state/rootProducer";
 import { StatusEffect } from "./statusEffect";
 import Signal from "@rbxts/signal";
 import { Timer, TimerState } from "@rbxts/timer";
+import { t } from "@rbxts/t";
 
 export interface SkillState {
     IsActive: boolean;
@@ -35,6 +36,7 @@ type ReadonlyState = ReadonlyDeep<SkillState>;
 export interface SkillData {
     state: _internal_SkillState;
     constructorArguments: unknown[];
+    metadata: unknown;
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
@@ -45,6 +47,7 @@ const registeredSkills = new Map<string, Constructor<Skill>>();
 export abstract class Skill<
     StarterParams = unknown,
     ConstructorArguments extends unknown[] = unknown[],
+    Metadata = unknown,
     ServerToClientMessage = unknown,
     ClientToServerMessage = unknown,
 > {
@@ -58,6 +61,9 @@ export abstract class Skill<
     public readonly Ended = new Signal();
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>();
     public readonly Destroyed = new Signal();
+    public readonly MetadataChanged = new Signal<
+        (NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
+    >();
 
     /**
      * Checks whenever other skills should be non active for :Start() to procceed.
@@ -75,6 +81,7 @@ export abstract class Skill<
         IsActive: false,
         Debounce: false,
     };
+    private metadata?: Metadata;
     protected readonly Name = tostring(getmetatable(this));
     protected readonly ConstructorArguments: ConstructorArguments;
 
@@ -143,6 +150,7 @@ export abstract class Skill<
             this.Started.Destroy();
             this.Ended.Destroy();
             this.CooldownTimer.destroy();
+            this.MetadataChanged.Destroy();
         });
 
         this._janitor.Add(
@@ -252,6 +260,34 @@ export abstract class Skill<
     }
 
     /**
+     * Sets the metadata of the skill.
+     */
+    protected SetMetadata(NewMeta: Metadata) {
+        if (this.isReplicated) {
+            logError(
+                `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
+            );
+        }
+        if (t.table(NewMeta)) table.freeze(NewMeta);
+
+        this.MetadataChanged.Fire(NewMeta, this.metadata);
+        this.metadata = NewMeta;
+
+        if (RunService.IsServer()) {
+            rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
+                metadata: NewMeta,
+            });
+        }
+    }
+
+    /**
+     * Gets the metadata of the skill
+     * */
+    public GetMetadata() {
+        return this.metadata;
+    }
+
+    /**
      * A shortcut for creating a damage container
      */
     protected CreateDamageContainer(Damage: number): DamageContainer {
@@ -331,6 +367,15 @@ export abstract class Skill<
                 this.state = NewData.state;
                 this.StateChanged.Fire(NewData.state, OldData.state);
             }
+
+            if (NewData.metadata !== OldData.metadata) {
+                if (t.table(NewData.metadata)) table.freeze(NewData.metadata);
+                this.metadata = NewData.metadata as Metadata | undefined;
+                this.MetadataChanged.Fire(
+                    NewData.metadata as Metadata | undefined,
+                    OldData.metadata as Metadata | undefined,
+                );
+            }
         };
 
         const dataSelector = SelectSkillData(this.Character.GetId(), this.Name);
@@ -370,6 +415,7 @@ export abstract class Skill<
         return {
             state: this.state,
             constructorArguments: this.ConstructorArguments,
+            metadata: this.metadata,
         };
     }
 
