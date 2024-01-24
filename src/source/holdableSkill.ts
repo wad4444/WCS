@@ -8,9 +8,17 @@ import { logError } from "./utility";
 
 export abstract class HoldableSkill<
     StarterParams = unknown,
+    ConstructorArguments extends unknown[] = unknown[],
+    Metadata = unknown,
     ServerToClientMessage = unknown,
     ClientToServerMessage = unknown,
-> extends Skill<StarterParams, ServerToClientMessage | { __setHoldTime: number | undefined }, ClientToServerMessage> {
+> extends Skill<
+    StarterParams,
+    ConstructorArguments,
+    Metadata,
+    ServerToClientMessage | { __setHoldTime: number | undefined },
+    ClientToServerMessage
+> {
     private maxHoldTime?: number = undefined;
     /** Manually starting or stopping the timer will break things */
     protected readonly HoldTimer = new Timer(10);
