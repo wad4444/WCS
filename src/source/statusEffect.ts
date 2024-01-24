@@ -32,7 +32,7 @@ export interface StatusEffectState {
 
 export interface HumanoidData {
     Props: Partial<{
-        [P in keyof AffectableHumanoidProps]: { Value: AffectableHumanoidProps[P]; Mode: "Set" | "Increment" };
+        [P in keyof AffectableHumanoidProps]: [AffectableHumanoidProps[P], "Set" | "Increment"];
     }>;
     Priority: number;
 }

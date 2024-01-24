@@ -567,10 +567,10 @@ export class Character {
 
             const priority = humanoidData.Priority;
             for (const [PropertyName, PropertyData] of pairs(humanoidData.Props)) {
-                if (PropertyData.Mode === "Increment") {
-                    propsToApply[PropertyName] = (PropertyData.Value + propsToApply[PropertyName as never]) as never;
+                if (PropertyData[1] === "Increment") {
+                    propsToApply[PropertyName] = (PropertyData[0] + propsToApply[PropertyName as never]) as never;
                 } else if (priority > incPriorityList[PropertyName]) {
-                    propsToApply[PropertyName as never] = PropertyData.Value as never;
+                    propsToApply[PropertyName as never] = PropertyData[0] as never;
                     incPriorityList[PropertyName] = priority;
                 }
             }
