@@ -34,6 +34,7 @@ type ReadonlyState = ReadonlyDeep<SkillState>;
 
 export interface SkillData {
     state: _internal_SkillState;
+    constructorArguments: unknown[];
 }
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
@@ -41,7 +42,12 @@ const registeredSkills = new Map<string, Constructor<Skill>>();
 /**
  * A status effect class.
  */
-export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unknown, ClientToServerMessage = unknown> {
+export abstract class Skill<
+    StarterParams = unknown,
+    ConstructorArguments extends unknown[] = unknown[],
+    ServerToClientMessage = unknown,
+    ClientToServerMessage = unknown,
+> {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();
@@ -70,14 +76,15 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
         Debounce: false,
     };
     protected readonly Name = tostring(getmetatable(this));
+    protected readonly ConstructorArguments: ConstructorArguments;
 
-    constructor(Character: Character);
+    constructor(Character: Character, ...Args: ConstructorArguments);
     /**
      * @internal Reserved for internal usage
      * @hidden
      */
     constructor(Props: SkillProps);
-    constructor(Props: SkillProps | Character) {
+    constructor(Props: SkillProps | Character, ...Args: ConstructorArguments) {
         const { Character, Flag } =
             tostring(getmetatable(Props)) !== "Character"
                 ? (Props as SkillProps)
@@ -97,6 +104,7 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
         }
 
         this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
+        this.ConstructorArguments = Args;
 
         if (RunService.IsServer()) {
             this._janitor.Add(
@@ -151,7 +159,8 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
             rootProducer.setSkillData(this.Character.GetId(), this.Name, this.packData());
         }
 
-        this.Construct();
+        this.OnConstruct(...Args);
+        RunService.IsServer() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
     }
 
     /**
@@ -360,11 +369,16 @@ export abstract class Skill<StarterParams = unknown, ServerToClientMessage = unk
     private packData(): SkillData {
         return {
             state: this.state,
+            constructorArguments: this.ConstructorArguments,
         };
     }
 
-    /** Called after class gets instantiated */
-    protected Construct() {}
+    /** Called after class gets instantiated (both client and server) */
+    protected OnConstruct(...Args: ConstructorArguments) {}
+    /** Called after class gets instantiated on client */
+    protected OnConstructClient(...Args: ConstructorArguments) {}
+    /** Called after class gets instantiated on server */
+    protected OnConstructServer(...Args: ConstructorArguments) {}
     protected OnStartServer(StarterParams: StarterParams) {}
     protected OnStartClient(StarterParams: StarterParams) {}
     protected HandleClientMessage(Message: ClientToServerMessage) {}

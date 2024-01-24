@@ -469,13 +469,16 @@ export class Character {
                 );
             }
 
-            new constructor!({
-                Character: this,
-                Flag: {
-                    flag: Flags.CanAssignCustomId,
-                    data: Id,
-                },
-            } as never);
+            new constructor!(
+                {
+                    Character: this,
+                    Flag: {
+                        flag: Flags.CanAssignCustomId,
+                        data: Id,
+                    },
+                } as never,
+                ...(Data.constructorArgs as never[]),
+            );
         };
 
         const proccessMovesetChange = (New: string | undefined, Old: string | undefined) => {
@@ -491,10 +494,13 @@ export class Character {
                 );
             }
 
-            new constructor!({
-                Character: this,
-                Flag: Flags.CanInstantiateSkillClient,
-            } as never);
+            new constructor!(
+                {
+                    Character: this,
+                    Flag: Flags.CanInstantiateSkillClient,
+                } as never,
+                ...(Data.constructorArguments as never[]),
+            );
         };
 
         const proccessDataUpdate = (CharacterData: CharacterData | undefined) => {

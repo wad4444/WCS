@@ -8,13 +8,13 @@ import { SelectStatusData } from "state/selectors";
 import { rootProducer } from "state/rootProducer";
 import { t } from "@rbxts/t";
 import Signal from "@rbxts/signal";
-import { _internal_SkillState } from "./skill";
 
 export interface StatusData {
     className: string;
     state: internal_statusEffectState;
     metadata?: unknown;
     humanoidData?: HumanoidData;
+    constructorArgs: unknown[];
 }
 
 interface StatusEffectProps {
@@ -42,10 +42,6 @@ type ReadonlyState = ReadonlyDeep<StatusEffectState>;
 const registeredStatuses: Map<string, Constructor<StatusEffect>> = new Map();
 let nextId = 0;
 function generateId() {
-    if (nextId > 9e9) {
-        nextId = 0;
-    }
-
     nextId += RunService.IsServer() ? 1 : -1;
     return tostring(nextId);
 }
@@ -53,10 +49,12 @@ function generateId() {
 /**
  * A status effect class.
  */
-export class StatusEffect<T = unknown> {
+export class StatusEffect<Metadata = unknown, ConstructorArguments extends unknown[] = unknown[]> {
     private readonly janitor = new Janitor();
 
-    public readonly MetadataChanged = new Signal<(NewMeta: T | undefined, PreviousMeta: T | undefined) => void>();
+    public readonly MetadataChanged = new Signal<
+        (NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
+    >();
     public readonly StateChanged = new Signal<(State: ReadonlyState, PreviousState: ReadonlyState) => void>();
     public readonly HumanoidDataChanged = new Signal<
         (Data: HumanoidData | undefined, PreviousData: HumanoidData | undefined) => void
@@ -72,7 +70,7 @@ export class StatusEffect<T = unknown> {
         IsActive: false,
         _isActive_counter: 0,
     };
-    private metadata?: T;
+    private metadata?: Metadata;
     private humanoidData?: HumanoidData;
 
     private isDestroyed = false;
@@ -80,13 +78,15 @@ export class StatusEffect<T = unknown> {
     private readonly id;
     private readonly isReplicated: boolean;
 
-    constructor(Character: Character);
+    protected readonly ConstructorArguments: ConstructorArguments;
+
+    constructor(Character: Character, ...Args: ConstructorArguments);
     /**
      * @internal Reserved for internal usage
      * @hidden
      */
     constructor(Character: StatusEffectProps);
-    constructor(Props: Character | StatusEffectProps) {
+    constructor(Props: Character | StatusEffectProps, ...Args: ConstructorArguments) {
         const { Character, Flag } =
             tostring(getmetatable(Props)) !== "Character"
                 ? (Props as StatusEffectProps)
@@ -104,13 +104,11 @@ export class StatusEffect<T = unknown> {
         }
 
         this.isReplicated = RunService.IsClient() && tonumber(this.id)! > 0;
-        Character._addStatus(this as StatusEffect);
-
-        this.startReplicationClient();
+        this.ConstructorArguments = Args;
 
         this.janitor.Add(
             this.StateChanged.Connect((New, Old) =>
-                this.stateDependentCallbacks(New as _internal_SkillState, Old as _internal_SkillState),
+                this.stateDependentCallbacks(New as internal_statusEffectState, Old as internal_statusEffectState),
             ),
         );
         this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd ?? this.Destroy()));
@@ -131,10 +129,14 @@ export class StatusEffect<T = unknown> {
             this.Ended.Destroy();
         });
 
+        Character._addStatus(this as StatusEffect);
+        this.startReplicationClient();
+
         if (RunService.IsServer()) {
             rootProducer.setStatusData(this.Character.GetId(), this.id, this._packData());
         }
-        this.Construct();
+        this.OnConstruct(...Args);
+        RunService.IsServer() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
     }
 
     /**
@@ -308,7 +310,7 @@ export class StatusEffect<T = unknown> {
     /**
      * Sets the metadata of the status effect.
      */
-    protected SetMetadata(NewMeta: T) {
+    protected SetMetadata(NewMeta: Metadata) {
         if (this.isReplicated) {
             logError(
                 `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
@@ -397,6 +399,7 @@ export class StatusEffect<T = unknown> {
         return {
             className: tostring(getmetatable(this)),
             state: this.state,
+            constructorArgs: this.ConstructorArguments,
         };
     }
 
@@ -433,8 +436,11 @@ export class StatusEffect<T = unknown> {
 
             if (StatusData.metadata !== PreviousData.metadata) {
                 if (t.table(StatusData.metadata)) table.freeze(StatusData.metadata);
-                this.metadata = StatusData.metadata as T | undefined;
-                this.MetadataChanged.Fire(StatusData.metadata as T | undefined, PreviousData.metadata as T | undefined);
+                this.metadata = StatusData.metadata as Metadata | undefined;
+                this.MetadataChanged.Fire(
+                    StatusData.metadata as Metadata | undefined,
+                    PreviousData.metadata as Metadata | undefined,
+                );
             }
 
             if (StatusData.humanoidData !== PreviousData.humanoidData) {
@@ -452,8 +458,13 @@ export class StatusEffect<T = unknown> {
         this.janitor.Add(subscription);
     }
 
-    /** Called after class gets instantiated */
-    protected Construct() {}
+    /** Called after class gets instantiated (both client and server) */
+    protected OnConstruct(...Args: ConstructorArguments) {}
+    /** Called after class gets instantiated on client */
+    protected OnConstructClient(...Args: ConstructorArguments) {}
+    /** Called after class gets instantiated on server */
+    protected OnConstructServer(...Args: ConstructorArguments) {}
+
     protected OnStartServer() {}
     protected OnStartClient() {}
     protected OnEndClient() {}
