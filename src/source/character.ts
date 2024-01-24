@@ -175,6 +175,26 @@ export class Character {
         return container;
     }
 
+    /** Predicts the estimated damage in health after the status effect appliement */
+    public PredictDamage(Container: DamageContainer) {
+        if (RunService.IsClient()) {
+            logWarning(`Cannot use :TakeDamage() on client`);
+            return;
+        }
+
+        const originalDamage = Container.Damage;
+        let modifiedDamage = originalDamage;
+        this.statusEffects.forEach((Status) => {
+            modifiedDamage = Status.HandleDamage(modifiedDamage, originalDamage);
+        });
+
+        const container = {
+            ...Container,
+            Damage: modifiedDamage,
+        };
+        return container;
+    }
+
     /**
      * @internal Reserved for internal usage
      * @hidden
