@@ -29,7 +29,7 @@ class Client {
         remotes._dispatch.connect((Actions) => {
             this.receiver.dispatch(Actions);
         });
-        rootProducer.applyMiddleware(this.receiver.middleware, devToolsMiddleware);
+        rootProducer.applyMiddleware(this.receiver.middleware);
     }
 
     /**
