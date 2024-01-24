@@ -3,7 +3,6 @@ import { RunService } from "@rbxts/services";
 import { Skill, SkillProps, _internal_SkillState } from "./skill";
 import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
-import { Flags } from "./flags";
 import { logError } from "./utility";
 
 export abstract class HoldableSkill<
