@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
@@ -38,6 +39,8 @@ export interface HumanoidData {
 }
 
 type ReadonlyState = ReadonlyDeep<StatusEffectState>;
+export type AnyStatus = StatusEffect<any, any[]>;
+export type UnknownStatus = StatusEffect<unknown, unknown[]>;
 
 const registeredStatuses: Map<string, Constructor<StatusEffect>> = new Map();
 let nextId = 0;
@@ -49,7 +52,7 @@ function generateId() {
 /**
  * A status effect class.
  */
-export class StatusEffect<Metadata = unknown, ConstructorArguments extends unknown[] = unknown[]> {
+export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[] = []> {
     private readonly janitor = new Janitor();
 
     public readonly MetadataChanged = new Signal<
@@ -129,7 +132,7 @@ export class StatusEffect<Metadata = unknown, ConstructorArguments extends unkno
             this.Ended.Destroy();
         });
 
-        Character._addStatus(this as StatusEffect);
+        Character._addStatus(this);
         this.startReplicationClient();
 
         if (RunService.IsServer()) {
@@ -387,7 +390,7 @@ export class StatusEffect<Metadata = unknown, ConstructorArguments extends unkno
     protected CreateDamageContainer(Damage: number): DamageContainer {
         return {
             Damage: Damage,
-            Source: this as StatusEffect,
+            Source: this,
         };
     }
 

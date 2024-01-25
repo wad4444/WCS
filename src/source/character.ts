@@ -2,9 +2,15 @@ import { Players, RunService } from "@rbxts/services";
 import { Constructor, getActiveHandler, logError, logMessage, logWarning, mapToArray } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectCharacterData } from "state/selectors";
-import { GetRegisteredStatusEffectConstructor, StatusData, StatusEffect } from "./statusEffect";
+import {
+    AnyStatus,
+    GetRegisteredStatusEffectConstructor,
+    StatusData,
+    StatusEffect,
+    UnknownStatus,
+} from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
-import { GetRegisteredSkillConstructor, Skill, SkillData } from "./skill";
+import { AnySkill, GetRegisteredSkillConstructor, Skill, SkillData, UnknownSkill } from "./skill";
 import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
 import { remotes } from "./remotes";
@@ -21,7 +27,7 @@ export interface CharacterData {
 
 export interface DamageContainer {
     Damage: number;
-    Source: StatusEffect | Skill | undefined;
+    Source: UnknownStatus | UnknownSkill | undefined;
 }
 
 export type AffectableHumanoidProps = Pick<Humanoid, "WalkSpeed" | "JumpPower" | "AutoRotate" | "JumpHeight">;
@@ -43,8 +49,8 @@ export class Character {
 
     private readonly janitor = new Janitor();
 
-    public readonly StatusEffectAdded = new Signal<(Status: StatusEffect) => void>();
-    public readonly StatusEffectRemoved = new Signal<(Status: StatusEffect) => void>();
+    public readonly StatusEffectAdded = new Signal<(Status: UnknownStatus) => void>();
+    public readonly StatusEffectRemoved = new Signal<(Status: UnknownStatus) => void>();
     /**
      * Fires only on client if the character belongs to a player
      */
@@ -58,8 +64,8 @@ export class Character {
         (NewMoveset: string | undefined, OldMoveset: string | undefined) => void
     >();
 
-    private readonly statusEffects: Map<string, StatusEffect> = new Map();
-    private readonly skills: Map<string, Skill> = new Map();
+    private readonly statusEffects: Map<string, UnknownStatus> = new Map();
+    private readonly skills: Map<string, UnknownSkill> = new Map();
     private defaultsProps: AffectableHumanoidProps = {
         WalkSpeed: 16,
         JumpPower: 50,
@@ -199,7 +205,7 @@ export class Character {
      * @internal Reserved for internal usage
      * @hidden
      */
-    public _addStatus(Status: StatusEffect) {
+    public _addStatus(Status: AnyStatus) {
         this.statusEffects.set(Status.GetId(), Status);
         this.StatusEffectAdded.Fire(Status);
 
@@ -219,7 +225,7 @@ export class Character {
      * @internal Reserved for internal usage
      * @hidden
      */
-    public _addSkill(Skill: Skill) {
+    public _addSkill(Skill: AnySkill) {
         const name = Skill.GetName();
         if (this.skills.has(name)) {
             logError(`Skill with name ${name} is already registered for character ${this.Instance}`);
@@ -432,7 +438,7 @@ export class Character {
         const movesetObject = GetMovesetObjectByName(Moveset);
         if (!movesetObject) return;
 
-        const skills: Skill[] = [];
+        const skills: AnySkill[] = [];
         this.skills.forEach((Skill) => {
             if (movesetObject.Skills.find((T) => tostring(T) === tostring(getmetatable(Skill)))) {
                 skills.push(Skill);
@@ -566,7 +572,7 @@ export class Character {
     private updateHumanoidProps() {
         if (RunService.IsServer() && this.Player) return;
 
-        const statuses: StatusEffect[] = [];
+        const statuses: UnknownStatus[] = [];
         this.statusEffects.forEach((Status) => {
             if (Status.GetHumanoidData() && Status.GetState().IsActive) {
                 statuses.push(Status);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable roblox-ts/no-array-pairs */
 import { Players, RunService } from "@rbxts/services";
 import { Character, DamageContainer } from "./character";
@@ -38,6 +39,8 @@ export interface SkillData {
     constructorArguments: unknown[];
     metadata: unknown;
 }
+export type AnySkill = Skill<any, any[], any, any, any>;
+export type UnknownSkill = Skill<unknown, unknown[], unknown, unknown, unknown>;
 
 const registeredSkills = new Map<string, Constructor<Skill>>();
 
@@ -45,11 +48,11 @@ const registeredSkills = new Map<string, Constructor<Skill>>();
  * A status effect class.
  */
 export abstract class Skill<
-    StarterParams = unknown,
-    ConstructorArguments extends unknown[] = unknown[],
-    Metadata = unknown,
-    ServerToClientMessage = unknown,
-    ClientToServerMessage = unknown,
+    StarterParams = void,
+    ConstructorArguments extends unknown[] = [],
+    Metadata = void,
+    ServerToClientMessage = void,
+    ClientToServerMessage = void,
 > {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
@@ -159,7 +162,7 @@ export abstract class Skill<
             ),
         );
 
-        this.Character._addSkill(this as Skill);
+        this.Character._addSkill(this);
         this.isReplicated = RunService.IsClient();
 
         this.startReplication();
@@ -293,7 +296,7 @@ export abstract class Skill<
     protected CreateDamageContainer(Damage: number): DamageContainer {
         return {
             Damage: Damage,
-            Source: this as Skill,
+            Source: this,
         };
     }
 
