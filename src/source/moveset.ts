@@ -1,9 +1,9 @@
-import { Skill } from "./skill";
+import { AnySkill, Skill, UnknownSkill } from "./skill";
 import { Constructor, logError } from "./utility";
 
 export interface Moveset {
     readonly Name: string;
-    readonly Skills: Constructor<Skill>[];
+    readonly Skills: Constructor<UnknownSkill>[];
 }
 
 const registeredMovesets = new Map<string, Moveset>();
@@ -11,7 +11,7 @@ const registeredMovesets = new Map<string, Moveset>();
 /**
  * Creates a moveset with the given name and skills.
  */
-export function CreateMoveset(Name: string, Skills: Constructor<Skill>[]): Moveset {
+export function CreateMoveset(Name: string, Skills: Constructor<AnySkill>[]): Moveset {
     if (registeredMovesets.has(Name)) {
         logError(`StatusEffect with name ${Name} was already registered before`);
     }
