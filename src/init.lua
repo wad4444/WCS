@@ -30,14 +30,15 @@ type Partial_StatusEffectState = {
 
 export type Moveset = {
     Name: string;
-    Skills: {SkillConstructor<any, any, any>};
+    Skills: {SkillImpl};
 }
 
+export type HumanoidPropsMode = "Set" | "Increment"
 export type HumanoidDataProps = {
-    WalkSpeed: {Mode: ("Set" | "Increment"), Value: number}?;
-    JumpPower: {Mode: ("Set" | "Increment"), Value: number}?;
-    JumpHeight: {Mode: ("Set" | "Increment"), Value: number}?;
-    AutoRotate: {Mode: ("Set" | "Increment"), Value: boolean}?;
+    WalkSpeed: {number | HumanoidPropsMode}?;
+    JumpPower: {number | HumanoidPropsMode}?;
+    JumpHeight: {number | HumanoidPropsMode}?;
+    AutoRotate: {boolean | HumanoidPropsMode}?;
 }
 
 export type HumanoidData = {
@@ -45,8 +46,34 @@ export type HumanoidData = {
     Priority: number;
 }
 
-export type StatusEffect<T = any> = {
-    MetadataChanged: ReadonlySignal<(T?, T?) -> void>;
+export type StatusEffectImpl<Metadata = any, ConstructorArguments... = ()> = {
+    new: (Character, ConstructorArguments...) -> StatusEffect<Metadata, ConstructorArguments...>,
+    Start: (StatusEffect<Metadata, ConstructorArguments...>, number?) -> void;
+    End: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    Pause: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    Resume: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    Stop: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    SetHumanoidData: (StatusEffect<Metadata, ConstructorArguments...>, HumanoidDataProps, number?) -> void;
+    ClearHumanoidData: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    ClearMetadata: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    SetState: (StatusEffect<Metadata, ConstructorArguments...>, Partial_StatusEffectState) -> void;
+    SetMetadata: (StatusEffect<Metadata, ConstructorArguments...>, Metadata) -> void;
+    GetState: (StatusEffect<Metadata, ConstructorArguments...>) -> StatusEffectState;
+    GetHumanoidData: (StatusEffect<Metadata, ConstructorArguments...>) -> HumanoidData;
+    GetMetadata: (StatusEffect<Metadata, ConstructorArguments...>) -> Metadata;
+    IsDestroyed: (StatusEffect<Metadata, ConstructorArguments...>) -> boolean;
+    GetId: (StatusEffect<Metadata, ConstructorArguments...>) -> string;
+    Destroy: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    Construct: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    OnStartServer: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    OnStartClient: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    OnEndClient: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    OnEndServer: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
+    CreateDamageContainer: (StatusEffect<Metadata, ConstructorArguments...>, number) -> DamageContainer,
+}
+
+type StatusFields<Metadata> = {
+    MetadataChanged: ReadonlySignal<(Metadata?, Metadata?) -> void>;
     StateChanged: ReadonlySignal<(StatusEffectState, StatusEffectState) -> void>;
     HumanoidDataChanged: ReadonlySignal<(HumanoidData?, HumanoidData?) -> void>;
     Destroyed: ReadonlySignal<Callback>;
@@ -55,34 +82,9 @@ export type StatusEffect<T = any> = {
     Character: Character;
 
     DestroyOnEnd: boolean;
-    
-    Start: (StatusEffect<T>, number?) -> void;
-    End: (StatusEffect<T>) -> void;
-    Pause: (StatusEffect<T>) -> void;
-    Resume: (StatusEffect<T>) -> void;
-    Stop: (StatusEffect<T>) -> void;
-    SetHumanoidData: (StatusEffect<T>, HumanoidDataProps, number?) -> void;
-    ClearHumanoidData: (StatusEffect<T>) -> void;
-    ClearMetadata: (StatusEffect<T>) -> void;
-    SetState: (StatusEffect<T>, Partial_StatusEffectState) -> void;
-    SetMetadata: (StatusEffect<T>, T) -> void;
-    GetState: (StatusEffect<T>) -> StatusEffectState;
-    GetHumanoidData: (StatusEffect<T>) -> HumanoidData;
-    GetMetadata: (StatusEffect<T>) -> T;
-    IsDestroyed: (StatusEffect<T>) -> boolean;
-    GetId: (StatusEffect<T>) -> string;
-    Destroy: (StatusEffect<T>) -> void;
-    Construct: (StatusEffect<T>) -> void;
-    OnStartServer: (StatusEffect<T>) -> void;
-    OnStartClient: (StatusEffect<T>) -> void;
-    OnEndClient: (StatusEffect<T>) -> void;
-    OnEndServer: (StatusEffect<T>) -> void;
-    CreateDamageContainer: (StatusEffect<T>, number) -> DamageContainer,
 }
 
-type StatusEffectConstructor<T = any> = {
-    new: (Character) -> StatusEffect<T>
-}
+export type StatusEffect<Metadata = any, ConstructorArguments... = ()> = typeof(setmetatable({} :: StatusFields<Metadata>, {} :: StatusEffectImpl<Metadata, ConstructorArguments...>))
 
 type SkillState = {
     IsActive: boolean,
@@ -128,40 +130,56 @@ type Janitor = {
 
 type DamageContainer = {
     Damage: number;
-    Source: Skill<any, any, any> | StatusEffect<any> | void;
+    Source: Skill | StatusEffect | void;
 }
 
-export type Skill<StarterParams, ClientToServerMessage, ServerToClientMessage> = {
+--[[
+        StarterParams = unknown,
+    ConstructorArguments extends unknown[] = unknown[],
+    Metadata = unknown,
+    ServerToClientMessage = unknown,
+    ClientToServerMessage = unknown,
+]]
+type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = {
+    new: (Character, ConstructorArguments...) -> Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
+    ApplyCooldown: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> void,
+    ShouldStart: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> boolean,
+    HandleClientMessage: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ClientToServerMessage) -> void,
+    HandleServerMessage: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ServerToClientMessage) -> void,
+    SendMessageToClient: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ServerToClientMessage) -> void,
+    SendMessageToServer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ClientToServerMessage) -> void,
+    GetName: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> string,
+    OnStartServer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, StarterParams) -> void,
+    OnStartClient: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, StarterParams) -> void,
+    OnEndServer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
+    OnEndClient: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
+    OnConstruct: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ConstructorArguments...) -> void,
+    OnConstructServer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ConstructorArguments...) -> void,
+    OnConstructClient: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ConstructorArguments...) -> void,
+    GetState: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> SkillState,
+    End: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
+    CreateDamageContainer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> DamageContainer,
+    Destroy: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
+}
+
+type SkillFields<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = {
     Janitor: Janitor,
     Started: ReadonlySignal<Callback>,
     Ended: ReadonlySignal<Callback>,
     StateChanged: ReadonlySignal<(NewState: SkillState, OldState: SkillState) -> ()>,
     Destroyed: ReadonlySignal<Callback>,
-    MutualExclusives: {StatusEffectConstructor<any>},
-    Requirements: {StatusEffectConstructor<any>},
+    MutualExclusives: {SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>},
+    Requirements: {SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>},
     Player: Player?,
     Character: Character,
     CheckOthersActive: boolean,
-    ApplyCooldown: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, number) -> void,
-    ShouldStart: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> boolean,
-    HandleClientMessage: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ClientToServerMessage) -> void,
-    HandleServerMessage: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ServerToClientMessage) -> void,
-    SendMessageToClient: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ServerToClientMessage) -> void,
-    SendMessageToServer: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, ClientToServerMessage) -> void,
-    GetName: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> string,
-    OnStartServer: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, StarterParams) -> void,
-    OnStartClient: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, StarterParams) -> void,
-    OnEndServer: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> void,
-    OnEndClient: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> void,
-    GetState: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> SkillState,
-    End: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> void,
-    CreateDamageContainer: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>, number) -> DamageContainer,
-    Destroy: (Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> void,
 }
-
-export type SkillConstructor<StarterParams, ClientToServerMessage, ServerToClientMessage> = {
-    new: (Character) -> Skill<StarterParams, ClientToServerMessage, ServerToClientMessage>
-}
+export type Skill<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = typeof(
+    setmetatable(
+        {} :: SkillFields<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
+        {} :: SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>
+    )
+)
 
 export type AffectableHumanoidProps = {
     WalkSpeed: number;
@@ -170,63 +188,61 @@ export type AffectableHumanoidProps = {
     AutoRotate: boolean;
 }
 
-export type HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage> = Skill<StarterParams, ClientToServerMessage, ServerToClientMessage> & {
-    SetMaxHoldTime: (HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage>, number) -> void,
-    GetMaxHoldTime: (HoldableSkill<StarterParams, ClientToServerMessage, ServerToClientMessage>) -> number,
+type HoldableSkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...> & {
+    SetMaxHoldTime: (HoldableSkill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> void,
+    GetMaxHoldTime: (HoldableSkill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> number,
 }
+export type HoldableSkill<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = typeof(setmetatable({} :: SkillFields<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, {} :: HoldableSkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>))
 
-export type Character = {
-    Instance: Instance;
-    Humanoid: Humanoid;
-    Player: Player?;
-
-    StatusEffectAdded: ReadonlySignal<(StatusEffect<any>) -> void>;
-    StatusEffectRemoved: ReadonlySignal<(StatusEffect<any>) -> void>;
-    DamageTaken: ReadonlySignal<(number) -> void>;
-    Destroyed: ReadonlySignal<Callback>;
-    MovesetChanged: ReadonlySignal<(string | void, string | void) -> void>;
-
-    Destroy: () -> void;
-    GetId: () -> string;
-
+type CharacterImpl = {
+    new: (Instance) -> Character;
+    CharacterCreated: ReadonlySignal<(Character) -> void>;
+    CharacterDestroyed: ReadonlySignal<(Character) -> void>;
+    GetCharacterMap: () -> {[Instance]: Character};
+    GetCharacterFromInstance: (Instance) -> Character?;
     SetDefaultProps: (Character, AffectableHumanoidProps) -> void;
     GetDefaultProps: (Character) -> AffectableHumanoidProps;
-    GetAllStatusEffects: (Character) -> {StatusEffect<any>};
-    GetAllActiveStatusEffects: (Character) -> {StatusEffect<any>};
-    GetAllStatusStatusEffectsOfType: (Character, StatusEffectConstructor<any>) -> {StatusEffect<any>};
-    GetAllActiveStatusStatusEffectsOfType: (Character, StatusEffectConstructor<any>) -> {StatusEffect<any>};
-    HasStatusEffects: (Character, {StatusEffectConstructor<any>}) -> boolean;
-    GetSkillFromString: (Character, string) -> Skill<any, any, any>?;
-    GetSkillFromConstructor: (Character, SkillConstructor<any, any, any>) -> Skill<any, any, any>?;
+    GetAllStatusEffects: (Character) -> {StatusEffect};
+    GetAllActiveStatusEffects: (Character) -> {StatusEffect};
+    GetAllStatusStatusEffectsOfType: (Character, StatusEffectImpl) -> {StatusEffect};
+    GetAllActiveStatusStatusEffectsOfType: (Character, StatusEffectImpl) -> {StatusEffect};
+    HasStatusEffects: (Character, {StatusEffectImpl}) -> boolean;
+    GetSkillFromString: (Character, string) -> Skill?;
+    GetSkillFromConstructor: (Character, SkillImpl) -> Skill?;
     ApplyMoveset: (Character, Moveset | string) -> void;
     GetMoveset: (Character) -> string | void;
     ClearMoveset: (Character) -> void;
     ApplySkillsFromMoveset: (Character, Moveset) -> void;
     TakeDamage: (DamageContainer) -> DamageContainer;
+    Destroy: (Character) -> void;
+    GetId: (Character) -> string;
 }
 
-type CharacterClass = {
-    CharacterCreated: ReadonlySignal<(Character) -> void>;
-    CharacterDestroyed: ReadonlySignal<(Character) -> void>;
+export type Character = typeof(setmetatable({} :: {
+    Instance: Instance;
+    Humanoid: Humanoid;
+    Player: Player?;
 
-    new: (Instance) -> Character;
-    GetCharacterMap: () -> {[Instance]: Character};
-    GetCharacterFromInstance: (Instance) -> Character?;
-}
+    StatusEffectAdded: ReadonlySignal<(StatusEffect) -> void>;
+    StatusEffectRemoved: ReadonlySignal<(StatusEffect) -> void>;
+    DamageTaken: ReadonlySignal<(number) -> void>;
+    Destroyed: ReadonlySignal<Callback>;
+    MovesetChanged: ReadonlySignal<(string | void, string | void) -> void>;
+}, {} :: CharacterImpl))
 
 export type WCS = {
     CreateServer: () -> Server;
     CreateClient: () -> Client;
     CreateMoveset: (string) -> Moveset;
-    RegisterStatusEffect: (string) -> StatusEffect<any> & StatusEffectConstructor<any>;
-    RegisterSkill: (string) -> Skill<any, any, any> & SkillConstructor<any, any, any>;
-    RegisterHoldableSkill: (string) -> HoldableSkill<any, any, any> & SkillConstructor<any, any, any>;
+    RegisterStatusEffect: (string) -> StatusEffectImpl;
+    RegisterSkill: (string) -> SkillImpl;
+    RegisterHoldableSkill: (string) -> HoldableSkillImpl;
     GetMovesetObjectByName: (string) -> Moveset | void;
-    Character: CharacterClass;
+    Character: CharacterImpl;
     Types: ModuleScript;
 }
 
-local TS = script:FindFirstChild("include") and require(script:FindFirstChild("include").RuntimeLib) or _G[script]
+local TS = script:FindFirstChild("include") and require(script:WaitForChild("include"):WaitForChild("RuntimeLib") :: ModuleScript) or _G[script]
 
 local exports = {}
 for _k, _v in TS.import(script, script, "exports") or {} do
