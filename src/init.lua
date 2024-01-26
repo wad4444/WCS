@@ -47,7 +47,7 @@ export type HumanoidData = {
 }
 
 export type StatusEffectImpl<Metadata = any, ConstructorArguments... = ()> = {
-    new: (any, ConstructorArguments...) -> StatusEffect<Metadata, ConstructorArguments...>,
+    new: (Character, ConstructorArguments...) -> StatusEffect<Metadata, ConstructorArguments...>,
     Start: (StatusEffect<Metadata, ConstructorArguments...>, number?) -> void;
     End: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     Pause: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
@@ -69,17 +69,57 @@ export type StatusEffectImpl<Metadata = any, ConstructorArguments... = ()> = {
     OnStartClient: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     OnEndClient: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     OnEndServer: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
-    CreateDamageContainer: (StatusEffect<Metadata, ConstructorArguments...>, number) -> any,
+    CreateDamageContainer: (StatusEffect<Metadata, ConstructorArguments...>, number) -> DamageContainer,
 }
 
+type AnyStatusImpl = {
+    new: (Character) -> AnyStatus,
+    Start: (AnyStatus, number?) -> void;
+    End: (AnyStatus) -> void;
+    Pause: (AnyStatus) -> void;
+    Resume: (AnyStatus) -> void;
+    Stop: (AnyStatus) -> void;
+    SetHumanoidData: (AnyStatus, HumanoidDataProps, number?) -> void;
+    ClearHumanoidData: (AnyStatus) -> void;
+    ClearMetadata: (AnyStatus) -> void;
+    SetState: (AnyStatus, Partial_StatusEffectState) -> void;
+    SetMetadata: (AnyStatus, any) -> void;
+    GetState: (AnyStatus) -> StatusEffectState;
+    GetHumanoidData: (AnyStatus) -> HumanoidData;
+    GetMetadata: (AnyStatus) -> any;
+    IsDestroyed: (AnyStatus) -> boolean;
+    GetId: (AnyStatus) -> string;
+    Destroy: (AnyStatus) -> void;
+    Construct: (AnyStatus) -> void;
+    OnStartServer: (AnyStatus) -> void;
+    OnStartClient: (AnyStatus) -> void;
+    OnEndClient: (AnyStatus) -> void;
+    OnEndServer: (AnyStatus) -> void;
+    CreateDamageContainer: (AnyStatus, number) -> any,
+}
+
+export type AnyStatus = typeof(setmetatable({} :: {
+    ConstructorArguments: {any},
+    MetadataChanged: ReadonlySignal<(any?, any?) -> void>;
+    StateChanged: ReadonlySignal<(StatusEffectState, StatusEffectState) -> void>;
+    HumanoidDataChanged: ReadonlySignal<(HumanoidData?, HumanoidData?) -> void>;
+    Destroyed: ReadonlySignal<Callback>;
+    Started: ReadonlySignal<Callback>;
+    Ended: ReadonlySignal<Callback>;
+    Character: Character;
+
+    DestroyOnEnd: boolean;
+}, {} :: AnyStatusImpl))
+
 type StatusFields<Metadata> = {
+    ConstructorArguments: {any},
     MetadataChanged: ReadonlySignal<(Metadata?, Metadata?) -> void>;
     StateChanged: ReadonlySignal<(StatusEffectState, StatusEffectState) -> void>;
     HumanoidDataChanged: ReadonlySignal<(HumanoidData?, HumanoidData?) -> void>;
     Destroyed: ReadonlySignal<Callback>;
     Started: ReadonlySignal<Callback>;
     Ended: ReadonlySignal<Callback>;
-    Character: any;
+    Character: Character;
 
     DestroyOnEnd: boolean;
 }
@@ -130,7 +170,7 @@ type Janitor = {
 
 type DamageContainer = {
     Damage: number;
-    Source: Skill | StatusEffect | void;
+    Source: AnySkill | AnyStatus | void;
 }
 
 --[[
@@ -162,7 +202,10 @@ type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any,
     Destroy: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
 }
 
+type Array<T> = {T}
+
 type SkillFields<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = {
+    ConstructorArguments: {any},
     Janitor: Janitor,
     Started: ReadonlySignal<Callback>,
     Ended: ReadonlySignal<Callback>,
@@ -171,13 +214,53 @@ type SkillFields<StarterParams = any, Metadata = any, ClientToServerMessage = an
     MutualExclusives: {SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>},
     Requirements: {SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>},
     Player: Player?,
-    Character: any,
+    Character: Character,
     CheckOthersActive: boolean,
 }
 export type Skill<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = typeof(
     setmetatable(
         {} :: SkillFields<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
         {} :: SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>
+    )
+)
+
+type AnySkillImpl = {
+    new: (Character) -> AnySkill,
+    ApplyCooldown: (AnySkill, number) -> void,
+    ShouldStart: (AnySkill) -> boolean,
+    HandleClientMessage: (AnySkill, any) -> void,
+    HandleServerMessage: (AnySkill, any) -> void,
+    SendMessageToClient: (AnySkill, any) -> void,
+    SendMessageToServer: (AnySkill, any) -> void,
+    GetName: (AnySkill) -> string,
+    OnStartServer: (AnySkill, any) -> void,
+    OnStartClient: (AnySkill, any) -> void,
+    OnEndServer: (AnySkill) -> void,
+    OnEndClient: (AnySkill) -> void,
+    OnConstruct: (AnySkill) -> void,
+    OnConstructServer: (AnySkill) -> void,
+    OnConstructClient: (AnySkill) -> void,
+    GetState: (AnySkill) -> SkillState,
+    End: (AnySkill) -> void,
+    CreateDamageContainer: (AnySkill, number) -> DamageContainer,
+    Destroy: (AnySkill) -> void,
+}
+
+export type AnySkill = typeof(
+    setmetatable(
+        {} :: {
+            Janitor: Janitor,
+            Started: ReadonlySignal<Callback>,
+            Ended: ReadonlySignal<Callback>,
+            StateChanged: ReadonlySignal<(NewState: SkillState, OldState: SkillState) -> ()>,
+            Destroyed: ReadonlySignal<Callback>,
+            MutualExclusives: {AnySkill},
+            Requirements: {AnySkill},
+            Player: Player?,
+            Character: Character,
+            CheckOthersActive: boolean,
+        },
+        {} :: AnySkillImpl
     )
 )
 
@@ -202,18 +285,19 @@ type CharacterImpl = {
     GetCharacterFromInstance: (Instance) -> Character?;
     SetDefaultProps: (Character, AffectableHumanoidProps) -> void;
     GetDefaultProps: (Character) -> AffectableHumanoidProps;
-    GetAllStatusEffects: (Character) -> {StatusEffect};
-    GetAllActiveStatusEffects: (Character) -> {StatusEffect};
-    GetAllStatusStatusEffectsOfType: (Character, StatusEffectImpl) -> {StatusEffect};
-    GetAllActiveStatusStatusEffectsOfType: (Character, StatusEffectImpl) -> {StatusEffect};
-    HasStatusEffects: (Character, {StatusEffectImpl}) -> boolean;
-    GetSkillFromString: (Character, string) -> Skill?;
-    GetSkillFromConstructor: (Character, SkillImpl) -> Skill?;
+    GetAllStatusEffects: (Character) -> {AnyStatus};
+    GetAllActiveStatusEffects: (Character) -> {AnyStatus};
+    GetAllStatusStatusEffectsOfType: (Character, AnyStatusImpl) -> {AnyStatus};
+    GetAllActiveStatusStatusEffectsOfType: (Character, AnyStatusImpl) -> {AnyStatus};
+    HasStatusEffects: (Character, {AnyStatusImpl}) -> boolean;
+    GetSkillFromString: (Character, string) -> AnySkill?;
+    GetSkillFromConstructor: (Character, AnySkillImpl) -> AnySkill?;
     ApplyMoveset: (Character, Moveset | string) -> void;
     GetMoveset: (Character) -> string | void;
     ClearMoveset: (Character) -> void;
     ApplySkillsFromMoveset: (Character, Moveset) -> void;
-    TakeDamage: (DamageContainer) -> DamageContainer;
+    TakeDamage: (Character, DamageContainer) -> DamageContainer;
+    PredictDamage: (Character, DamageContainer) -> DamageContainer;
     Destroy: (Character) -> void;
     GetId: (Character) -> string;
 }
@@ -223,8 +307,8 @@ export type Character = typeof(setmetatable({} :: {
     Humanoid: Humanoid;
     Player: Player?;
 
-    StatusEffectAdded: ReadonlySignal<(StatusEffect) -> void>;
-    StatusEffectRemoved: ReadonlySignal<(StatusEffect) -> void>;
+    StatusEffectAdded: ReadonlySignal<(AnyStatus) -> void>;
+    StatusEffectRemoved: ReadonlySignal<(AnyStatus) -> void>;
     DamageTaken: ReadonlySignal<(number) -> void>;
     Destroyed: ReadonlySignal<Callback>;
     MovesetChanged: ReadonlySignal<(string | void, string | void) -> void>;
