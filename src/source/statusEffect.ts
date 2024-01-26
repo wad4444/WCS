@@ -42,7 +42,7 @@ type ReadonlyState = ReadonlyDeep<StatusEffectState>;
 export type AnyStatus = StatusEffect<any, any[]>;
 export type UnknownStatus = StatusEffect<unknown, unknown[]>;
 
-const registeredStatuses: Map<string, Constructor<StatusEffect>> = new Map();
+const registeredStatuses: Map<string, Constructor<UnknownStatus>> = new Map();
 let nextId = 0;
 function generateId() {
     nextId += RunService.IsServer() ? 1 : -1;
@@ -474,7 +474,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     protected OnEndServer() {}
 }
 
-export function StatusEffectDecorator<T extends Constructor<StatusEffect>>(Constructor: T) {
+export function StatusEffectDecorator<T extends Constructor<AnyStatus>>(Constructor: T) {
     const name = tostring(Constructor);
     if (registeredStatuses.has(name)) {
         logError(`StatusEffect with name ${name} was already registered before`);

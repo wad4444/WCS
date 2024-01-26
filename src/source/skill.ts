@@ -42,7 +42,7 @@ export interface SkillData {
 export type AnySkill = Skill<any, any[], any, any, any>;
 export type UnknownSkill = Skill<unknown, unknown[], unknown, unknown, unknown>;
 
-const registeredSkills = new Map<string, Constructor<Skill>>();
+const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
 /**
  * A status effect class.
@@ -439,7 +439,7 @@ export abstract class Skill<
 /**
  * A decorator function that registers a skill.
  */
-export function SkillDecorator<T extends Constructor<Skill>>(Constructor: T) {
+export function SkillDecorator<T extends Constructor<AnySkill>>(Constructor: T) {
     const name = tostring(Constructor);
     if (registeredSkills.has(name)) {
         logError(`StatusEffect with name ${name} was already registered before`);
