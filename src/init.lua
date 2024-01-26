@@ -30,7 +30,7 @@ type Partial_StatusEffectState = {
 
 export type Moveset = {
     Name: string;
-    Skills: {SkillImpl};
+    Skills: {never};
 }
 
 export type HumanoidPropsMode = "Set" | "Increment"
@@ -47,7 +47,7 @@ export type HumanoidData = {
 }
 
 export type StatusEffectImpl<Metadata = any, ConstructorArguments... = ()> = {
-    new: (Character, ConstructorArguments...) -> StatusEffect<Metadata, ConstructorArguments...>,
+    new: (any, ConstructorArguments...) -> StatusEffect<Metadata, ConstructorArguments...>,
     Start: (StatusEffect<Metadata, ConstructorArguments...>, number?) -> void;
     End: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     Pause: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
@@ -69,7 +69,7 @@ export type StatusEffectImpl<Metadata = any, ConstructorArguments... = ()> = {
     OnStartClient: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     OnEndClient: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     OnEndServer: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
-    CreateDamageContainer: (StatusEffect<Metadata, ConstructorArguments...>, number) -> DamageContainer,
+    CreateDamageContainer: (StatusEffect<Metadata, ConstructorArguments...>, number) -> any,
 }
 
 type StatusFields<Metadata> = {
@@ -79,7 +79,7 @@ type StatusFields<Metadata> = {
     Destroyed: ReadonlySignal<Callback>;
     Started: ReadonlySignal<Callback>;
     Ended: ReadonlySignal<Callback>;
-    Character: Character;
+    Character: any;
 
     DestroyOnEnd: boolean;
 }
@@ -141,7 +141,7 @@ type DamageContainer = {
     ClientToServerMessage = unknown,
 ]]
 type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = {
-    new: (Character, ConstructorArguments...) -> Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
+    new: (any, ConstructorArguments...) -> Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
     ApplyCooldown: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> void,
     ShouldStart: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> boolean,
     HandleClientMessage: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ClientToServerMessage) -> void,
@@ -158,7 +158,7 @@ type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any,
     OnConstructClient: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ConstructorArguments...) -> void,
     GetState: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> SkillState,
     End: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
-    CreateDamageContainer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> DamageContainer,
+    CreateDamageContainer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> any,
     Destroy: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
 }
 
@@ -171,7 +171,7 @@ type SkillFields<StarterParams = any, Metadata = any, ClientToServerMessage = an
     MutualExclusives: {SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>},
     Requirements: {SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>},
     Player: Player?,
-    Character: Character,
+    Character: any,
     CheckOthersActive: boolean,
 }
 export type Skill<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = typeof(
