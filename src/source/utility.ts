@@ -40,3 +40,7 @@ export function setActiveHandler(handler: Handler) {
 export function getActiveHandler<T extends WCS_Server | WCS_Client>() {
     return activeHandler as T | undefined;
 }
+
+export function freezeCheck<T extends object>(obj: T) {
+    table.isfrozen(obj) && table.freeze(obj);
+}

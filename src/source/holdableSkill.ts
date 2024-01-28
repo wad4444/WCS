@@ -22,7 +22,6 @@ export abstract class HoldableSkill<
     ServerToClientMessage | { __setHoldTime: number | undefined },
     ClientToServerMessage
 > {
-    private maxHoldTime?: number = undefined;
     /** Manually starting or stopping the timer will break things */
     protected readonly HoldTimer = new Timer(10);
     protected _skillType: SkillType = SkillType.Holdable;
@@ -37,7 +36,7 @@ export abstract class HoldableSkill<
         super(Props as never);
         if (RunService.IsServer()) {
             this._janitor.Add(
-                this.HoldTimer.completed.Connect(() => this.End()),
+                this.HoldTimer.completed.Connect(() => this.GetState().IsActive && this.End()),
                 "Disconnect",
             );
         }
@@ -78,13 +77,13 @@ export abstract class HoldableSkill<
         }
 
         this.SetState({ MaxHoldTime: MaxHoldTime });
-        if (this.maxHoldTime) this.HoldTimer.setLength(this.maxHoldTime);
+        if (MaxHoldTime) this.HoldTimer.setLength(MaxHoldTime);
     }
 
     /**
      * Retrieves the maximum hold time.
      */
     public GetMaxHoldTime() {
-        return this.maxHoldTime;
+        return this.GetState().MaxHoldTime;
     }
 }

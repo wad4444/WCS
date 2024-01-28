@@ -1,5 +1,5 @@
 import { AnySkill, Skill, UnknownSkill } from "./skill";
-import { Constructor, logError } from "./utility";
+import { Constructor, freezeCheck, logError } from "./utility";
 
 export interface Moveset {
     readonly Name: string;
@@ -24,8 +24,8 @@ export function CreateMoveset(Name: string, Skills: Constructor<AnySkill>[]): Mo
     registeredMovesets.set(Name, moveset);
 
     setmetatable(moveset, { __tostring: () => Name });
-    table.freeze(moveset);
-    table.freeze(moveset.Skills);
+    freezeCheck(moveset);
+    freezeCheck(moveset.Skills);
 
     return moveset;
 }

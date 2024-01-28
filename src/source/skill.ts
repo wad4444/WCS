@@ -3,7 +3,7 @@
 import { Players, RunService } from "@rbxts/services";
 import { Character, DamageContainer } from "./character";
 import { Flags } from "./flags";
-import { Constructor, ReadonlyDeep, getActiveHandler, logError, logWarning } from "./utility";
+import { Constructor, ReadonlyDeep, freezeCheck, getActiveHandler, logError, logWarning } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
 import { remotes } from "./remotes";
@@ -283,7 +283,7 @@ export abstract class Skill<
                 `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
             );
         }
-        if (t.table(NewMeta)) table.freeze(NewMeta);
+        if (t.table(NewMeta)) freezeCheck(NewMeta);
 
         this.MetadataChanged.Fire(NewMeta, this.metadata);
         this.metadata = NewMeta;
@@ -352,7 +352,7 @@ export abstract class Skill<
 
         const oldState = this.state;
 
-        table.freeze(newState);
+        freezeCheck(newState);
         this.state = newState;
 
         if (RunService.IsServer()) {
@@ -378,13 +378,13 @@ export abstract class Skill<
             if (!NewData) return;
 
             if (NewData.state !== OldData.state) {
-                table.freeze(NewData.state);
+                freezeCheck(NewData.state);
                 this.state = NewData.state;
                 this.StateChanged.Fire(NewData.state, OldData.state);
             }
 
             if (NewData.metadata !== OldData.metadata) {
-                if (t.table(NewData.metadata)) table.freeze(NewData.metadata);
+                if (t.table(NewData.metadata)) freezeCheck(NewData.metadata);
                 this.metadata = NewData.metadata as Metadata | undefined;
                 this.MetadataChanged.Fire(
                     NewData.metadata as Metadata | undefined,

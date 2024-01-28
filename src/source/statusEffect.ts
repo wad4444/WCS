@@ -2,7 +2,7 @@
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
-import { Constructor, ReadonlyDeep, getActiveHandler, logError, logWarning } from "./utility";
+import { Constructor, ReadonlyDeep, freezeCheck, getActiveHandler, logError, logWarning } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
 import { SelectStatusData } from "state/selectors";
@@ -298,7 +298,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
         const oldState = this.state;
 
-        table.freeze(newState);
+        freezeCheck(newState);
         this.state = newState;
 
         if (RunService.IsServer()) {
@@ -319,7 +319,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
                 `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
             );
         }
-        if (t.table(NewMeta)) table.freeze(NewMeta);
+        if (t.table(NewMeta)) freezeCheck(NewMeta);
 
         this.MetadataChanged.Fire(NewMeta, this.metadata);
         this.metadata = NewMeta;
@@ -434,13 +434,13 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             if (!StatusData) return;
 
             if (StatusData.state !== PreviousData.state) {
-                table.freeze(StatusData.state);
+                freezeCheck(StatusData.state);
                 this.state = StatusData.state;
                 this.StateChanged.Fire(StatusData.state, PreviousData.state);
             }
 
             if (StatusData.metadata !== PreviousData.metadata) {
-                if (t.table(StatusData.metadata)) table.freeze(StatusData.metadata);
+                if (t.table(StatusData.metadata)) freezeCheck(StatusData.metadata);
                 this.metadata = StatusData.metadata as Metadata | undefined;
                 this.MetadataChanged.Fire(
                     StatusData.metadata as Metadata | undefined,
@@ -449,7 +449,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             }
 
             if (StatusData.humanoidData !== PreviousData.humanoidData) {
-                if (StatusData.humanoidData) table.freeze(StatusData.humanoidData);
+                if (StatusData.humanoidData) freezeCheck(StatusData.humanoidData);
                 this.humanoidData = StatusData.humanoidData;
                 this.HumanoidDataChanged.Fire(StatusData.humanoidData, PreviousData.humanoidData);
             }
