@@ -17,7 +17,7 @@ class Client {
     private registeredModules: ModuleScript[] = [];
     private receiver: BroadcastReceiver<typeof slices>;
 
-    constructor() {
+    constructor(ApplyLoggerMiddleware = false) {
         currentInstance = this;
 
         this.receiver = createBroadcastReceiver({
@@ -30,6 +30,7 @@ class Client {
             this.receiver.dispatch(Actions);
         });
         rootProducer.applyMiddleware(this.receiver.middleware);
+        ApplyLoggerMiddleware && rootProducer.applyMiddleware(devToolsMiddleware);
     }
 
     /**
