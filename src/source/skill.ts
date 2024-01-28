@@ -21,6 +21,11 @@ export interface SkillState {
     StarterParams?: unknown;
 }
 
+export enum SkillType {
+    Default = "Default",
+    Holdable = "Holdable",
+}
+
 /** @hidden @internal */
 export interface SkillProps {
     Character: Character;
@@ -87,6 +92,8 @@ export abstract class Skill<
     private metadata?: Metadata;
     protected readonly Name = tostring(getmetatable(this));
     protected readonly ConstructorArguments: ConstructorArguments;
+    /** @internal @hidden */
+    protected _skillType = SkillType.Default;
 
     constructor(Character: Character, ...Args: ConstructorArguments);
     /**
@@ -220,6 +227,11 @@ export abstract class Skill<
             StarterParams: undefined,
         });
         this.Janitor.Cleanup();
+    }
+
+    /** Retrieves the skill type */
+    public GetSkillType() {
+        return this._skillType;
     }
 
     /**

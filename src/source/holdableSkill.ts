@@ -1,6 +1,6 @@
 /* eslint-disable roblox-ts/no-array-pairs */
 import { RunService } from "@rbxts/services";
-import { Skill, SkillProps, _internal_SkillState } from "./skill";
+import { Skill, SkillProps, SkillType, _internal_SkillState } from "./skill";
 import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
 import { logError } from "./utility";
@@ -25,6 +25,7 @@ export abstract class HoldableSkill<
     private maxHoldTime?: number = undefined;
     /** Manually starting or stopping the timer will break things */
     protected readonly HoldTimer = new Timer(10);
+    protected _skillType: SkillType = SkillType.Holdable;
 
     constructor(Character: Character);
     /**
