@@ -9,6 +9,7 @@ import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
 import { Flags } from "./flags";
 import { RootState, rootProducer } from "state/rootProducer";
+import { certainFlushMiddleware } from "state/middleware/certainFlush";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -29,7 +30,7 @@ class Client {
         remotes._dispatch.connect((Actions) => {
             this.receiver.dispatch(Actions);
         });
-        rootProducer.applyMiddleware(this.receiver.middleware);
+        rootProducer.applyMiddleware(certainFlushMiddleware, this.receiver.middleware);
         ApplyLoggerMiddleware && rootProducer.applyMiddleware(devToolsMiddleware);
     }
 

@@ -427,38 +427,41 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         }
     }
 
+    /** @hidden @internal */
+    public _proccessDataUpdate(StatusData?: StatusData, PreviousData: StatusData = this._packData()) {
+        if (!StatusData) return;
+
+        if (StatusData.state !== PreviousData.state) {
+            freezeCheck(StatusData.state);
+            this.state = StatusData.state;
+            this.StateChanged.Fire(StatusData.state, PreviousData.state);
+        }
+
+        if (StatusData.metadata !== PreviousData.metadata) {
+            if (t.table(StatusData.metadata)) freezeCheck(StatusData.metadata);
+            this.metadata = StatusData.metadata as Metadata | undefined;
+            this.MetadataChanged.Fire(
+                StatusData.metadata as Metadata | undefined,
+                PreviousData.metadata as Metadata | undefined,
+            );
+        }
+
+        if (StatusData.humanoidData !== PreviousData.humanoidData) {
+            if (StatusData.humanoidData) freezeCheck(StatusData.humanoidData);
+            this.humanoidData = StatusData.humanoidData;
+            this.HumanoidDataChanged.Fire(StatusData.humanoidData, PreviousData.humanoidData);
+        }
+    }
+
     private startReplicationClient() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (StatusData?: StatusData, PreviousData: StatusData = this._packData()) => {
-            if (!StatusData) return;
-
-            if (StatusData.state !== PreviousData.state) {
-                freezeCheck(StatusData.state);
-                this.state = StatusData.state;
-                this.StateChanged.Fire(StatusData.state, PreviousData.state);
-            }
-
-            if (StatusData.metadata !== PreviousData.metadata) {
-                if (t.table(StatusData.metadata)) freezeCheck(StatusData.metadata);
-                this.metadata = StatusData.metadata as Metadata | undefined;
-                this.MetadataChanged.Fire(
-                    StatusData.metadata as Metadata | undefined,
-                    PreviousData.metadata as Metadata | undefined,
-                );
-            }
-
-            if (StatusData.humanoidData !== PreviousData.humanoidData) {
-                if (StatusData.humanoidData) freezeCheck(StatusData.humanoidData);
-                this.humanoidData = StatusData.humanoidData;
-                this.HumanoidDataChanged.Fire(StatusData.humanoidData, PreviousData.humanoidData);
-            }
-        };
-
         const dataSelector = SelectStatusData(this.Character.GetId(), this.id);
 
-        const subscription = rootProducer.subscribe(dataSelector, proccessDataUpdate);
-        proccessDataUpdate(dataSelector(rootProducer.getState()));
+        const subscription = rootProducer.subscribe(dataSelector, (...args: [StatusData?, StatusData?]) =>
+            this._proccessDataUpdate(...args),
+        );
+        this._proccessDataUpdate(dataSelector(rootProducer.getState()));
 
         this.janitor.Add(subscription);
     }

@@ -371,31 +371,32 @@ export abstract class Skill<
         return true;
     }
 
+    /** @hidden @internal */
+    public _proccessDataUpdate(NewData?: SkillData, OldData: SkillData = this.packData()) {
+        if (!NewData) return;
+
+        if (NewData.state !== OldData.state) {
+            freezeCheck(NewData.state);
+            this.state = NewData.state;
+            this.StateChanged.Fire(NewData.state, OldData.state);
+        }
+
+        if (NewData.metadata !== OldData.metadata) {
+            if (t.table(NewData.metadata)) freezeCheck(NewData.metadata);
+            this.metadata = NewData.metadata as Metadata | undefined;
+            this.MetadataChanged.Fire(
+                NewData.metadata as Metadata | undefined,
+                OldData.metadata as Metadata | undefined,
+            );
+        }
+    }
+
     private startReplication() {
         if (!this.isReplicated) return;
 
-        const proccessDataUpdate = (NewData?: SkillData, OldData: SkillData = this.packData()) => {
-            if (!NewData) return;
-
-            if (NewData.state !== OldData.state) {
-                freezeCheck(NewData.state);
-                this.state = NewData.state;
-                this.StateChanged.Fire(NewData.state, OldData.state);
-            }
-
-            if (NewData.metadata !== OldData.metadata) {
-                if (t.table(NewData.metadata)) freezeCheck(NewData.metadata);
-                this.metadata = NewData.metadata as Metadata | undefined;
-                this.MetadataChanged.Fire(
-                    NewData.metadata as Metadata | undefined,
-                    OldData.metadata as Metadata | undefined,
-                );
-            }
-        };
-
         const dataSelector = SelectSkillData(this.Character.GetId(), this.Name);
-        proccessDataUpdate(dataSelector(rootProducer.getState()));
-        rootProducer.subscribe(dataSelector, proccessDataUpdate);
+        this._proccessDataUpdate(dataSelector(rootProducer.getState()));
+        rootProducer.subscribe(dataSelector, (...args: [SkillData?, SkillData?]) => this._proccessDataUpdate(...args));
     }
 
     /**
