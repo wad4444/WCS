@@ -279,6 +279,24 @@ type HoldableSkillImpl<StarterParams = any, Metadata = any, ClientToServerMessag
 }
 export type HoldableSkill<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = typeof(setmetatable({} :: SkillFields<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, {} :: HoldableSkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>))
 
+type AnyHoldableSkillImpl = AnySkillImpl & {
+    SetMaxHoldTime: (AnyHoldableSkill, number) -> void,
+    GetMaxHoldTime: (AnyHoldableSkill) -> number,
+}
+export type AnyHoldableSkill = typeof(setmetatable({} :: {
+    Janitor: Janitor,
+    Started: ReadonlySignal<Callback>,
+    Ended: ReadonlySignal<Callback>,
+    StateChanged: ReadonlySignal<(NewState: SkillState, OldState: SkillState) -> ()>,
+    Destroyed: ReadonlySignal<Callback>,
+    MutualExclusives: {AnySkill},
+    Requirements: {AnySkill},
+    Player: Player?,
+    Character: Character,
+    CheckOthersActive: boolean,
+}, {} :: AnyHoldableSkillImpl))
+
+
 type CharacterImpl = {
     new: (Instance) -> Character;
     CharacterCreated: ReadonlySignal<(Character) -> void>;
