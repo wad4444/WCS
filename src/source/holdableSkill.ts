@@ -5,12 +5,16 @@ import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
 import { logError } from "./utility";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyHoldableSkill = HoldableSkill<any, any[], any, any, any>;
+export type UnknownHoldableSkill = HoldableSkill<unknown, unknown[], unknown, unknown, unknown>;
+
 export abstract class HoldableSkill<
-    StarterParams = unknown,
-    ConstructorArguments extends unknown[] = unknown[],
-    Metadata = unknown,
-    ServerToClientMessage = unknown,
-    ClientToServerMessage = unknown,
+    StarterParams = void,
+    ConstructorArguments extends unknown[] = [],
+    Metadata = void,
+    ServerToClientMessage = void,
+    ClientToServerMessage = void,
 > extends Skill<
     StarterParams,
     ConstructorArguments,
