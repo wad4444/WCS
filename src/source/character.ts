@@ -539,7 +539,7 @@ export class Character {
             });
 
             this.statusEffects.forEach((Status, Id) => {
-                if (!CharacterData.statusEffects.has(Id)) {
+                if (!CharacterData.statusEffects.has(Id) && tonumber(Id)! > 0) {
                     Status.Destroy();
                     this.StatusEffectRemoved.Fire(Status);
                 }

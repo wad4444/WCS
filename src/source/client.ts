@@ -17,7 +17,7 @@ class Client {
     private registeredModules: ModuleScript[] = [];
     private receiver: BroadcastReceiver<typeof slices>;
 
-    constructor(ApplyLoggerMiddleware = false) {
+    constructor(ApplyLoggerMiddleware: boolean) {
         currentInstance = this;
 
         this.receiver = createBroadcastReceiver({
@@ -119,7 +119,7 @@ class Client {
     }
 }
 
-export function CreateClient() {
+export function CreateClient(ApplyLoggerMiddleware = false) {
     if (RunService.IsServer()) {
         logError(`Attempted to instantiate Client handler on server side!`);
     }
@@ -129,5 +129,5 @@ export function CreateClient() {
         return currentInstance;
     }
 
-    return new Client();
+    return new Client(ApplyLoggerMiddleware);
 }
