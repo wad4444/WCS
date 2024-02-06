@@ -80,6 +80,9 @@ export abstract class Skill<
     protected MutualExclusives: Constructor<AnyStatus>[] = [];
     protected Requirements: Constructor<AnyStatus>[] = [];
 
+    /** Whenever the start function should check if the skill is active/on cooldown on client side before firing a remote */
+    protected CheckClientState = true;
+
     public Player?: Player;
 
     /** @internal @hidden */
@@ -187,7 +190,7 @@ export abstract class Skill<
      */
     public Start(StarterParams: StarterParams) {
         const state = this.GetState();
-        if (state.IsActive || state.Debounce) return;
+        if ((state.IsActive || state.Debounce) && !(RunService.IsClient() && !this.CheckClientState)) return;
 
         if (RunService.IsClient()) {
             remotes._requestSkill.fire(this.Character.GetId(), this.Name, "Start", StarterParams);
