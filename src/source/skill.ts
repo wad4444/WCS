@@ -8,7 +8,7 @@ import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
 import { remotes } from "./remotes";
 import { rootProducer } from "state/rootProducer";
-import { StatusEffect } from "./statusEffect";
+import { AnyStatus, StatusEffect } from "./statusEffect";
 import Signal from "@rbxts/signal";
 import { Timer, TimerState } from "@rbxts/timer";
 import { t } from "@rbxts/t";
@@ -77,8 +77,8 @@ export abstract class Skill<
      * Checks whenever other skills should be non active for :Start() to procceed.
      */
     protected CheckOthersActive = true;
-    protected MutualExclusives: Constructor<StatusEffect>[] = [];
-    protected Requirements: Constructor<StatusEffect>[] = [];
+    protected MutualExclusives: Constructor<AnyStatus>[] = [];
+    protected Requirements: Constructor<AnyStatus>[] = [];
 
     public Player?: Player;
 

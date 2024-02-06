@@ -345,7 +345,7 @@ export class Character {
     /**
      * Checks if character has any active status effects of the speicified type.
      */
-    public HasStatusEffects(Constructors: Constructor<StatusEffect>[]) {
+    public HasStatusEffects(Constructors: Constructor<AnyStatus>[]) {
         for (const [_, Effect] of pairs(this.statusEffects)) {
             if (!Effect.GetState().IsActive) continue;
             if (Constructors.find((T) => tostring(T) === tostring(getmetatable(Effect)))) return true;
