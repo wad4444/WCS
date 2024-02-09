@@ -40,6 +40,7 @@ export abstract class HoldableSkill<
                 "Disconnect",
             );
         }
+        this._init();
     }
 
     /** @internal @hidden */

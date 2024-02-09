@@ -172,13 +172,21 @@ export abstract class Skill<
             ),
         );
 
-        this.Character._addSkill(this);
         this.isReplicated = RunService.IsClient();
+        if (tostring(getmetatable(this)) === tostring(Skill)) {
+            this._init();
+        }
+    }
 
+    /** @hidden @internal */
+    protected _init() {
+        this.Character._addSkill(this);
         this.startReplication();
         if (!this.isReplicated) {
             rootProducer.setSkillData(this.Character.GetId(), this.Name, this.packData());
         }
+
+        const Args = this.ConstructorArguments;
 
         this.OnConstruct(...Args);
         RunService.IsServer() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
