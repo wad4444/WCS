@@ -70,8 +70,6 @@ export = function () {
 
             RunService.Heartbeat.Wait();
 
-            print(char.GetSkills());
-
             expect(char.GetSkillFromConstructor(someSkill)).to.be.ok();
             expect(char.GetSkillFromString(tostring(someSkill))).to.be.ok();
         });
