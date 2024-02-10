@@ -7,7 +7,9 @@
     "build": "rbxtsc",
     "watch": "rbxtsc -w",
     "prepublishOnly": "npm run build",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test:watch": "rbxtsc -w --type=game -p testing -i testing/include",
+    "serve": "rojo serve testing/testing.project.json"
   },
   "keywords": [
     "WCS",
@@ -31,9 +33,9 @@
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-roblox-ts": "^0.0.36",
     "prettier": "^3.1.0",
+    "rbxts-transformer-private": "^1.0.1",
     "roblox-ts": "^2.2.0",
-    "typescript": "^5.3.3",
-    "rbxts-transformer-private": "^1.0.1"
+    "typescript": "^5.3.3"
   },
   "types": "out/index.d.ts",
   "repository": "https://github.com/g1mmethemoney/WCSTypescript",
@@ -48,6 +50,7 @@
     "@rbxts/services": "^1.5.1",
     "@rbxts/signal": "^1.1.1",
     "@rbxts/t": "^3.1.0",
+    "@rbxts/testez": "^0.4.2-ts.0",
     "@rbxts/timer": "^0.0.9"
   }
 }

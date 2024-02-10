@@ -74,6 +74,7 @@ export class Character {
     };
     private id;
     private moveset?: string;
+    private destroyed = false;
 
     constructor(Instance: Instance);
     /**
@@ -155,6 +156,11 @@ export class Character {
 
         this.Destroyed.Fire();
         this.janitor.Cleanup();
+        this.destroyed = true;
+    }
+
+    public IsDestroyed() {
+        return this.destroyed;
     }
 
     /**
