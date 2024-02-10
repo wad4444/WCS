@@ -220,7 +220,7 @@ export abstract class SkillBase<
         }
 
         if (this.CheckOthersActive && this.Character.GetAllActiveSkills().size() > 0) return;
-        if (!this.ShouldStart()) return;
+        if (!this.ShouldStart(StarterParams)) return;
 
         this.SetState({
             IsActive: true,
@@ -389,7 +389,7 @@ export abstract class SkillBase<
     /**
      * Determines whether the skill should start or not.
      */
-    protected ShouldStart(): boolean {
+    protected ShouldStart(Params: StarterParams): boolean {
         return true;
     }
 
