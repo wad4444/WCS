@@ -1,9 +1,9 @@
 /* eslint-disable roblox-ts/no-array-pairs */
 import { RunService } from "@rbxts/services";
-import { Skill, SkillProps, SkillType, _internal_SkillState } from "./skill";
+import { SkillBase, SkillProps, SkillType, _internal_SkillState } from "./skill";
 import { Timer, TimerState } from "@rbxts/timer";
 import { Character } from "./character";
-import { logError } from "./utility";
+import { isClientContext, isServerContext, logError } from "./utility";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyHoldableSkill = HoldableSkill<any, any[], any, any, any>;
@@ -15,7 +15,7 @@ export abstract class HoldableSkill<
     Metadata = void,
     ServerToClientMessage = void,
     ClientToServerMessage = void,
-> extends Skill<
+> extends SkillBase<
     StarterParams,
     ConstructorArguments,
     Metadata,
@@ -34,7 +34,7 @@ export abstract class HoldableSkill<
     constructor(Character: SkillProps);
     constructor(Props: Character | SkillProps) {
         super(Props as never);
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             this._janitor.Add(
                 this.HoldTimer.completed.Connect(() => this.GetState().IsActive && this.End()),
                 "Disconnect",
@@ -49,13 +49,13 @@ export abstract class HoldableSkill<
 
         if (!PreviousState.IsActive && State.IsActive) {
             if (this.GetState().MaxHoldTime !== undefined) this.HoldTimer.start();
-            RunService.IsClient()
+            isClientContext()
                 ? this.OnStartClient(State.StarterParams as StarterParams)
                 : this.OnStartServer(State.StarterParams as StarterParams);
             this.Started.Fire();
         } else if (PreviousState.IsActive && !State.IsActive) {
             if (this.HoldTimer.getState() === TimerState.Running) this.HoldTimer.stop();
-            RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
+            isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
         if (State.MaxHoldTime !== PreviousState.MaxHoldTime) {

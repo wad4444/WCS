@@ -1,20 +1,23 @@
 /// <reference types="@rbxts/testez/globals" />
 
-import { Workspace } from "@rbxts/services";
+import { RunService, Workspace } from "@rbxts/services";
 import { CreateServer, WCS_Server } from "exports";
 
+print(RunService.IsStudio());
+
 export = function () {
+    let server!: WCS_Server;
+
     describe("server", () => {
-        let server!: WCS_Server;
         it("should create a server", () => {
             server = CreateServer();
             expect(server).to.be.ok();
         });
         it("should register directories", () => {
-            expect(server.Start()).to.be.ok();
+            server.RegisterDirectory(Workspace);
         });
         it("should run the server", () => {
-            expect(server.Start()).to.be.ok();
+            server.Start();
         });
         it("should be active", () => {
             expect(server.IsActive()).equal(true);

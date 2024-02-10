@@ -2,7 +2,16 @@
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
-import { Constructor, ReadonlyDeep, freezeCheck, getActiveHandler, logError, logWarning } from "./utility";
+import {
+    Constructor,
+    ReadonlyDeep,
+    freezeCheck,
+    getActiveHandler,
+    isServerContext,
+    logError,
+    logWarning,
+    isClientContext,
+} from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
 import { SelectStatusData } from "state/selectors";
@@ -45,7 +54,7 @@ export type UnknownStatus = StatusEffect<unknown, unknown[]>;
 const registeredStatuses: Map<string, Constructor<UnknownStatus>> = new Map();
 let nextId = 0;
 function generateId() {
-    nextId += RunService.IsServer() ? 1 : -1;
+    nextId += isServerContext() ? 1 : -1;
     return tostring(nextId);
 }
 
@@ -106,7 +115,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             logError(`Attempted to instantiate a character before server has started.`);
         }
 
-        this.isReplicated = RunService.IsClient() && tonumber(this.id)! > 0;
+        this.isReplicated = isClientContext() && tonumber(this.id)! > 0;
         this.ConstructorArguments = Args;
 
         this.janitor.Add(
@@ -135,11 +144,11 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         Character._addStatus(this);
         this.startReplicationClient();
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.setStatusData(this.Character.GetId(), this.id, this._packData());
         }
         this.OnConstruct(...Args);
-        RunService.IsServer() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
+        isServerContext() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
     }
 
     /**
@@ -241,7 +250,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.HumanoidDataChanged.Fire(newData, this.humanoidData);
         this.humanoidData = newData;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: this.humanoidData,
             });
@@ -255,7 +264,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.HumanoidDataChanged.Fire(undefined, this.humanoidData);
         this.humanoidData = undefined;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: undefined,
             });
@@ -275,7 +284,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.MetadataChanged.Fire(undefined, this.metadata);
         this.metadata = undefined;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 metadata: undefined,
             });
@@ -301,7 +310,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         freezeCheck(newState);
         this.state = newState;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 state: newState,
             });
@@ -324,7 +333,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.MetadataChanged.Fire(NewMeta, this.metadata);
         this.metadata = NewMeta;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 metadata: NewMeta,
             });
@@ -377,7 +386,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Destroys the status effect and removes it from the character
      */
     public Destroy() {
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.deleteStatusData(this.Character.GetId(), this.id);
         }
 
@@ -411,11 +420,11 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     private stateDependentCallbacks(State: internal_statusEffectState, PreviousState: internal_statusEffectState) {
         if (PreviousState.IsActive === State.IsActive) return;
         if (!PreviousState.IsActive && State.IsActive) {
-            RunService.IsClient() ? this.OnStartClient() : this.OnStartServer();
+            isClientContext() ? this.OnStartClient() : this.OnStartServer();
             this.Started.Fire();
-            RunService.IsServer() ?? this.OnEndServer();
+            isServerContext() ?? this.OnEndServer();
         } else if (PreviousState.IsActive && !State.IsActive) {
-            RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
+            isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
 

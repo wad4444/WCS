@@ -2,6 +2,7 @@ import { Symbol } from "symbol";
 import { WCS_Client } from "./client";
 import { WCS_Server } from "./server";
 import { DeepReadonly } from "@rbxts/reflex";
+import { RunService } from "@rbxts/services";
 
 export const consolePrefix = `WCS`;
 const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`;
@@ -22,6 +23,14 @@ export function mapToArray<T extends defined, K extends defined>(Map: Map<T, K>)
 
 export function logMessage(Message: string) {
     print(`[${consolePrefix}]: ${Message}`);
+}
+
+export function isServerContext() {
+    return RunService.IsServer();
+}
+
+export function isClientContext() {
+    return RunService.IsClient() && RunService.IsRunning();
 }
 
 export type Constructor<T extends object = object> = new (...args: never[]) => T;

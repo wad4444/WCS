@@ -2,7 +2,7 @@
 import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
-import { logError, logMessage, logWarning, setActiveHandler } from "source/utility";
+import { isClientContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
 import { remotes } from "./remotes";
 import { slices } from "state/slices";
 import { rootProducer } from "state/rootProducer";
@@ -115,7 +115,7 @@ class Server {
 }
 
 export function CreateServer() {
-    if (RunService.IsClient()) {
+    if (isClientContext()) {
         logError(`Attempted to instantiate server handler on client side!`);
     }
 

@@ -1,14 +1,16 @@
 import { Players, RunService } from "@rbxts/services";
-import { Constructor, getActiveHandler, logError, logMessage, logWarning, mapToArray } from "./utility";
+import {
+    Constructor,
+    getActiveHandler,
+    isClientContext,
+    isServerContext,
+    logError,
+    logWarning,
+    mapToArray,
+} from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectCharacterData } from "state/selectors";
-import {
-    AnyStatus,
-    GetRegisteredStatusEffectConstructor,
-    StatusData,
-    StatusEffect,
-    UnknownStatus,
-} from "./statusEffect";
+import { AnyStatus, GetRegisteredStatusEffectConstructor, StatusData, UnknownStatus } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
 import { AnySkill, GetRegisteredSkillConstructor, Skill, SkillData, UnknownSkill } from "./skill";
 import { rootProducer } from "state/rootProducer";
@@ -33,7 +35,7 @@ export interface DamageContainer {
 export type AffectableHumanoidProps = Pick<Humanoid, "WalkSpeed" | "JumpPower" | "AutoRotate" | "JumpHeight">;
 let nextId = 0;
 function generateId() {
-    if (RunService.IsClient()) logError(`Why are you trying to call this on client?`);
+    if (isClientContext()) logError(`Why are you trying to call this on client?`);
     nextId++;
     return tostring(nextId);
 }
@@ -83,7 +85,7 @@ export class Character {
      */
     constructor(Instance: Instance, canCreateClient: FlagWithData<string>);
     constructor(Instance: Instance, canCreateClient?: FlagWithData<string>) {
-        if (RunService.IsClient() && canCreateClient?.flag !== Flags.CanCreateCharacterClient) {
+        if (isClientContext() && canCreateClient?.flag !== Flags.CanCreateCharacterClient) {
             logError(
                 `Attempted to manually create a character on client. \n On client side character are created by the handler automatically, \n doing this manually can lead to a possible desync`,
             );
@@ -121,7 +123,7 @@ export class Character {
             this.HumanoidPropertiesUpdated.Destroy();
         });
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.setCharacterData(this.id, this._packData());
 
             const server = getActiveHandler<WCS_Server>()!;
@@ -146,7 +148,7 @@ export class Character {
      */
     public Destroy() {
         Character.currentCharMap.delete(this.Instance);
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.deleteCharacterData(this.id);
         }
 
@@ -167,7 +169,7 @@ export class Character {
      * @returns The damage that was actually taken.
      */
     public TakeDamage(Container: DamageContainer) {
-        if (RunService.IsClient()) {
+        if (isClientContext()) {
             logWarning(`Cannot use :TakeDamage() on client`);
             return;
         }
@@ -189,7 +191,7 @@ export class Character {
 
     /** Predicts the estimated damage in health after the status effect appliement */
     public PredictDamage(Container: DamageContainer) {
-        if (RunService.IsClient()) {
+        if (isClientContext()) {
             logWarning(`Cannot use :TakeDamage() on client`);
             return;
         }
@@ -238,7 +240,7 @@ export class Character {
         }
 
         this.skills.set(name, Skill);
-        Skill.Destroyed.Once(() => {
+        Skill.Destroyed.Connect(() => {
             this.skills.delete(name);
         });
     }
@@ -262,7 +264,7 @@ export class Character {
 
     public SetDefaultProps(Props: AffectableHumanoidProps) {
         this.defaultsProps = Props;
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchCharacterData(this.id, {
                 defaultProps: Props,
             });
@@ -393,7 +395,7 @@ export class Character {
     public ApplyMoveset(Moveset: string): void;
     public ApplyMoveset(Moveset: Moveset): void;
     public ApplyMoveset(Moveset: Moveset | string) {
-        if (!RunService.IsServer()) {
+        if (!isServerContext()) {
             logWarning(`Attempted to apply moveset on client`);
             return;
         }
@@ -458,7 +460,7 @@ export class Character {
      * Clears the moveset and destroys all skills.
      */
     public ClearMoveset() {
-        if (!RunService.IsServer()) {
+        if (!isServerContext()) {
             logError(`Attempted to clear moveset on client`);
         }
         if (!this.moveset) return;
@@ -490,7 +492,7 @@ export class Character {
     }
 
     private setupReplication_Client() {
-        if (!RunService.IsClient()) return;
+        if (!isClientContext()) return;
         if (!getActiveHandler()) return;
 
         const processStatusAddition = (Data: StatusData, Id: string) => {
@@ -576,7 +578,7 @@ export class Character {
     }
 
     private updateHumanoidProps() {
-        if (RunService.IsServer() && this.Player) return;
+        if (isServerContext() && this.Player) return;
 
         const statuses: UnknownStatus[] = [];
         this.statusEffects.forEach((Status) => {

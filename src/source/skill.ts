@@ -3,7 +3,16 @@
 import { Players, RunService } from "@rbxts/services";
 import { Character, DamageContainer } from "./character";
 import { Flags } from "./flags";
-import { Constructor, ReadonlyDeep, freezeCheck, getActiveHandler, logError, logWarning } from "./utility";
+import {
+    Constructor,
+    ReadonlyDeep,
+    freezeCheck,
+    getActiveHandler,
+    isClientContext,
+    isServerContext,
+    logError,
+    logWarning,
+} from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
 import { remotes } from "./remotes";
@@ -49,10 +58,8 @@ export type UnknownSkill = Skill<unknown, unknown[], unknown, unknown, unknown>;
 
 const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
-/**
- * A status effect class.
- */
-export abstract class Skill<
+/** @hidden @internal */
+export abstract class SkillBase<
     StarterParams = void,
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
@@ -92,6 +99,7 @@ export abstract class Skill<
         IsActive: false,
         Debounce: false,
     };
+    private destroyed = false;
     private metadata?: Metadata;
     protected readonly Name = tostring(getmetatable(this));
     protected readonly ConstructorArguments: ConstructorArguments;
@@ -119,14 +127,14 @@ export abstract class Skill<
             logError(`Attempted to instantiate a skill before server has started.`);
         }
 
-        if (RunService.IsClient() && Flag !== Flags.CanInstantiateSkillClient) {
+        if (isClientContext() && Flag !== Flags.CanInstantiateSkillClient) {
             logError(`Attempted to instantiate a skill on client`);
         }
 
         this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
         this.ConstructorArguments = Args;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             this._janitor.Add(
                 remotes._messageToServer.connect((Player, CharacterId, SkillName, Message) => {
                     if (Player !== this.Player) return;
@@ -172,10 +180,7 @@ export abstract class Skill<
             ),
         );
 
-        this.isReplicated = RunService.IsClient();
-        if (tostring(getmetatable(this)) === tostring(Skill)) {
-            this._init();
-        }
+        this.isReplicated = isClientContext();
     }
 
     /** @hidden @internal */
@@ -189,7 +194,7 @@ export abstract class Skill<
         const Args = this.ConstructorArguments;
 
         this.OnConstruct(...Args);
-        RunService.IsServer() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
+        isServerContext() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
     }
 
     /**
@@ -198,9 +203,9 @@ export abstract class Skill<
      */
     public Start(StarterParams: StarterParams) {
         const state = this.GetState();
-        if ((state.IsActive || state.Debounce) && !(RunService.IsClient() && !this.CheckClientState)) return;
+        if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
-        if (RunService.IsClient()) {
+        if (isClientContext()) {
             remotes._requestSkill.fire(this.Character.GetId(), this.Name, "Start", StarterParams);
             return;
         }
@@ -224,11 +229,15 @@ export abstract class Skill<
         });
     }
 
+    public IsDestroyed() {
+        return this.destroyed;
+    }
+
     /**
      * Force end the skill. This is automatically called after OnStartServer() is completed
      */
     public End() {
-        if (RunService.IsClient()) {
+        if (isClientContext()) {
             remotes._requestSkill.fire(this.Character.GetId(), this.Name, "End", undefined);
             return;
         }
@@ -249,9 +258,11 @@ export abstract class Skill<
      * Destroys the skill and removes it from the character
      */
     public Destroy() {
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.deleteSkillData(this.Character.GetId(), this.Name);
         }
+        this.destroyed = true;
+        this.Destroyed.Fire();
         this._janitor.Cleanup();
     }
 
@@ -260,13 +271,13 @@ export abstract class Skill<
         if (PreviousState._isActive_counter === State._isActive_counter) return;
 
         if (!PreviousState.IsActive && State.IsActive) {
-            RunService.IsClient()
+            isClientContext()
                 ? this.OnStartClient(State.StarterParams as StarterParams)
                 : this.OnStartServer(State.StarterParams as StarterParams);
             this.Started.Fire();
-            if (RunService.IsServer()) this.End();
+            if (isServerContext()) this.End();
         } else if (PreviousState.IsActive && !State.IsActive) {
-            RunService.IsClient() ? this.OnEndClient() : this.OnEndServer();
+            isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
@@ -299,7 +310,7 @@ export abstract class Skill<
         this.MetadataChanged.Fire(NewMeta, this.metadata);
         this.metadata = NewMeta;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
                 metadata: NewMeta,
             });
@@ -324,7 +335,7 @@ export abstract class Skill<
     }
 
     protected ApplyCooldown(Duration: number) {
-        if (!RunService.IsServer()) {
+        if (!isServerContext()) {
             logWarning(`Cannot :ApplyCooldown() on client.`);
             return;
         }
@@ -366,7 +377,7 @@ export abstract class Skill<
         freezeCheck(newState);
         this.state = newState;
 
-        if (RunService.IsServer()) {
+        if (isServerContext()) {
             rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
                 state: newState,
             });
@@ -416,7 +427,7 @@ export abstract class Skill<
     protected SendMessageToClient(Message: ServerToClientMessage) {
         if (!this.Player) return;
 
-        if (!RunService.IsServer()) {
+        if (!isServerContext()) {
             logWarning(`Tried to send a message from client to client`);
             return;
         }
@@ -430,7 +441,7 @@ export abstract class Skill<
     protected SendMessageToServer(Message: ClientToServerMessage) {
         if (!this.Player) return;
 
-        if (!RunService.IsClient()) {
+        if (!isClientContext()) {
             logWarning(`Tried to send a message from server to server`);
             return;
         }
@@ -458,6 +469,20 @@ export abstract class Skill<
     protected HandleServerMessage(Message: ServerToClientMessage) {}
     protected OnEndClient() {}
     protected OnEndServer() {}
+}
+
+/** A skill class. */
+export abstract class Skill<
+    StarterParams = void,
+    ConstructorArguments extends unknown[] = [],
+    Metadata = void,
+    ServerToClientMessage = void,
+    ClientToServerMessage = void,
+> extends SkillBase<StarterParams, ConstructorArguments, Metadata, ServerToClientMessage, ClientToServerMessage> {
+    constructor(Character: Character, ...Args: ConstructorArguments) {
+        super(Character, ...Args);
+        this._init();
+    }
 }
 
 /**

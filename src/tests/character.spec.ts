@@ -2,13 +2,13 @@
 
 import { Janitor } from "@rbxts/janitor";
 import { shallowEqual } from "@rbxts/reflex";
-import { Workspace } from "@rbxts/services";
+import { RunService, Workspace } from "@rbxts/services";
 import { Character, Skill, SkillDecorator, StatusEffect, StatusEffectDecorator } from "exports";
 
 function haveKeys(object: object, keys: string[]) {
     // eslint-disable-next-line roblox-ts/no-array-pairs
     for (const [i, v] of pairs(keys)) {
-        if (!(i in object)) return false;
+        if (!(v in object)) return false;
     }
 
     return true;
@@ -16,7 +16,6 @@ function haveKeys(object: object, keys: string[]) {
 
 export = function () {
     const janitor = new Janitor();
-    let char: Character;
 
     @SkillDecorator
     class someSkill extends Skill {}
@@ -24,124 +23,144 @@ export = function () {
     @StatusEffectDecorator
     class someStatus extends StatusEffect {}
 
+    function makeChar() {
+        const part = new Instance("Part");
+        new Instance("Humanoid", part);
+        janitor.Add(part);
+
+        const character = new Character(part);
+        janitor.Add(character);
+        return character;
+    }
+
     describe("instantiation", () => {
         it("should instantiate a character over a valid instance", () => {
-            const model = new Instance("Humanoid", new Instance("Part"));
-            janitor.Add(model);
-
-            const character = new Character(model);
-            expect(character).to.be.ok();
-
-            char = character;
-
-            janitor.Add(char);
+            expect(makeChar()).to.be.ok();
         });
 
         it("should throw if instance is invalid", () => {
-            expect(new Character(Workspace)).to.throw();
+            expect(() => new Character(Workspace)).to.throw();
         });
     });
 
     describe("humanoid props", () => {
         it("should have valid humanoid props", () => {
             expect(
-                haveKeys(char.GetDefaultsProps(), ["WalkSpeed", "JumpPower", "JumpHeight", "AutoRotate"]),
+                haveKeys(makeChar().GetDefaultsProps(), ["WalkSpeed", "JumpPower", "JumpHeight", "AutoRotate"]),
             ).to.be.equal(true);
         });
 
         it("should set new props", () => {
+            const char = makeChar();
             const props = {
                 WalkSpeed: 0,
                 JumpPower: 0,
                 JumpHeight: 0,
                 AutoRotate: false,
             } as const;
-            expect(char.SetDefaultProps(props)).to.be.ok();
+            char.SetDefaultProps(props);
             expect(shallowEqual(char.GetDefaultsProps(), props)).to.be.equal(true);
         });
     });
 
     describe("skills", () => {
         it("should add a skill", () => {
-            expect(new someSkill(char)).to.be.ok();
-        });
+            const char = makeChar();
+            new someSkill(char);
 
-        it("should list the added skill", () => {
-            expect(char.GetSkills().find((T) => T instanceof someSkill) !== undefined).to.be.equal(true);
-        });
+            RunService.Heartbeat.Wait();
 
-        it("should get the added skill by the name & constructor", () => {
-            expect(char.GetSkillFromConstructor(someSkill) instanceof someSkill).to.be.equal(true);
-            expect(char.GetSkillFromString(tostring(someSkill)) instanceof someSkill).to.be.equal(true);
+            print(char.GetSkills());
+
+            expect(char.GetSkillFromConstructor(someSkill)).to.be.ok();
+            expect(char.GetSkillFromString(tostring(someSkill))).to.be.ok();
         });
 
         it("should remove skills", () => {
-            expect(char.GetSkills().forEach((T) => T.Destroy())).to.be.ok();
+            const char = makeChar();
+            new someSkill(char);
+
+            char.GetSkills().forEach((T) => T.Destroy());
+            RunService.Heartbeat.Wait();
             expect(char.GetSkills().size()).to.be.equal(0);
         });
     });
 
     describe("statuses", () => {
         it("should add a status", () => {
-            expect(new someStatus(char)).to.be.ok();
+            expect(new someStatus(makeChar())).to.be.ok();
         });
 
         it("should list the added status", () => {
-            expect(char.GetAllStatusEffects().find((T) => T instanceof someStatus) !== undefined).to.be.equal(true);
+            const char = makeChar();
+            new someStatus(char);
+
+            expect(char.GetAllStatusEffects().size()).to.be.equal(1);
             expect(char.GetAllStatusEffectsOfType(someStatus).size()).to.be.equal(1);
         });
 
         it("should list an active status", () => {
-            expect(char.GetAllStatusEffectsOfType(someStatus).forEach((T) => T.Start())).to.be.ok();
-            expect(char.GetAllActiveStatusEffectsOfType(someStatus).size() > 0).to.be.equal(true);
+            const char = makeChar();
+            const status = new someStatus(char);
+            status.Start();
+
+            expect(char.GetAllActiveStatusEffectsOfType(someStatus).size()).to.be.equal(1);
         });
 
         it("should remove a status", () => {
-            expect(char.GetAllStatusEffects().forEach((T) => T.Destroy())).to.be.ok();
+            const char = makeChar();
+            new someStatus(char);
+
+            char.GetAllStatusEffects().forEach((T) => T.Destroy());
+            RunService.Heartbeat.Wait();
             expect(char.GetAllStatusEffects().size()).to.be.equal(0);
         });
     });
 
     describe("damage", () => {
         it("should take damage", () => {
-            expect(
-                char.TakeDamage({
-                    Source: undefined,
-                    Damage: 10,
-                }),
-            ).to.be.ok();
+            makeChar().TakeDamage({
+                Source: undefined,
+                Damage: 10,
+            });
         });
 
         it("should fire callbacks", () => {
+            const char = makeChar();
             let pass = false;
             char.DamageTaken.Connect(() => (pass = true));
 
-            expect(
-                char.TakeDamage({
-                    Source: undefined,
-                    Damage: 10,
-                }),
-            ).to.be.ok();
+            char.TakeDamage({
+                Source: undefined,
+                Damage: 10,
+            });
+
+            RunService.Heartbeat.Wait();
             expect(pass).to.be.equal(true);
         });
     });
 
     describe("destroy", () => {
-        beforeAll(() => {
-            new someStatus(char);
-            new someSkill(char);
-        });
-
         it("should destroy successfully", () => {
             let pass = false;
+            const char = makeChar();
             char.Destroyed.Connect(() => (pass = true));
+            char.Destroy();
 
-            expect(char.Destroy()).to.be.ok();
+            RunService.Heartbeat.Wait();
+
             expect(pass).to.be.equal(true);
             expect(char.IsDestroyed()).to.be.equal(true);
         });
 
         it("should destroy all skills and statuses", () => {
+            const char = makeChar();
+            new someStatus(char);
+            new someSkill(char);
+
+            char.Destroy();
+            RunService.Heartbeat.Wait();
+
             expect(char.GetAllStatusEffects().size()).to.be.equal(0);
             expect(char.GetSkills().size()).to.be.equal(0);
         });
