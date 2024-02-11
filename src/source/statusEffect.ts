@@ -274,7 +274,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     /**
      * Clears the metadata
      */
-    public ClearMetadata() {
+    protected ClearMetadata() {
         if (this.isReplicated) {
             logError(
                 `Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync`,

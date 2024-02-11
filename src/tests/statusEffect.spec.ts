@@ -10,6 +10,10 @@ export = function () {
         changeMeta(newMeta: number) {
             this.SetMetadata(newMeta);
         }
+
+        clearMeta() {
+            this.ClearMetadata();
+        }
     }
 
     function makeChar() {
@@ -101,7 +105,7 @@ export = function () {
             const status = new emptyStatus(makeChar());
 
             status.changeMeta(5);
-            status.ClearMetadata();
+            status.clearMeta();
             RunService.Heartbeat.Wait();
 
             expect(status.GetMetadata()).to.never.be.ok();
