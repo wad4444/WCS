@@ -10,7 +10,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 Before we continue with *starting a skill*, it's really **important** to know some stuff 
 about *wcs internals*, *especially how it handles* the **replicaton process**.
 
-Every action *is launched on server*б and then gets *replicated* to client. Here is a simple *block scheme* that
+Every action *is launched on server*, and then gets *replicated* to client. Here is a simple *block scheme* that
 represents it visually:
 
 <ThemedImage
