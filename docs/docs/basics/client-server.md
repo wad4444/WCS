@@ -7,7 +7,7 @@ import TabItem from "@theme/TabItem";
 
 # Client / Server Setup
 
-Start off your *setup* by creating a special **WCS** objects: `Client` and `Server` handlers.
+Start off your *setup* by creating two special **WCS** objects: `Client` and `Server` handlers.
 
 The objects should register your *directories* *containing skills* and *status effects*.
 Provide *the directories* by using `RegisterDirectory` method on both of them.
@@ -62,7 +62,7 @@ Server:Start()
 </TabItem>
 </Tabs>
 
-Do the same thing for client side, except use the `CreateClient()` function:
+Do the same thing on the client side, except use the `CreateClient()` function:
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>

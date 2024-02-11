@@ -8,7 +8,7 @@ You can currently install **WCS** to your *project* with *3 different methods*:
 
 ### NPM Installation
 
-Intended for only *[Typescript](https://typescriptlang.org/)* users:
+Intended only for *[Typescript](https://typescriptlang.org/)* users:
 Install **WCS** by running *the following command* in your *terminal*:
 
 ```bash
@@ -28,7 +28,7 @@ wcs = "cheetiedotpy/wcs@0.6.32"
 
 ### Roblox Studio Installation
 
-If you are not using **[Rojo](https://rojo.space/)** navigate yourself to *[github releases](https://github.com/g1mmethemoney/WCSTypescript/releases/)*
+If you are not using **[Rojo](https://rojo.space/)**, navigate yourself to *[github releases](https://github.com/g1mmethemoney/WCSTypescript/releases/)*
 page and download *rbxm* file of *the latest* version:
 
 img here idiot

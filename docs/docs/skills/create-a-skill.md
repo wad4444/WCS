@@ -9,7 +9,7 @@ import TabItem from "@theme/TabItem";
 
 It's a common thing to question how do you create an ability with **WCS**.
 
-A **WCS** ability/skill is a *class* that when instantiated gets bound to a *character*. To define the behaviour of your ability you override the default methods.
+A **WCS** ability/skill is a *class* that, when instantiated, gets bound to a *character*. To define the behaviour of your ability you override the default methods.
 Let's make a file/script `attack` and register our *first ability*:
 
 <Tabs groupId="languages">
