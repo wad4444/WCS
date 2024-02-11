@@ -38,3 +38,42 @@ return Block
 
 </TabItem>
 </Tabs>
+
+Then set the *max hold duration* to *undefined*, so we could *hold the block* infinitely.
+
+<Tabs groupId="languages">
+<TabItem value="TypeScript" default>
+
+```ts title="block.ts" showLineNumbers {5-7}
+import { HoldableSkill, SkillDecorator } from "@rbxts/wcs";
+
+@SkillDecorator
+export class Block extends HoldableSkill {
+	public OnConstructServer() {
+		this.SetMaxHoldDuration(undefined);
+	}
+}
+```
+
+</TabItem>
+<TabItem value="Luau">
+
+```lua title="block.lua" showLineNumbers {6-8}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local WCS = require(ReplicatedStorage.WCS)
+
+local Block = WCS.RegisterHoldableSkill("Block")
+
+function BLock:OnConstructServer()
+	this:SetMaxHoldDuration(nil)
+end
+
+return Block
+```
+
+</TabItem>
+</Tabs>
+
+:::note
+You can determine if the ability is holdable or not by calling `GetSkillType()`
+:::
