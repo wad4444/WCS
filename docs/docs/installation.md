@@ -35,4 +35,4 @@ img here idiot
 
 And put it under `Replicated Storage`:
 
-![Replicated Storage](./images/replicatedstorage.png)
+![Replicated Storage](../static/img/replicatedstorage.png)

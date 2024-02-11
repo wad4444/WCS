@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Define The Behaviour
 
 import Tabs from "@theme/Tabs";

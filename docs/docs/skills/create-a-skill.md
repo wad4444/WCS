@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Create an ability
 
 import Tabs from "@theme/Tabs";
