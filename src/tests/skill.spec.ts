@@ -2,7 +2,7 @@
 
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
-import { SkillDecorator, Skill, Character, SkillType } from "exports";
+import { SkillDecorator, Skill, Character, SkillType, HoldableSkill } from "exports";
 
 export = function () {
     const janitor = new Janitor();
@@ -18,6 +18,17 @@ export = function () {
     class emptySkill extends Skill<void, [], number> {
         public changeMeta(meta: number) {
             this.SetMetadata(meta);
+        }
+    }
+
+    @SkillDecorator
+    class holdableSkill extends HoldableSkill {
+        protected OnConstructServer(): void {
+            this.SetMaxHoldTime(5);
+        }
+
+        public setTime(newTime: number | undefined): void {
+            this.SetMaxHoldTime(newTime);
         }
     }
 
@@ -137,6 +148,18 @@ export = function () {
         it("should return a valid name", () => {
             const skill = new emptySkill(makeChar());
             expect(skill.GetName()).to.be.equal(tostring(emptySkill));
+        });
+    });
+
+    describe("holdable", () => {
+        it("should instantiate a skill", () => {
+            expect(new holdableSkill(makeChar())).to.be.ok();
+        });
+
+        it("should set/get max hold time", () => {
+            const skill = new holdableSkill(makeChar());
+            skill.setTime(5);
+            expect(skill.GetMaxHoldTime()).to.be.equal(5);
         });
     });
 

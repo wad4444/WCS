@@ -72,7 +72,7 @@ export abstract class HoldableSkill<
     /**
      * Sets the maximum hold time for the skill.
      */
-    public SetMaxHoldTime(MaxHoldTime?: number) {
+    protected SetMaxHoldTime(MaxHoldTime?: number) {
         if (MaxHoldTime && MaxHoldTime <= 0) {
             logError("Max Hold Time can't be lower or equal to zero");
         }
