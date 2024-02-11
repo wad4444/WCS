@@ -23,6 +23,8 @@ jobs:
           node-version: 18
           cache: npm
 
+      - name: Move to the docs directory
+        run: cd docs
       - name: Install dependencies
         run: npm ci
       - name: Build website
