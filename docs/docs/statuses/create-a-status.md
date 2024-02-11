@@ -7,8 +7,8 @@ sidebar_position: 1
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-*Status Effects* in **WCS** are classes that represent *side-effects*. The usage is very similar to skills, you also *define their behaviour*
-with overriding *default methods*. They also provide *useful tooling* for manipulating *roblox humanoid stats*, e.g: setting the walkspeed 
+*Status Effects* in **WCS** are classes that represent *side-effects*. The usage is very similar to skills, you also *define their behavior by*
+ overriding *default methods*. They also provide *useful tooling* for manipulating *roblox humanoid stats*, e.g, setting the walkspeed 
 when the player should be stunned.
 
 Let's register a simple status effect:

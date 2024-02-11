@@ -4,15 +4,15 @@ sidebar_position: 6
 
 # Messages
 
-Messages is a powerful concept in **WCS** that allows the *client* and *server* sides of your ability to **communicate** between eachother.
-Think of them as regular remote calls: when client sends a message using `SendMessageToServer()`, server can handle it inside `HandleClientMessage()` 
-method and vise versa.
+Messages are a powerful concept in **WCS** that allow the *client* and *server* sides of your ability to **communicate** between eachother.
+Think of them as regular remote calls: when the client sends a message using `SendMessageToServer()`, the server can handle it inside `HandleClientMessage()` method.
+method and vice versa.
 
 :::danger
 You should **always** validate your arguments manually when receiving messages from *client*. They act like regular *remote calls* and exploiters can send invalid data.
 :::
 
-Here is a *simple example* how would you implement messages inside *an ability*:
+Here is a *simple example* on how would you implement messages inside *an ability*:
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";

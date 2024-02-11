@@ -9,9 +9,9 @@ import TabItem from "@theme/TabItem";
 
 Let's *bind* our ability start to some *user input*.
 To achieve this, we need to modify our `client.ts` file, so that it could
-listen to user inputs and start the skill we need.
+listen to user input and start the skill we need.
 
-Then, when *user makes an input* it should get the *[replicated character wrap](replication-explained.md)*, get the skill and request the launch by calling `Start`
+Then, when *a user makes an input* it should get the *[replicated character wrap](replication-explained.md)*, get the skill and request the launch by calling `Start`.
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>

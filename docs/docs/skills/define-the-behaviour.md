@@ -2,12 +2,12 @@
 sidebar_position: 2
 ---
 
-# Define The Behaviour
+# Define The behavior
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-Now, after we *[created our first ability](./create-a-skill)* we need to define its *custom behaviour*.
+Now, after we *[created our first ability](./create-a-skill)* we need to define its *custom behavior*.
 Right now, lets make it *print something* when player *starts the ability*:
 
 <Tabs groupId="languages">
@@ -43,4 +43,4 @@ return Attack
 </TabItem>
 </Tabs>
 
-Okay! That's *great* but [let's start our ability](./start-an-ability)!
+Okay! That's *great*, but [let's start our ability](./start-an-ability)!

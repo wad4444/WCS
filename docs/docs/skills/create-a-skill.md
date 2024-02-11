@@ -7,7 +7,7 @@ sidebar_position: 1
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-A **WCS** ability/skill is a *class* that, when instantiated, gets bound to a *character*. To define the behaviour of your ability you override the default methods.
+A **WCS** ability/skill is a *class* that, when instantiated, gets bound to a *character*. To define the behavior of your ability you override the default methods.
 Let's make a file/script `attack` and register our *first ability*:
 
 <Tabs groupId="languages">
@@ -35,5 +35,5 @@ return Attack
 </TabItem>
 </Tabs>
 
-Here is how *simple* you create a whole new ability! Worth to mention, this is where you get first *syntactical difference* between
+Here is how *simple* it is to create a whole new ability! Worth to mention, this is where you get first *syntactical difference* between
 typescript and luau. *Here* is where you can view all [*syntactical differences*](../extras/differences).

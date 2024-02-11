@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # Holdable Abilities
 
-Sometimes, you wanna *create an* **ability** that you can use for *an* **unknown** *amount* of time, which depends on *user input*.
+Sometimes, you want to *create an* **ability** that you can use for *an* **unknown** *amount* of time, depending on *user input*.
 
 **WCS** introduces a whole new ability type for this case: `HoldableSkill`, which you can specify the max hold time of and run the callbacks
 whenever it ends like on a regular ability.
@@ -39,7 +39,7 @@ return Block
 </TabItem>
 </Tabs>
 
-Then set the *max hold duration* to *undefined*, so we could *hold the block* infinitely.
+Then set the *max hold duration* to *undefined*, so we could *hold the block* indefinitely.
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
