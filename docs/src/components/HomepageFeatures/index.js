@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 const FeatureList = [
     {
         title: "Easy to Use",
-        Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
+        Svg: require("@site/static/img/plug.svg").default,
         description: (
             <>
                 WCS was created with simplicity in mind, covering every possible aspect of a combat system and providing
@@ -15,7 +15,7 @@ const FeatureList = [
     },
     {
         title: "Flexible and abstract",
-        Svg: require("@site/static/img/undraw_docusaurus_tree.svg").default,
+        Svg: require("@site/static/img/settings.svg").default,
         description: (
             <>
                 WCS is very flexible and will fullfil all your needs, hiding tedious stuff like replication and ability
@@ -25,7 +25,7 @@ const FeatureList = [
     },
     {
         title: "Made with Typescript",
-        Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
+        Svg: require("@site/static/img/wires1.svg").default,
         description: (
             <>
                 WCS is made using Typescript & Roblox-ts so it supports typescript natively. However, it also provides
