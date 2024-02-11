@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction  
 
-**WCS** is a handy library that provides **useful abstraction** for your combat systems.
+**WCS** is a handy framework that provides **useful abstraction** for your combat systems.
 It allows you to create **any kind** of combat systems with **ease**, providing tools and covering basic and tedious stuff, like *replication*,
 *skill creation*, *side effects*, *requests to server*.
 

@@ -8,20 +8,22 @@ import { themes as prismThemes } from "prism-react-renderer";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-    title: "My Site",
-    tagline: "Dinosaurs are cool",
-    favicon: "img/favicon.ico",
+    title: "WCS",
+    tagline: "A flexible combat system framework",
+    favicon: "img/logo.svg",
+    deploymentBranch: "gh-pages",
 
     // Set the production url of your site here
-    url: "https://your-docusaurus-site.example.com",
+    url: "https://g1mmethemoney.github.io",
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
     baseUrl: "/",
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
-    organizationName: "facebook", // Usually your GitHub org/user name.
-    projectName: "docusaurus", // Usually your repo name.
+    organizationName: "g1mmethemoney", // Usually your GitHub org/user name.
+    projectName: "g1mmethemoney.github.io", // Usually your repo name.
+    trailingSlash: false,
 
     onBrokenLinks: "throw",
     onBrokenMarkdownLinks: "warn",
@@ -54,11 +56,11 @@ const config = {
         /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
         ({
             // Replace with your project's social card
-            image: "img/docusaurus-social-card.jpg",
+            image: "img/social-card.png",
             navbar: {
-                title: "My Site",
+                title: "WCS",
                 logo: {
-                    alt: "My Site Logo",
+                    alt: "WCS Logo",
                     src: "img/logo.svg",
                 },
                 items: [
@@ -77,36 +79,8 @@ const config = {
             },
             footer: {
                 style: "dark",
-                links: [
-                    {
-                        title: "Docs",
-                        items: [
-                            {
-                                label: "Tutorial",
-                                to: "/docs/intro",
-                            },
-                        ],
-                    },
-                    {
-                        title: "Community",
-                        items: [
-                            {
-                                label: "Discord",
-                                href: "https://discord.com/invite/JFvZY5JSBT",
-                            },
-                        ],
-                    },
-                    {
-                        title: "More",
-                        items: [
-                            {
-                                label: "GitHub",
-                                href: "https://github.com/g1mmethemoney/WCSTypescript",
-                            },
-                        ],
-                    },
-                ],
-                copyright: `Built with Docusaurus & Love ♥`,
+                links: [],
+                copyright: `Copyright © ${new Date().getFullYear()} g1mmethemoney. Built with Docusaurus & Love`,
             },
             prism: {
                 theme: prismThemes.github,

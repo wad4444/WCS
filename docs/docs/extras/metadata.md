@@ -62,3 +62,7 @@ return Attack
 
 </TabItem>
 </Tabs>
+
+:::note
+The usage with status effects is the same.
+:::

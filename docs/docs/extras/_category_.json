@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial - Extras",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "A collection of extra things and details you should probably know about."
+  }
+}
