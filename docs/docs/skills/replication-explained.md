@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Replication Expained
+# Replication Explained
 
 import ThemedImage from '@theme/ThemedImage';
 import useBaseUrl from '@docusaurus/useBaseUrl';
