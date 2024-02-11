@@ -5,7 +5,7 @@ version = "0.7.0"
 license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
-exclude = [".vscode", "src", "node_modules/*", "testing"]
+exclude = [".vscode", "src", "node_modules/*", "testing", "docs", ".github", ".vscode"]
 include = ["include", "node_modules/@rbxts", "node_modules/@rbxts/*", "out", "default.project.json", "LICENSE"]
 
 [dependencies]

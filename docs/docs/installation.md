@@ -23,7 +23,7 @@ under `[dependencies]` in your `wally.toml` file.
 
 ```md title="wally.toml"
 [dependencies]
-wcs = "cheetiedotpy/wcs@0.6.32"
+wcs = "cheetiedotpy/wcs@0.7.0"
 ```
 
 ### Roblox Studio Installation
@@ -31,7 +31,7 @@ wcs = "cheetiedotpy/wcs@0.6.32"
 If you are not using **[Rojo](https://rojo.space/)**, navigate yourself to *[github releases](https://github.com/g1mmethemoney/WCSTypescript/releases/)*
 page and download *rbxm* file of *the latest* version:
 
-img here idiot
+![Rbxm File](../static/img/rbxm-file.png)
 
 And put it under `Replicated Storage`:
 
