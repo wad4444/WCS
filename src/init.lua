@@ -141,6 +141,11 @@ type RbxScriptConnection = {
     Disconnect: (RbxScriptConnection) -> void;
 }
 
+type SkillType = {
+    Default: number,
+    Holdable: number,
+}
+
 type BooleanOrString = boolean | string;
 type Janitor = {
 	ClassName: "Janitor",
@@ -345,6 +350,7 @@ export type WCS = {
     RegisterHoldableSkill: (string) -> HoldableSkillImpl;
     GetMovesetObjectByName: (string) -> Moveset | void;
     Character: CharacterImpl;
+    SkillType: SkillType;
     Types: ModuleScript;
 }
 

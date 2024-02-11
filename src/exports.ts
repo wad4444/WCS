@@ -8,4 +8,5 @@ export * from "./source/holdableSkill";
 export * from "./luaSpecific/registerStatusEffect";
 export * from "./luaSpecific/registerSkill";
 export * from "./luaSpecific/registerHoldableSkill";
+export { SkillType } from "./source/skill";
 export { FlagWithData } from "./source/flags";

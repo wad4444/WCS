@@ -115,6 +115,19 @@ export = function () {
         });
     });
 
+    describe("static callbacks", () => {
+        it("should fire static callbacks", () => {
+            const changed: boolean[] = [];
+            Character.CharacterDestroyed.Connect(() => changed.push(true));
+            Character.CharacterCreated.Connect(() => changed.push(true));
+
+            makeChar().Destroy();
+            RunService.Heartbeat.Wait();
+
+            expect(changed.size()).to.be.equal(2);
+        });
+    });
+
     describe("damage", () => {
         it("should take damage", () => {
             makeChar().TakeDamage({

@@ -271,18 +271,18 @@ export abstract class SkillBase<
         if (PreviousState._isActive_counter === State._isActive_counter) return;
 
         if (!PreviousState.IsActive && State.IsActive) {
+            this.Started.Fire();
             isClientContext()
                 ? this.OnStartClient(State.StarterParams as StarterParams)
                 : this.OnStartServer(State.StarterParams as StarterParams);
-            this.Started.Fire();
             if (isServerContext()) this.End();
         } else if (PreviousState.IsActive && !State.IsActive) {
             isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
-            this.OnStartClient(State.StarterParams as StarterParams);
             this.Started.Fire();
+            this.OnStartClient(State.StarterParams as StarterParams);
             this.OnEndClient();
             this.Ended.Fire();
         }
