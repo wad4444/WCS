@@ -297,6 +297,26 @@ export abstract class SkillBase<
     }
 
     /**
+     * Clears the metadata
+     */
+    protected ClearMetadata() {
+        if (this.isReplicated) {
+            logError(
+                `Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
+            );
+        }
+
+        this.MetadataChanged.Fire(undefined, this.metadata);
+        this.metadata = undefined;
+
+        if (isServerContext()) {
+            rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
+                metadata: undefined,
+            });
+        }
+    }
+
+    /**
      * Sets the metadata of the skill.
      */
     protected SetMetadata(NewMeta: Metadata) {

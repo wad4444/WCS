@@ -141,7 +141,9 @@ type RbxScriptConnection = {
     Disconnect: (RbxScriptConnection) -> void;
 }
 
-type SkillType = {
+type SkillType = "Default" | "Holdable"
+
+type SkillTypeEnum = {
     Default: number,
     Holdable: number,
 }
@@ -202,10 +204,37 @@ type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any,
     OnConstructServer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ConstructorArguments...) -> void,
     OnConstructClient: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, ConstructorArguments...) -> void,
     GetState: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> SkillState,
+    ClearMetadata: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void;
     SetMetadata: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, Metadata) -> void,
+    GetSkillType: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> SkillType,
     End: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
     CreateDamageContainer: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> any,
     Destroy: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> void,
+}
+
+type AnySkillImpl = {
+    new: (Character) -> AnySkill,
+    ApplyCooldown: (AnySkill, number) -> void,
+    ShouldStart: (AnySkill) -> boolean,
+    HandleClientMessage: (AnySkill, any) -> void,
+    HandleServerMessage: (AnySkill, any) -> void,
+    SendMessageToClient: (AnySkill, any) -> void,
+    SendMessageToServer: (AnySkill, any) -> void,
+    GetName: (AnySkill) -> string,
+    OnStartServer: (AnySkill, any) -> void,
+    OnStartClient: (AnySkill, any) -> void,
+    OnEndServer: (AnySkill) -> void,
+    OnEndClient: (AnySkill) -> void,
+    OnConstruct: (AnySkill) -> void,
+    OnConstructServer: (AnySkill) -> void,
+    OnConstructClient: (AnySkill) -> void,
+    GetState: (AnySkill) -> SkillState,
+    ClearMetadata: (AnySkill) -> void;
+    SetMetadata: (AnySkill, any) -> void,
+    GetSkillType: (AnySkill) -> SkillType,
+    End: (AnySkill) -> void,
+    CreateDamageContainer: (AnySkill, number) -> DamageContainer,
+    Destroy: (AnySkill) -> void,
 }
 
 type Array<T> = {T}
@@ -231,28 +260,6 @@ export type Skill<StarterParams = any, Metadata = any, ClientToServerMessage = a
         {} :: SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>
     )
 )
-
-type AnySkillImpl = {
-    new: (Character) -> AnySkill,
-    ApplyCooldown: (AnySkill, number) -> void,
-    ShouldStart: (AnySkill) -> boolean,
-    HandleClientMessage: (AnySkill, any) -> void,
-    HandleServerMessage: (AnySkill, any) -> void,
-    SendMessageToClient: (AnySkill, any) -> void,
-    SendMessageToServer: (AnySkill, any) -> void,
-    GetName: (AnySkill) -> string,
-    OnStartServer: (AnySkill, any) -> void,
-    OnStartClient: (AnySkill, any) -> void,
-    OnEndServer: (AnySkill) -> void,
-    OnEndClient: (AnySkill) -> void,
-    OnConstruct: (AnySkill) -> void,
-    OnConstructServer: (AnySkill) -> void,
-    OnConstructClient: (AnySkill) -> void,
-    GetState: (AnySkill) -> SkillState,
-    End: (AnySkill) -> void,
-    CreateDamageContainer: (AnySkill, number) -> DamageContainer,
-    Destroy: (AnySkill) -> void,
-}
 
 export type AnySkill = typeof(
     setmetatable(
@@ -350,7 +357,7 @@ export type WCS = {
     RegisterHoldableSkill: (string) -> HoldableSkillImpl;
     GetMovesetObjectByName: (string) -> Moveset | void;
     Character: CharacterImpl;
-    SkillType: SkillType;
+    SkillType: SkillTypeEnum;
     Types: ModuleScript;
 }
 
