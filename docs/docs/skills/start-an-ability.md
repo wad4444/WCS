@@ -31,8 +31,6 @@ function getCurrentWCS_Character() {
 
 UserInputService.InputBegan.Connect((Input, GameProcessed) => {
 	if (GameProcessed) return;
-	if (Input.UserInputState !== Enum.UserInputState.Begin) return;
-
 	if (Input.UserInputType === Enum.UserInputType.MouseButton1) {
 		// get and start the "attack" when we left click
 		const character = getCurrentWCS_Character();

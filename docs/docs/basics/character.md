@@ -7,9 +7,9 @@ import TabItem from "@theme/TabItem";
 
 # Character Setup
 
-**WCS** provides a special `Character` class that *wraps* around player's character model.
-Whenever a **character** that will take action in the combat spawns, you should instantiate the class.
- - To avoid **a memory leak** always destroy the wrap when the humanoid dies.
+**WCS** provides a special `Character` class that acts as a *wrapper* for a player's character model
+You should instantiate this class whenever *a character* that will take action in combat spawns.
+ - To avoid **memory leaks** always destroy the wrap when the humanoid dies.
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
