@@ -4,4 +4,5 @@ sidebar_position: 1
 
 # Create a status effect
 
-teawsa
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";

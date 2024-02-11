@@ -28,8 +28,8 @@ const FeatureList = [
         Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
         description: (
             <>
-                WCS is made using Typescript & Roblox-ts so it support typescript natively, however it also provides the
-                luau types for people who don't use TS.
+                WCS is made using Typescript & Roblox-ts so it supports typescript natively. However, it also provides
+                the luau types for people who don't use TS.
             </>
         ),
     },

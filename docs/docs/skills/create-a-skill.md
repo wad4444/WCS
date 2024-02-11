@@ -38,4 +38,4 @@ return Attack
 </Tabs>
 
 Here is how *simple* you create a whole new ability! Worth to mention, this is where you get first *syntactical difference* between
-typescript and luau. *Here* is where you can view all *syntactical differences*: (link here idiot)
+typescript and luau. *Here* is where you can view all [*syntactical differences*](../extras/differences).
