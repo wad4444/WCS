@@ -16,7 +16,7 @@ If you want to get the `Character Class Instance` from *a model its applied to* 
 
 
 :::info
-If you want to apply/remove multiple abilities at the same time, consider looking into [movesets](../movesets/create-a-moveset).
+If you want to apply/remove multiple abilities at the same time, consider looking into [movesets](../extras/movesets).
 :::
 
 Let's modify our *character file/script* to apply our ability:

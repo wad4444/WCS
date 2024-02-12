@@ -11,7 +11,7 @@ import TabItem from "@theme/TabItem";
  overriding *default methods*. They also provide *useful tooling* for manipulating *roblox humanoid stats*, e.g, setting the walkspeed 
 when the player should be stunned.
 
-Let's register a simple status effect:
+Let's register a simple status effect and make it print something when started:
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -20,7 +20,11 @@ Let's register a simple status effect:
 import { StatusEffect, StatusEffectDecorator } from "@rbxts/wcs";
 
 @StatusEffectDecorator
-export class Stun extends StatusEffect {}
+export class Stun extends StatusEffect {
+	public OnStartServer() {
+		print("Stun just started!")
+	}
+}
 ```
 
 </TabItem>
@@ -31,6 +35,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WCS = require(ReplicatedStorage.WCS)
 
 local Stun = WCS.RegisterStatusEffect("Stun")
+
+function Stun:OnStartServer()
+	print("Stun just started!")
+end
 
 return Stun
 ```
