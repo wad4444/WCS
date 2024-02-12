@@ -17,7 +17,7 @@ import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
 import { remotes } from "./remotes";
 import { rootProducer } from "state/rootProducer";
-import { AnyStatus, StatusEffect } from "./statusEffect";
+import { AnyStatus } from "./statusEffect";
 import Signal from "@rbxts/signal";
 import { Timer, TimerState } from "@rbxts/timer";
 import { t } from "@rbxts/t";
@@ -158,7 +158,7 @@ export abstract class SkillBase<
         this._janitor.Add(
             this.CooldownTimer.completed.Connect(() => {
                 if (!this.GetState().Debounce) return;
-                this.SetState({
+                this._setState({
                     Debounce: false,
                 });
             }),
@@ -222,7 +222,7 @@ export abstract class SkillBase<
         if (this.CheckOthersActive && this.Character.GetAllActiveSkills().size() > 0) return;
         if (!this.ShouldStart(StarterParams)) return;
 
-        this.SetState({
+        this._setState({
             IsActive: true,
             StarterParams: StarterParams,
             Debounce: false,
@@ -242,7 +242,7 @@ export abstract class SkillBase<
             return;
         }
 
-        this.SetState({
+        this._setState({
             IsActive: false,
             StarterParams: undefined,
         });
@@ -360,10 +360,6 @@ export abstract class SkillBase<
             return;
         }
 
-        this.SetState({
-            Debounce: true,
-        });
-
         if (this.CooldownTimer.getState() === TimerState.Running) {
             this.CooldownTimer.stop();
         }
@@ -375,17 +371,18 @@ export abstract class SkillBase<
 
         this.CooldownTimer.setLength(Duration);
         this.CooldownTimer.start();
+
+        this._setState({
+            Debounce: true,
+            TimerEndTimestamp: this.CooldownTimer.getCurrentEndTimeUtc(),
+        });
     }
 
     /**
      * @internal Reserved for internal usage
      * @hidden
      */
-    protected SetState(Patch: Partial<SkillState>) {
-        if (this.isReplicated) {
-            logError(`Cannot :SetState() of replicated status effect on client! \n This can lead to a possible desync`);
-        }
-
+    protected _setState(Patch: Partial<SkillState>) {
         const newState = {
             ...this.state,
             ...Patch,

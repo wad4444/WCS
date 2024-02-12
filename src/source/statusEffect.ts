@@ -166,7 +166,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             this.timer.stop();
         }
 
-        this.SetState({
+        this._setState({
             IsActive: true,
         });
 
@@ -221,7 +221,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             return;
         }
 
-        this.SetState({
+        this._setState({
             IsActive: false,
         });
 
@@ -294,11 +294,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     /**
      * Sets the state of the status effect.
      */
-    protected SetState(Patch: Partial<StatusEffectState>) {
-        if (this.isReplicated) {
-            logError(`Cannot :SetState() of replicated status effect on client! \n This can lead to a possible desync`);
-        }
-
+    protected _setState(Patch: Partial<StatusEffectState>) {
         const newState = {
             ...this.state,
             ...Patch,
