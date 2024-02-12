@@ -1,8 +1,8 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
-# Define The behavior
+# Define The Behavior
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
