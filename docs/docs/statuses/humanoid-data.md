@@ -74,5 +74,3 @@ the slowness will be ignored.
     dark: useBaseUrl('/img/themed-block-schemes/double-set-dark.png'),
   }}>
 </ThemedImage>
-
-### [Now, let's actually *apply* some *humanoid data* to our *status*.](./apply-data)
