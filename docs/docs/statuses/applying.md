@@ -27,7 +27,7 @@ import { SpeedBoost } from "shared/statusEffects/speedBoost";
 @SkillDecorator
 export class Attack extends Skill {
 	public OnStartServer() {
-		const speedBoost = new SpeedBost(this.Character);
+		const speedBoost = new SpeedBoost(this.Character);
 		speedBoost.Start(5);
 	}
 }
