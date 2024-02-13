@@ -3,7 +3,6 @@ type void = nil;
 type Callback = () -> void;
 
 export type Server = {
-    FilterReplicatedCharacters: (Player, Character) -> boolean;
     Start: (Server) -> void;
     RegisterDirectory: (Server, Instance) -> void;
     IsActive: () -> boolean;

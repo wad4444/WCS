@@ -14,12 +14,6 @@ let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
 
 class Server {
-    /**
-     * A function that decides whether or not character should be replicated to the given player.
-     */
-    public FilterReplicatedCharacters = (Player: Player, Character: Character) =>
-        Character.Instance === Player.Character;
-
     private isActive = false;
     private registeredModules: ModuleScript[] = [];
     private broadcaster: Broadcaster;
@@ -38,7 +32,7 @@ class Server {
                         const character = Character.GetCharacterFromId_TS(Id);
                         if (!character) continue;
 
-                        if (!this.FilterReplicatedCharacters(Player, character)) Draft.replication.delete(Id);
+                        if (!this.filterReplicatedCharacters(Player, character)) Draft.replication.delete(Id);
                     }
                 });
             },
@@ -48,13 +42,17 @@ class Server {
                 const character = Character.GetCharacterFromId_TS(Action.arguments[0]);
                 if (!character) return Action;
 
-                if (!this.FilterReplicatedCharacters(Player, character)) return;
+                if (!this.filterReplicatedCharacters(Player, character)) return;
 
                 return Action;
             },
         });
         rootProducer.applyMiddleware(this.broadcaster.middleware);
         remotes._start.connect((Player) => this.broadcaster.start(Player));
+    }
+
+    private filterReplicatedCharacters(Player: Player, Character: Character) {
+        return Character.Instance === Player.Character;
     }
 
     /**
