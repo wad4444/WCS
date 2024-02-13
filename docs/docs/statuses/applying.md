@@ -54,6 +54,10 @@ return Attack
 </TabItem>
 </Tabs>
 
+:::info
+You can *safely* instantiate *status effects on client*, but they will *not be replicated* and will *only be visible* to client character *apis*.
+:::
+
 :::note
 You can invoke `Start()` without providing a time limit, but you will have to call `Stop()` manually.
 :::

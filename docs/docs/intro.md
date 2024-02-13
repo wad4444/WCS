@@ -8,6 +8,10 @@ sidebar_position: 1
 It allows you to create **any kind** of combat system with **ease**, providing tools and covering basic and tedious stuff, like *replication*,
 *skill creation*, *side effects*, *requests to server*.
 
+:::warning
+**WCS** is still in `beta`. Expect **bugs** and *breaking changes*.
+:::
+
 ## Getting Started
 
 **WCS** is made utilizing **[Typescript](https://typescriptlang.org/)** and compiled to luau using **[roblox-ts](https://roblox-ts.com/)**. It provides support for
