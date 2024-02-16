@@ -75,5 +75,5 @@ return Block
 </Tabs>
 
 :::note
-You can determine if the ability is holdable or not by calling `GetSkillType()`
+You can determine if the ability is holdable or not by calling `GetSkillType()`.
 :::

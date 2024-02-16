@@ -52,7 +52,7 @@ local Attack = require(ReplicatedStorage.Skills.Attack)
 local Character = WCS.Character
 
 function getCurrentWCS_Character()
-	local characterModel = Players.LocalPlayer.Character;
+	local characterModel = Players.LocalPlayer.Character
 	if not characterModel then return end
 
 	return Character.GetCharacterFromInstance(characterModel)

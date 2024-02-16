@@ -8,7 +8,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 Movesets is a *powerful* concept in **WCS**. It allows you to *group/manage* your abilities *easily* by *composing* them into special **WCS** objects.
-*Applying a moveset* to the character will *add all skills* the moveset contains, *clearing the moveset* or *applying another one*
+*Applying a moveset* to the character will *add all skills* the moveset contains to it, *clearing the moveset* or *applying another one*
 will *remove them* back.
 
 Let's quickly make a simple *moveset object*:
@@ -42,7 +42,7 @@ Great, now we can *apply* the following moveset to our character:
 
 :::note
 Character can only have *1 moveset* applied at a time. If you apply *another moveset*, the previous one will be *cleared*.
-To add *all skills* from the moveset *without applying it* you can use the following **WCS** Api: `Character:ApplySkillsFromMoveset()`.
+To add *all skills* from a moveset *without applying the moveset itself,* you can use the following **WCS** Api: `Character:ApplySkillsFromMoveset()`.
 :::
 
 <Tabs groupId="languages">
@@ -100,5 +100,5 @@ end)
 </Tabs>
 
 :::info
-To clear the moveset use an api provided by WCS: `Character:ClearMoveset()`.
+To clear character's moveset use an api provided by WCS: `Character:ClearMoveset()`.
 :::
