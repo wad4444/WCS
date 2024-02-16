@@ -50,7 +50,7 @@ import { HoldableSkill, SkillDecorator } from "@rbxts/wcs";
 @SkillDecorator
 export class Block extends HoldableSkill {
 	public OnConstructServer() {
-		this.SetMaxHoldDuration(undefined);
+		this.SetMaxHoldTime(undefined);
 	}
 }
 ```
@@ -64,8 +64,8 @@ local WCS = require(ReplicatedStorage.WCS)
 
 local Block = WCS.RegisterHoldableSkill("Block")
 
-function BLock:OnConstructServer()
-	this:SetMaxHoldDuration(nil)
+function Block:OnConstructServer()
+	self:SetMaxHoldTime(nil)
 end
 
 return Block
