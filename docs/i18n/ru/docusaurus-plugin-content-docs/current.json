@@ -1,0 +1,38 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Basics": {
+    "message": "Основы",
+    "description": "The label for category Basics in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Basics.link.generated-index.description": {
+    "message": "Научитесь как использовать WCS в вашем проекте за пару минут.",
+    "description": "The generated-index page description for category Basics in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Abilities": {
+    "message": "Способности",
+    "description": "The label for category Abilities in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Abilities.link.generated-index.description": {
+    "message": "Научитесь как создавать способности при помощи WCS и ими манипулировать.",
+    "description": "The generated-index page description for category Abilities in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Status Effects": {
+    "message": "Статус Эффекты",
+    "description": "The label for category Status Effects in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Status Effects.link.generated-index.description": {
+    "message": "Узнайте, что такое Статус Эффекты и как создавать их с помощью WCS.",
+    "description": "The generated-index page description for category Status Effects in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Extras": {
+    "message": "Дополнительно",
+    "description": "The label for category Extras in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Extras.link.generated-index.description": {
+    "message": "Сборник дополнительной информации, о которой вам нужно знать.",
+    "description": "The generated-index page description for category Extras in sidebar tutorialSidebar"
+  }
+}

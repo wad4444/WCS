@@ -1,36 +1,44 @@
+/* eslint-disable no-undef */
 import clsx from "clsx";
 import Heading from "@theme/Heading";
 import styles from "./styles.module.css";
+import Translate, { translate } from "@docusaurus/Translate";
 
 const FeatureList = [
     {
-        title: "Easy to Use",
+        title: translate({
+            message: "Easy to Use",
+            id: "feature1.title",
+        }),
         Svg: require("@site/static/img/plug.svg").default,
         description: (
-            <>
-                WCS was created with simplicity in mind, covering every possible aspect of a combat system and providing
-                useful abstractions for them
-            </>
+            <Translate id="feature1.desc">
+                {`WCS was created with simplicity in mind, covering every possible aspect of a combat system and providing\nuseful abstractions for them`}
+            </Translate>
         ),
     },
     {
-        title: "Flexible and abstract",
+        title: translate({
+            message: "Flexible and abstract",
+            id: "feature2.title",
+        }),
         Svg: require("@site/static/img/settings.svg").default,
         description: (
-            <>
-                WCS is very flexible and will fullfil all your needs, hiding tedious stuff like replication and ability
-                management inside.
-            </>
+            <Translate id="feature2.desc">
+                {`WCS is very flexible and will fullfil all your needs, hiding tedious stuff like replication and ability \nmanagement inside.`}
+            </Translate>
         ),
     },
     {
-        title: "Made with Typescript",
+        title: translate({
+            message: "Made with Typescript",
+            id: "feature3.title",
+        }),
         Svg: require("@site/static/img/wires1.svg").default,
         description: (
-            <>
-                WCS is made using Typescript & Roblox-ts so it supports typescript natively. However, it also provides
-                the luau types for people who don't use TS.
-            </>
+            <Translate id="feature3.desc">
+                {`WCS is made using Typescript & Roblox-ts so it supports typescript natively. However, it also provides \nthe luau types for people who don't use TS.`}
+            </Translate>
         ),
     },
 ];
