@@ -1,8 +1,12 @@
-# WCS
-WCS is an extensible framework for combat.
-It allows you create fully customizable combat systems easily by providing useful abstraction.
+## WCS - A combat system framework
 
-## Documentation
-Documentation is currently in development. As of right now, there is no api or documentation.
-However, I made a simple template repository you can look through:
-https://github.com/g1mmethemoney/WCS-Example
+**WCS** is a *handy framework* that provides *useful abstraction* for your *combat systems*. It allows you to create **any kind of combat system** with **ease**, providing *tools* and *covering basic and tedious stuff*, like *replication*, *skill creation*, side effects, requests to server.*
+
+**WCS** is made utilizing **[Typescript](<https://typescriptlang.org/>)** and compiled to luau using **[roblox-ts](<https://roblox-ts.com/>)**. It provides support for
+[roblox-ts](<https://roblox-ts.com/>) users and [luau](<https://luau-lang.org/>) users,
+by prodiving type definitions for both languages.
+
+Please give feedback
+
+[**Documentation**](<https://g1mmethemoney.github.io/WCS/>)
+[**Github Repository**](<https://github.com/g1mmethemoney/WCS>)
