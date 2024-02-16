@@ -31,8 +31,14 @@ wcs = "cheetiedotpy/wcs@0.7.0"
 If you are not using **[Rojo](https://rojo.space/)**, navigate yourself to *[github releases](https://github.com/g1mmethemoney/WCSTypescript/releases/)*
 page and download *rbxm* file of *the latest* version:
 
-![Rbxm File](../static/img/rbxm-file.png)
+<img
+  src={require('@site/static/img/rbxm-file.png').default}
+  alt="Example banner"
+/>
 
 And put it under `Replicated Storage`:
 
-![Replicated Storage](../static/img/replicatedstorage.png)
+<img
+  src={require('@site/static/img/replicatedstorage.png').default}
+  alt="Example banner"
+/>

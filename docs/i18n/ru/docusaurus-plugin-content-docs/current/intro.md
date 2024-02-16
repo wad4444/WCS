@@ -4,24 +4,25 @@ sidebar_position: 1
 
 # Вступление  
 
-**WCS** is a handy framework that provides **useful abstraction** for your combat systems.
-It allows you to create **any kind** of combat system with **ease**, providing tools and covering basic and tedious stuff, like *replication*,
-*skill creation*, *side effects*, *requests to server*.
+**WCS** это фреймворк, который предоставляет **полезную абстракцию** для ваших Комбат Систем.
+Он позволяет создавать **любые** Комбат Системы с **легкостью**, предоставляя разные инструменты и скрывая внутри себя кучу нудных вещей, таких как *репликация*,
+*создание способностей*, *сайд эффекты*, *запросы к серверу*, о которым вам больше не нужно беспокоиться!
 
 :::warning
-**WCS** is still in `beta`. Expect **bugs** and *breaking changes*.
+**WCS** до сих пор в `бэте`. Возможны **баги** и *глобальные обновления*.
 :::
 
-## Getting Started
+## Начало
 
-**WCS** is made utilizing **[Typescript](https://typescriptlang.org/)** and compiled to luau using **[roblox-ts](https://roblox-ts.com/)**. It provides support for
-[roblox-ts](https://roblox-ts.com/) users and [luau](https://luau-lang.org/) users,
-by prodiving type definitions for both languages.
+**WCS** сделан с помощью **[Тайпскрипта](https://typescriptlang.org/)** и скомпилирован в [Луау](https://luau-lang.org/) 
+с помощью **[roblox-ts](https://roblox-ts.com/)**. Фреймворк предоставляет поддержку
+[roblox-ts](https://roblox-ts.com/) и [луау](https://luau-lang.org/) пользователям,
+предоставляя *типизацию* для обоих.
 
-But the usage may differ depending on the language you use, as some utility tools were exported specifically for luau users,
-the main differences are listed [on this page](./extras//differences.md).
+Но использование некоторых паттернов и методов может отличаться в зависимости от того,
+что вы используете. Основные различия можно найти [на этой странице](./extras//differences.md).
 
-### Typescript Template
-If you are familiar with *[Typescript](https://typescriptlang.org/)*, it might be worth looking at [a template](https://github.com/g1mmethemoney/WCS-Example),
-made specifically for [roblox-ts](https://roblox-ts.com/) usage.
- - [Luau](https://luau-lang.org/) Template is not currently planned.
+### Шаблон для Тайпскрипта
+Если вам знаком *[Тайпскрипт](https://typescriptlang.org/)*, то возможно вам стоит посмотреть на [шаблон](https://github.com/g1mmethemoney/WCS-Example),
+сделанный специально для [roblox-ts](https://roblox-ts.com/) пользователей.
+ - [Луау](https://luau-lang.org/) Шаблон пока что не планируется.
