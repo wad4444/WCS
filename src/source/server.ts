@@ -29,20 +29,20 @@ class Server {
             beforeHydrate: (Player, State) => {
                 return Immut.produce(State, (Draft) => {
                     for (const [Id, _] of State.replication) {
-                        const character = Character.GetCharacterFromId_TS(Id);
+                        const character = Character.GetCharacterFromId(Id);
                         if (!character) continue;
 
-                        if (!this.filterReplicatedCharacters(Player, character)) Draft.replication.delete(Id);
+                        if (!this._filterReplicatedCharacters(Player, character)) Draft.replication.delete(Id);
                     }
                 });
             },
             beforeDispatch: (Player, Action) => {
                 if (!t.string(Action.arguments[0])) return Action;
 
-                const character = Character.GetCharacterFromId_TS(Action.arguments[0]);
+                const character = Character.GetCharacterFromId(Action.arguments[0]);
                 if (!character) return Action;
 
-                if (!this.filterReplicatedCharacters(Player, character)) return;
+                if (!this._filterReplicatedCharacters(Player, character)) return;
 
                 return Action;
             },
@@ -51,7 +51,8 @@ class Server {
         remotes._start.connect((Player) => this.broadcaster.start(Player));
     }
 
-    private filterReplicatedCharacters(Player: Player, Character: Character) {
+    /** @internal @hidden */
+    public _filterReplicatedCharacters(Player: Player, Character: Character) {
         return Character.Instance === Player.Character;
     }
 
@@ -92,7 +93,7 @@ class Server {
             const characterData = SelectCharacterData(CharacterId)(rootProducer.getState());
             if (!characterData) return;
 
-            const character = Character.GetCharacterFromInstance_TS(characterData.instance);
+            const character = Character.GetCharacterFromInstance(characterData.instance);
             if (!character || character.Player !== Player) return;
 
             const skill = character.GetSkillFromString(SkillName);

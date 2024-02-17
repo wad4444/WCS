@@ -73,7 +73,7 @@ class Client {
         this.setupCharacterReplication();
 
         remotes._damageTaken.connect((CharacterId, Damage) => {
-            const character = Character.GetCharacterFromId_TS(CharacterId);
+            const character = Character.GetCharacterFromId(CharacterId);
             if (character) {
                 character.DamageTaken.Fire({
                     Damage: Damage,
@@ -95,7 +95,7 @@ class Client {
             }
 
             State.replication.forEach((Data, Id) => {
-                if (Character.GetCharacterFromInstance_TS(Data.instance)) {
+                if (Character.GetCharacterFromInstance(Data.instance)) {
                     return;
                 }
 
@@ -104,7 +104,7 @@ class Client {
                     data: Id,
                 });
             });
-            Character.GetCharacterMap_TS().forEach((Character, Id) => {
+            Character.GetCharacterMap().forEach((Character, Id) => {
                 if (State.replication.has(Character.GetId())) {
                     return;
                 }

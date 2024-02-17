@@ -77,7 +77,7 @@ export abstract class HoldableSkill<
             logError("Max Hold Time can't be lower or equal to zero");
         }
 
-        this.SetState({ MaxHoldTime: MaxHoldTime });
+        this._setState({ MaxHoldTime: MaxHoldTime });
         if (MaxHoldTime) this.HoldTimer.setLength(MaxHoldTime);
     }
 

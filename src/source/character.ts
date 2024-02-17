@@ -130,7 +130,7 @@ export class Character {
             this.janitor.Add(
                 this.DamageTaken.Connect((Container) => {
                     Players.GetPlayers().forEach((Player) => {
-                        if (!server.FilterReplicatedCharacters(Player, this)) return;
+                        if (!server._filterReplicatedCharacters(Player, this)) return;
                         remotes._damageTaken.fire(Player, this.id, Container.Damage);
                     });
                 }),
@@ -281,7 +281,7 @@ export class Character {
     /**
      * Returns the map of all characters to their instances.
      */
-    public static GetCharacterMap_TS() {
+    public static GetCharacterMap(this: void) {
         return table.clone(Character.currentCharMap) as ReadonlyMap<Instance, Character>;
     }
 
@@ -289,10 +289,10 @@ export class Character {
      * @internal Reserved for internal usage
      * @hidden
      */
-    public static GetCharacterFromId_TS(Id: string) {
-        for (const [_, Character] of pairs(this.currentCharMap)) {
-            if (Character.GetId() === Id) {
-                return Character;
+    public static GetCharacterFromId(this: void, Id: string) {
+        for (const [_, _Character] of pairs(Character.currentCharMap)) {
+            if (_Character.GetId() === Id) {
+                return _Character;
             }
         }
     }
@@ -300,23 +300,7 @@ export class Character {
     /**
      * Retrieves the character associated with the given instance.
      */
-    public static GetCharacterFromInstance_TS(Instance: Instance) {
-        return Character.currentCharMap.get(Instance);
-    }
-
-    /**
-     * @internal Reserved for LuaU usage
-     * @hidden
-     */
-    public GetCharacterMap(this: void) {
-        return table.clone(Character.currentCharMap) as ReadonlyMap<Instance, Character>;
-    }
-
-    /**
-     * @internal Reserved for LuaU usage
-     * @hidden
-     */
-    public GetCharacterFromInstance(this: void, Instance: Instance) {
+    public static GetCharacterFromInstance(this: void, Instance: Instance) {
         return Character.currentCharMap.get(Instance);
     }
 

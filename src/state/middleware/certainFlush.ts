@@ -8,7 +8,7 @@ export const certainFlushMiddleware: ProducerMiddleware<RootState, RootActions> 
             if (name.match("delete")[0]) {
                 const previousState = producer.getState();
 
-                const chars = Character.GetCharacterMap_TS();
+                const chars = Character.GetCharacterMap();
                 chars.forEach((char) => {
                     const oldCharData = previousState.replication.get(char.GetId());
                     char.GetSkills().forEach((skill) => {
