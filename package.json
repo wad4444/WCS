@@ -25,8 +25,8 @@
   "author": "g1mmethemoney",
   "license": "MIT",
   "devDependencies": {
-    "@rbxts/compiler-types": "^2.2.0-types.0",
-    "@rbxts/types": "^1.0.737",
+    "@rbxts/compiler-types": "^2.3.0-types.0",
+    "@rbxts/types": "^1.0.754",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "eslint": "^8.55.0",
@@ -35,7 +35,7 @@
     "eslint-plugin-roblox-ts": "^0.0.36",
     "prettier": "^3.1.0",
     "rbxts-transformer-private": "^1.0.1",
-    "roblox-ts": "^2.2.0",
+    "roblox-ts": "^2.3.0",
     "typescript": "^5.3.3"
   },
   "types": "out/index.d.ts",
