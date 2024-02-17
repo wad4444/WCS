@@ -367,4 +367,6 @@ for _k, _v in TS.import(script, script, "exports") or {} do
 	exports[_k] = _v
 end
 
+table.freeze(exports)
+
 return exports :: WCS
