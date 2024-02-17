@@ -282,7 +282,7 @@ export class Character {
      * Returns the map of all characters to their instances.
      */
     public static GetCharacterMap(this: void) {
-        return table.clone(Character.currentCharMap) as ReadonlyMap<Instance, Character>;
+        return table.freeze(table.clone(Character.currentCharMap)) as ReadonlyMap<Instance, Character>;
     }
 
     /**
