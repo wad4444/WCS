@@ -138,6 +138,7 @@ export class Character {
         }
     }
 
+    /** @hidden @internal */
     public GetId() {
         return this.id;
     }

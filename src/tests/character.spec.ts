@@ -177,11 +177,17 @@ export = function () {
         });
     });
 
-    describe("char map", () => {
+    describe("static", () => {
         it("should return a valid character map", () => {
             const map = Character.GetCharacterMap();
             expect(map).to.be.a("table");
             expect(table.isfrozen(map)).to.be.equal(true);
+        });
+
+        it("should get the character using static methods", () => {
+            const char = makeChar();
+            expect(Character.GetCharacterFromInstance(char.Instance)).to.be.equal(char);
+            expect(Character.GetCharacterFromId(char.GetId())).to.be.equal(char);
         });
     });
 
