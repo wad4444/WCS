@@ -2,16 +2,14 @@
 sidebar_position: 4
 ---
 
-# Replication Explained
+# Принцип работы репликации
 
 import ThemedImage from '@theme/ThemedImage';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-Before we continue with *starting a skill*, it's really **important** to know some stuff 
-about *wcs internals*, *especially how it handles* the **replicaton process**.
-
-Every action *is launched on server*, and then gets *replicated* to client. Here is a simple *block scheme* that
-represents it visually:
+Перед тем, как мы *начнем запускать способности* довольно важно знать то, как **WCS** реплецирует наши способности.
+Каждое действие, которое мы производим, *запускается на сервере*, и позже *реплицируется* на клиент. Вот простенькая
+*блок схема*, которая наглядно *показывает* как происходит репликация:
 
 <ThemedImage
   alt="Docusaurus themed image"
@@ -21,9 +19,9 @@ represents it visually:
   }}>
 </ThemedImage>
 
-## Action Requests
+## Запросы
 
-If a client makes an *action*, like `Start` or `End` for example, it sends a *request to the server* under the hood:
+Если клиент выполняет *действие*, например методы `Start` или `End`, запрос на выполнение сначала *отправляется на сервер*:
 
 <ThemedImage
   alt="Docusaurus themed image"

@@ -2,24 +2,24 @@
 sidebar_position: 2
 ---
 
-# Applying abilities
+# Добавление скиллов
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-To apply your *ability* to a character in **WCS** you need to instantiate *an ability class* providing a `Character Class Instance`.
+Чтобы добавить *способность* к персонажу в **WCS**, вам нужно создать экземпляр *класса данной способности*, передав в него экземпляр класса-обертки `Character`.
 
 :::note
-If you want to get the `Character Class Instance` from *a model its applied to* you can use a *special static method* provided by **WCS**:
+Если вы хотите получить класс-обертку `Character` через *модель, к которой он прикреплен* вы можете воспользоваться *специальным статическим методом* **WCS**:
 `Character.GetCharacterFromInstance()`.
 :::
 
 
 :::info
-If you want to apply/remove multiple abilities at the same time, consider looking into [movesets](../extras/movesets).
+Если вы хотите добавить/убрать много способностей за раз, вы можете использовать [мувсеты](../extras/movesets).
 :::
 
-Let's modify our *character file/script* to apply our ability:
+Давайте изменим наш *файл/скрипт*, чтобы к персонажу добавлялась новая способность:
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -76,8 +76,8 @@ end)
 </Tabs>
 
 :::note
-In order to remove an ability from a character you got to call `Destroy()` on its instance.
-To get the instance from the name/constructor you can use the following **WCS** APIs:
+Чтобы удалить *способность* у персонажа вы должны вызвать метод `Destroy()` на её экзэмпляре.
+Чтобы получить *экземпляр способности* имея *конструктор* или *имя способности* вы можете воспользоваться следующими методами **WCS**:
 `Character:GetSkillFromConstructor()`, `Character:GetSkillFromString()`
 :::
 

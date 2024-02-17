@@ -2,13 +2,13 @@
 sidebar_position: 3
 ---
 
-# Define The Behavior
+# Написание логики
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-Now, after we *[created our first ability](./create-a-skill)* we need to define its *custom behavior*.
-Right now, lets make it *print something* when player *starts the ability* and add a small cooldown for it:
+Теперь, когда мы *[создали нашу первую способность](./create-a-skill)*, нам нужно написать *логику* для неё.
+Давайте на простом примере *законсолим какую-нибудь строку* когда игрок *активирует способность* и добавим маленький откат:
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -45,4 +45,4 @@ return Attack
 </TabItem>
 </Tabs>
 
-Okay! That's *great*, but [let's start our ability](./start-an-ability)!
+Отлично! Теперь нам осталось [запустить нашу способность](./start-an-ability)!

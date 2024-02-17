@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# Start an ability
+# Запуск способностей
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
