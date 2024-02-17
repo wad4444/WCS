@@ -2,17 +2,17 @@
 sidebar_position: 8
 ---
 
-# Messages
+# Сообщения
 
-Messages are a powerful concept in **WCS** that allow the *client* and *server* sides of your ability to **communicate** between eachother.
-Think of them as regular remote calls: when the client sends a message using `SendMessageToServer()`, the server can handle it inside `HandleClientMessage()` method.
-method and vice versa.
+Сообщения в **WCS** позволяют общаться между собой *клиентской* и *серверной* частями скилла.
+Представляйте их как обычные ремоут эвенты: когда клиент отправляет сообщение с помощью метода `SendMessageToServer()`, сервер может обработать его
+в своём методе `HandleClientMessage()` и наоборот.
 
 :::danger
-You should **always** validate your arguments manually when receiving messages from *client*. They act like regular *remote calls* and exploiters can send invalid data.
+Вы должны **всегда** проверять аргументы, когда обрабатываете *клиентский запрос*: они ведут себя как обычные *ремоут эвенты* и *читеры* *смогут отправлять поддельные данные*.
 :::
 
-Here is a *simple example* on how would you implement messages inside *an ability*:
+Вот *простой пример*, как можно наладить коммуникацию между *серверной* и *клиентской* частью скилла:
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";

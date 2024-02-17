@@ -5,27 +5,29 @@ sidebar_position: 9
 import ThemedImage from '@theme/ThemedImage';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-# Ability State
+# "Состояние" способности
 
-Ability State is an object represents current state of an ability and can be obtained with `GetState()` method or inside `StateChanged` event.
-It can be useful to *display some information* about your ability, e.g, whenever its currently *active or on debounce*.
+Состояние способности это объект, который отражает состояние способности в данный момент. Вы можете получить
+его с помощью метода `GetState()` или эвента `StateChanged`.
+Он может быть использован для *вывода какой-то информации* о способности, к примеру, активна ли она в данный момент или в откате.
 
 :::note
-`StateChanged` is deferred and safe to use in react components.
+`StateChanged` при частом изменении вызывается только с последним изменением за фрейм
+и может быть безопасно использован в реакт-компонентах.
 :::
 
-The `State Object` itself looks like this:
- - IsActive: `boolean` - Determines if an ability is currently *active* or not
- - Debounce: `boolean` - Determines if an ability is currently *on cooldown* or not
+Сам `объект состояния` выглядит так:
+ - IsActive: `boolean` - Определяет *активна* ли способность *в данный момент*.
+ - Debounce: `boolean` - Определяет *в откате* ли способность *в данный момент*.
 
-### What abilities **WCS** considers "Active"?
+### Какие способности **WCS** считает "активными"?
 
-All abilities that have `OnStartServer()` method *currently executing* are considered **active**.
+Все способности, у которых метод `OnStartServer()` в данный момент *выполняется* считаются активными.
 :::note
-It is a **good practice** to yield your code inside `OnStartServer()`
+Синхронно выполнять свой код в `OnStartServer()` - **хорошая практика**.
 :::
 
-Here is an *execution schema* of how it works *internally*:
+Вот *небольшая схемка*, которая показывает то, как это работает *внутри фреймворка*:
 
 <ThemedImage
   alt="Docusaurus themed image"

@@ -7,11 +7,11 @@ sidebar_position: 5
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-Let's *bind* our ability start to some *user input*.
-To achieve this, we need to modify our `client.ts` file, so that it could
-listen to user input and start the skill we need.
+Давайте *забиндим* нашу способность на какую-то *клавишу*.
+Чтобы это сделать, нам нужно изменить наш скрипт/файл `client` и добавить
+*прослушку нажатия* на клавиши, после чего *запускать код*, если *нужная* клавиша нажата:
 
-Then, when *a user makes an input* it should get the *[replicated character wrap](replication-explained.md)*, get the skill and request the launch by calling `Start`.
+Код получает *[класс-обертку персонажа](replication-explained.md)* и *активирует полученную способность*:
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -75,5 +75,5 @@ end)
 </Tabs>
 
 :::note
-Remember that if you *request an action* like `Start` or `End` on client, it will just make *a remote request* to server for it to perform the action.
+Нужно помнить, что *вызывая* методы `Start` или `End` на клиенте вы просто производите *запрос на сервер* для вызова методов.
 :::

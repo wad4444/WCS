@@ -2,14 +2,15 @@
 sidebar_position: 7
 ---
 
-# Holdable Abilities
+# "Продолжительные" способности
 
-Sometimes, you want to *create an* **ability** that you can use for *an* **unknown** *amount* of time, depending on *user input*.
+Иногда бывает так, что вам нужно *создать способность*, которая будет действовать *неопределенное количество времени*, которое зависит
+от *действий пользователя*.
 
-**WCS** introduces a whole new ability type for this case: `HoldableSkill`, which you can specify the max hold time of and run the callbacks
-whenever it ends like on a regular ability.
+**WCS** экспортирует *новый тип способностей* для выполнения данной задачи: `HoldableSkill`.
+Вы можете указать *максимальное время действия* этой способности, или *закончить её досрочно*, вызвав метод `End()`
 
-Let's make a file called `block` and register a holdable ability:
+Давайте сделаем скрипт/файл `block` и зарегистрируем способность:
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -39,7 +40,7 @@ return Block
 </TabItem>
 </Tabs>
 
-Then set the *max hold duration* to *undefined*, so we could *hold the block* indefinitely.
+Теперь установим *максимальное время работы* на `undefined`, чтобы мы могли держать блок *бесконечно*.
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -75,5 +76,5 @@ return Block
 </Tabs>
 
 :::note
-You can determine if the ability is holdable or not by calling `GetSkillType()`.
+Вы можете получить *тип способности* использовав метод `GetSkillType()`.
 :::
