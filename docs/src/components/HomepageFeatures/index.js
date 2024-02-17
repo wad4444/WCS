@@ -31,13 +31,13 @@ const FeatureList = [
     },
     {
         title: translate({
-            message: "Made with Typescript",
+            message: "Made with TypeScript",
             id: "feature3.title",
         }),
         Svg: require("@site/static/img/wires1.svg").default,
         description: (
             <Translate id="feature3.desc">
-                {`WCS is made using Typescript & Roblox-ts so it supports typescript natively. However, it also provides \nthe luau types for people who don't use TS.`}
+                {`WCS is made using TypeScript & Roblox-ts so it supports typescript natively. However, it also provides \nthe luau types for people who don't use TS.`}
             </Translate>
         ),
     },

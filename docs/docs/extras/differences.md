@@ -7,11 +7,11 @@ sidebar_position: 2
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-There are several *syntactical differences* in **WCS** between *Luau* version and *Typescript* version.
+There are several *syntactical differences* in **WCS** between *Luau* version and *TypeScript* version.
 
 One of *the most big* being how *classes* are exported.
 Classes in **WCS** are used to define your *status effect* or *an ability*.
-In Typescript *package version* **WCS** explicitly exports classes `Skill`, `StatusEffect` and `HoldableSkill`
+In TypeScript *package version* **WCS** explicitly exports classes `Skill`, `StatusEffect` and `HoldableSkill`
 that you should decorate and *extend* from.
 
 *However*, due to the *funky emit syntax* in Luau **WCS** exports special "wrapper" methods that
@@ -37,36 +37,6 @@ local WCS = require(ReplicatedStorage.WCS)
 local Attack = WCS.RegisterSkill("Attack")
 
 return Attack
-```
-
-</TabItem>
-</Tabs>
-
-Another *small caveat* regarding some of the **WCS** APIs. Sometimes *some methods* in Typescript will have a `_TS` *postfix* due to
-[*the differences* how static methods are compiled](https://roblox-ts.com/playground/#code/MYGwhgzhAEBiD29oG8CwAoAkBALmHAlsNAGYCuAXhQBQCUKAvhk+hgPQBUGAkjtAA6QIAUxgAiBPDGkCAJ1zQwsgOZkAtsIB2OADTQISAnwDuBECGgAjYRmDxNEAgBNhs4U+hiRIEtIKboABkyMDIAOgwONgxJMPIqOgBuIA) in Typescript and how they are used in Luau.
-
-<Tabs groupId="languages">
-<TabItem value="TypeScript" default>
-
-```ts title="function.ts" showLineNumbers
-function getCurrentWCS_Character() {
-	const characterModel = Players.LocalPlayer.Character;
-	if (!characterModel) return;
-
-	return Character.GetCharacterFromInstance_TS(characterModel);
-}
-```
-
-</TabItem>
-<TabItem value="Luau">
-
-```lua title="function.lua" showLineNumbers
-function getCurrentWCS_Character()
-	local characterModel = Players.LocalPlayer.Character
-	if not characterModel then return end
-
-	return Character.GetCharacterFromInstance(characterModel)
-end
 ```
 
 </TabItem>

@@ -7,7 +7,7 @@ sidebar_position: 3
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-To set the *Humanoid Data* of your *status effect* you can use a built-in method `SetHumanoidData()`
+To set the *Humanoid Data* of your *status effect* you can use a built-in method `SetHumanoidData()`.
 Let's modify our *stun status* to set the player's `WalkSpeed` to zero.
 
 :::note

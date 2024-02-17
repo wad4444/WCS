@@ -2,15 +2,14 @@
 sidebar_position: 1
 ---
 
-# Concept of Metadata
+# Концепт Метаданных
 
-**Metadata** of a skill / statusEffect is *basically a* **state** that is replicated from *server to client*.
-There are many use cases to this: **For example**, you can use this to *tell the client* the *current skill target* / or some
-other information from the server.
+**Метаданные** скилла / статус эффекта это по сути состояние, которое реплецируется от *сервера к клиенту*. Для этого существует множество вариантов использования: **Например**, вы можете использовать это, чтобы *сообщить клиенту* *текущий таргет скилла* / или другую информацию с сервера.
 
 :::warning
-**Metadata** changes are **deferred**, so if you change it multiple times in a single heartbeat tick the `MetadataChanged` event
-will only be fired once with the latest changes.
+Изменения **метаданных** отложены.
+Если вы измените *метаданные* много раз в один фрейм, то эвент `MetadataChanged` сработает только *один раз* с
+*самыми новыми значениями*.
 :::
 
 import Tabs from "@theme/Tabs";
@@ -64,5 +63,5 @@ return Attack
 </Tabs>
 
 :::note
-The usage with status effects is the same.
+Использование вместе со статус эффектами идентично.
 :::
