@@ -177,5 +177,13 @@ export = function () {
         });
     });
 
+    describe("char map", () => {
+        it("should return a valid character map", () => {
+            const map = Character.GetCharacterMap();
+            expect(map).to.be.a("table");
+            expect(table.isfrozen(map)).to.be.equal(true);
+        });
+    });
+
     afterAll(() => janitor.Cleanup());
 };

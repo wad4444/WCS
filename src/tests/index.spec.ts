@@ -22,7 +22,7 @@ export = function () {
         it("should be active", () => {
             expect(server.IsActive()).equal(true);
         });
-        it("should be singleton", () => {
+        it("should be a singleton", () => {
             expect(server).equal(CreateServer());
         });
     });
