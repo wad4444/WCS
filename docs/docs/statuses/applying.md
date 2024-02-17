@@ -25,7 +25,7 @@ import { Skill, SkillDecorator } from "@rbxts/wcs";
 import { SpeedBoost } from "shared/statusEffects/speedBoost";
 
 @SkillDecorator
-export class Attack extends Skill {
+export class Dash extends Skill {
 	public OnStartServer() {
 		const speedBoost = new SpeedBoost(this.Character);
 		speedBoost.Start(5);
@@ -41,14 +41,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WCS = require(ReplicatedStorage.WCS)
 
 local SpeedBoost = require(ReplicatedStorage.StatusEffects.SpeedBoost)
-local Attack = WCS.RegisterSkill("Attack")
+local Dash = WCS.RegisterSkill("Dash")
 
-function Attack:OnStartServer()
+function Dash:OnStartServer()
 	local speedBoost = SpeedBoost.new(self.Character)
 	speedBoost:Start(5)
 end
 
-return Attack
+return Dash
 ```
 
 </TabItem>
@@ -64,6 +64,6 @@ You can invoke `Start()` without providing a time limit, but you will have to ca
 
 :::warning
 To prevent *memory leaks* **WCS** calls `Destroy()` on a *status effects* automatically when it ends.
-You can set `DestroyOnEnd` to false inside `OnStartServer()` to change that behavior, but you will have to
+You can set `DestroyOnEnd` to false inside `OnConstructServer()` to change that behavior, but you will have to
 call `Destroy()` manually.
 :::

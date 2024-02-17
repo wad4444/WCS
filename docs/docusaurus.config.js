@@ -9,7 +9,6 @@ import { themes as prismThemes } from "prism-react-renderer";
 /** @type {import('@docusaurus/types').Config} */
 const config = {
     title: "WCS",
-    tagline: "A flexible combat system framework",
     favicon: "img/logo.svg",
     deploymentBranch: "gh-pages",
 
@@ -33,7 +32,7 @@ const config = {
     // may want to replace "en" with "zh-Hans".
     i18n: {
         defaultLocale: "en",
-        locales: ["en"],
+        locales: ["en", "ru"],
     },
 
     presets: [
@@ -69,6 +68,10 @@ const config = {
                         sidebarId: "tutorialSidebar",
                         position: "left",
                         label: "Tutorial",
+                    },
+                    {
+                        type: "localeDropdown",
+                        position: "right",
                     },
                     {
                         href: "https://github.com/g1mmethemoney/WCSTypescript",
