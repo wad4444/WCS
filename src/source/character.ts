@@ -400,10 +400,6 @@ export class Character {
         this.setMovesetServer(movesetObject.Name);
 
         this.MovesetChanged.Fire(movesetObject.Name, oldMoveset);
-
-        rootProducer.patchCharacterData(this.id, {
-            moveset: this.moveset,
-        });
     }
 
     /**
