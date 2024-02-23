@@ -165,6 +165,8 @@ export abstract class SkillBase<
             "Disconnect",
         );
 
+        this.Ended.Connect(() => this.Janitor.Cleanup());
+
         this._janitor.Add(() => {
             this.StateChanged.Destroy();
             this.Destroyed.Destroy();
@@ -246,7 +248,6 @@ export abstract class SkillBase<
             IsActive: false,
             StarterParams: undefined,
         });
-        this.Janitor.Cleanup();
     }
 
     /** Retrieves the skill type */

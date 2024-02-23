@@ -82,6 +82,24 @@ export = function () {
             expect(skill.GetState().IsActive).to.be.equal(false);
             expect(changed).to.be.equal(true);
         });
+
+        it("should clean the janitor after skill ends", () => {
+            let changed = false;
+
+            @SkillDecorator
+            class sumsumSkill extends Skill {
+                protected OnConstructServer(): void {
+                    this.Janitor.Add(() => (changed = true));
+                }
+            }
+
+            const skill = new sumsumSkill(makeChar());
+            skill.Start();
+
+            RunService.Heartbeat.Wait();
+
+            expect(changed).to.be.equal(true);
+        });
     });
 
     describe("destruction", () => {
