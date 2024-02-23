@@ -397,7 +397,7 @@ export class Character {
         });
 
         const oldMoveset = this.moveset;
-        this.moveset = movesetObject.Name;
+        this.setMovesetServer(movesetObject.Name);
 
         this.MovesetChanged.Fire(movesetObject.Name, oldMoveset);
 
@@ -445,9 +445,16 @@ export class Character {
         this.cleanupMovesetSkills();
 
         const oldMoveset = this.moveset;
-        this.moveset = undefined;
+        this.setMovesetServer(undefined);
 
         this.MovesetChanged.Fire(this.moveset, oldMoveset);
+    }
+
+    private setMovesetServer(to?: string) {
+        this.moveset = to;
+        rootProducer.patchCharacterData(this.id, {
+            moveset: this.moveset,
+        });
     }
 
     private cleanupMovesetSkills() {
@@ -459,6 +466,7 @@ export class Character {
         movesetObject.Skills.forEach((SkillConstructor) => {
             const name = tostring(SkillConstructor);
             this.skills.get(name)?.Destroy();
+            this.skills.delete(name);
         });
     }
 
@@ -470,6 +478,7 @@ export class Character {
         Moveset.Skills.forEach((SkillConstructor) => {
             const name = tostring(SkillConstructor);
             this.skills.get(name)?.Destroy();
+            this.skills.delete(name);
 
             new SkillConstructor(this as never);
         });
