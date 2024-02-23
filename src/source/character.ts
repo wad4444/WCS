@@ -384,11 +384,11 @@ export class Character {
             logWarning(`Attempted to apply moveset on client`);
             return;
         }
-
         const movesetObject = typeIs(Moveset, "string") ? GetMovesetObjectByName(Moveset) : Moveset;
         if (!movesetObject) {
             logError(`The provided moveset is invalid`);
         }
+        if (movesetObject.Name === this.moveset) return;
 
         this.cleanupMovesetSkills();
 
