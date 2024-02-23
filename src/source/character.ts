@@ -390,17 +390,9 @@ export class Character {
             logError(`The provided moveset is invalid`);
         }
 
-        if (this.moveset) {
-            movesetObject.Skills.forEach((SkillConstructor) => {
-                const name = tostring(SkillConstructor);
-                this.skills.get(name)?.Destroy();
-            });
-        }
+        this.cleanupMovesetSkills();
 
         movesetObject.Skills.forEach((SkillConstructor) => {
-            const name = tostring(SkillConstructor);
-            this.skills.get(name)?.Destroy();
-
             new SkillConstructor(this as never);
         });
 
@@ -450,6 +442,17 @@ export class Character {
         }
         if (!this.moveset) return;
 
+        this.cleanupMovesetSkills();
+
+        const oldMoveset = this.moveset;
+        this.moveset = undefined;
+
+        this.MovesetChanged.Fire(this.moveset, oldMoveset);
+    }
+
+    private cleanupMovesetSkills() {
+        if (!this.moveset) return;
+
         const movesetObject = GetMovesetObjectByName(this.moveset);
         if (!movesetObject) return;
 
@@ -457,10 +460,6 @@ export class Character {
             const name = tostring(SkillConstructor);
             this.skills.get(name)?.Destroy();
         });
-        const oldMoveset = this.moveset;
-        this.moveset = undefined;
-
-        this.MovesetChanged.Fire(this.moveset, oldMoveset);
     }
 
     /**
@@ -496,7 +495,7 @@ export class Character {
                         data: Id,
                     },
                 } as never,
-                ...(Data.constructorArgs as never[]),
+                ...(Data.constructorArgs as n ever[]),
             );
         };
 
