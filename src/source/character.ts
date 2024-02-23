@@ -495,7 +495,7 @@ export class Character {
                         data: Id,
                     },
                 } as never,
-                ...(Data.constructorArgs as n ever[]),
+                ...(Data.constructorArgs as never[]),
             );
         };
 
