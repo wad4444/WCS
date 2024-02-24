@@ -49,7 +49,7 @@ function Attack:OnStartServer()
 end
 
 function Attack:HandleServerMessage(combo)
-	print("Combo x"...combo..."!")
+	print(`Combo x{combo}!`)
 end
 
 return Attack
