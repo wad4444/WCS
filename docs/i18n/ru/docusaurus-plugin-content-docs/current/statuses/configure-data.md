@@ -38,7 +38,7 @@ local WCS = require(ReplicatedStorage.WCS)
 local Stun = WCS.RegisterStatusEffect("Stun")
 
 function Stun:OnStartServer()
-	self:SetHumanoidData({ WalkSpeed: {0, "Set" } })
+	self:SetHumanoidData({ WalkSpeed = {0, "Set" } })
 end
 
 return Stun
