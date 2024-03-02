@@ -8,8 +8,7 @@ import { slices } from "state/slices";
 import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
 import { Flags } from "./flags";
-import { RootState, rootProducer } from "state/rootProducer";
-import { certainFlushMiddleware } from "state/middleware/certainFlush";
+import { rootProducer } from "state/rootProducer";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -30,7 +29,7 @@ class Client {
         remotes._dispatch.connect((Actions) => {
             this.receiver.dispatch(Actions);
         });
-        rootProducer.applyMiddleware(certainFlushMiddleware, this.receiver.middleware);
+        rootProducer.applyMiddleware(this.receiver.middleware);
         ApplyLoggerMiddleware && rootProducer.applyMiddleware(devToolsMiddleware);
     }
 
@@ -86,37 +85,19 @@ class Client {
     }
 
     private setupCharacterReplication() {
-        let previousSize = 0;
-
-        const stateUpdated = (State: RootState) => {
-            const amount = State.replication.size();
-            if (previousSize === amount) {
-                return;
-            }
-
-            State.replication.forEach((Data, Id) => {
-                if (Character.GetCharacterFromInstance(Data.instance)) {
-                    return;
-                }
-
-                new Character(Data.instance, {
+        rootProducer.observe(
+            (state) => state.replication,
+            (data, id) => {
+                const character = new Character(data.instance, {
                     flag: Flags.CanCreateCharacterClient,
-                    data: Id,
+                    data: id,
                 });
-            });
-            Character.GetCharacterMap().forEach((Character, Id) => {
-                if (State.replication.has(Character.GetId())) {
-                    return;
-                }
 
-                Character.Destroy();
-            });
-
-            previousSize = amount;
-        };
-
-        rootProducer.subscribe((State) => stateUpdated(State));
-        stateUpdated(rootProducer.getState());
+                return () => {
+                    character.Destroy();
+                };
+            },
+        );
     }
 }
 

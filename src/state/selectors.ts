@@ -6,6 +6,18 @@ export function SelectCharacterData(CharacterId: string) {
     };
 }
 
+export function SelectStatuses(CharacterId: string) {
+    return function (State: RootState) {
+        return State.replication.get(CharacterId)?.statusEffects;
+    };
+}
+
+export function SelectSkills(CharacterId: string) {
+    return function (State: RootState) {
+        return State.replication.get(CharacterId)?.skills;
+    };
+}
+
 export function SelectStatusData(CharacterId: string, Id: string) {
     return function (State: RootState) {
         return State.replication.get(CharacterId)?.statusEffects.get(Id);

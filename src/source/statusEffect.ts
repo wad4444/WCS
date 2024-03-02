@@ -434,7 +434,10 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
     /** @hidden @internal */
     public _proccessDataUpdate(StatusData?: StatusData, PreviousData: StatusData = this._packData()) {
-        if (!StatusData) return;
+        if (!StatusData) {
+            if (PreviousData) this._proccessDataUpdate(PreviousData);
+            return;
+        }
 
         if (StatusData.state !== PreviousData.state) {
             freezeCheck(StatusData.state);

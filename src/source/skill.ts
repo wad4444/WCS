@@ -413,7 +413,10 @@ export abstract class SkillBase<
 
     /** @hidden @internal */
     public _proccessDataUpdate(NewData?: SkillData, OldData: SkillData = this.packData()) {
-        if (!NewData) return;
+        if (!NewData) {
+            if (OldData) this._proccessDataUpdate(OldData);
+            return;
+        }
 
         if (NewData.state !== OldData.state) {
             freezeCheck(NewData.state);

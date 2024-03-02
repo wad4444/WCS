@@ -9,7 +9,7 @@ import {
     mapToArray,
 } from "./utility";
 import { Janitor } from "@rbxts/janitor";
-import { SelectCharacterData } from "state/selectors";
+import { SelectCharacterData, SelectSkills, SelectStatuses } from "state/selectors";
 import { AnyStatus, GetRegisteredStatusEffectConstructor, StatusData, UnknownStatus } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
 import { AnySkill, GetRegisteredSkillConstructor, Skill, SkillData, UnknownSkill } from "./skill";
@@ -484,79 +484,62 @@ export class Character {
         if (!isClientContext()) return;
         if (!getActiveHandler()) return;
 
-        const processStatusAddition = (Data: StatusData, Id: string) => {
-            const constructor = GetRegisteredStatusEffectConstructor(Data.className);
-            if (!constructor) {
-                logError(
-                    `Replication Error: Could not find a registered StatusEffect with name ${Data.className}. \n Try doing :RegisterDirectory() on the file directory.`,
-                );
-            }
-
-            new constructor!(
-                {
-                    Character: this,
-                    Flag: {
-                        flag: Flags.CanAssignCustomId,
-                        data: Id,
-                    },
-                } as never,
-                ...(Data.constructorArgs as never[]),
-            );
-        };
-
         const proccessMovesetChange = (New: string | undefined, Old: string | undefined) => {
             this.moveset = New;
             this.MovesetChanged.Fire(New, Old);
         };
 
-        const proccessSkillAddition = (Data: SkillData, Name: string) => {
-            const constructor = GetRegisteredSkillConstructor(Name);
-            if (!constructor) {
-                logError(
-                    `Replication Error: Could not find a registered Skill with name ${Name}. \n Try doing :RegisterDirectory() on the file directory.`,
-                );
-            }
-
-            new constructor!(
-                {
-                    Character: this,
-                    Flag: Flags.CanInstantiateSkillClient,
-                } as never,
-                ...(Data.constructorArguments as never[]),
-            );
-        };
-
         const proccessDataUpdate = (CharacterData: CharacterData | undefined) => {
             if (!CharacterData) return;
-
-            CharacterData.statusEffects.forEach((StatusData, Id) => {
-                if (!this.statusEffects.has(Id)) {
-                    processStatusAddition(StatusData, Id);
-                }
-            });
-
-            this.statusEffects.forEach((Status, Id) => {
-                if (!CharacterData.statusEffects.has(Id) && tonumber(Id)! > 0) {
-                    Status.Destroy();
-                    this.StatusEffectRemoved.Fire(Status);
-                }
-            });
-
-            CharacterData.skills.forEach((SkillData, Name) => {
-                if (!this.skills.has(Name)) {
-                    proccessSkillAddition(SkillData, Name);
-                }
-            });
-
-            this.skills.forEach((Skill, Name) => {
-                if (!CharacterData.skills.has(Name)) {
-                    Skill.Destroy();
-                }
-            });
 
             if (CharacterData.moveset !== this.moveset) proccessMovesetChange(CharacterData.moveset, this.moveset);
             if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
         };
+
+        this.janitor.Add(
+            rootProducer.observe(SelectStatuses(this.GetId()), (Data, Id) => {
+                const constructor = GetRegisteredStatusEffectConstructor(Data.className);
+                if (!constructor) {
+                    logError(
+                        `Replication Error: Could not find a registered StatusEffect with name ${Data.className}. \n Try doing :RegisterDirectory() on the file directory.`,
+                    );
+                }
+
+                const status = new constructor!(
+                    {
+                        Character: this,
+                        Flag: {
+                            flag: Flags.CanAssignCustomId,
+                            data: Id,
+                        },
+                    } as never,
+                    ...(Data.constructorArgs as never[]),
+                );
+
+                return () => status.Destroy();
+            }),
+        );
+
+        this.janitor.Add(
+            rootProducer.observe(SelectSkills(this.GetId()), (Data, Name) => {
+                const constructor = GetRegisteredSkillConstructor(Name);
+                if (!constructor) {
+                    logError(
+                        `Replication Error: Could not find a registered Skill with name ${Name}. \n Try doing :RegisterDirectory() on the file directory.`,
+                    );
+                }
+
+                const skill = new constructor!(
+                    {
+                        Character: this,
+                        Flag: Flags.CanInstantiateSkillClient,
+                    } as never,
+                    ...(Data.constructorArguments as never[]),
+                );
+
+                return () => skill.Destroy();
+            }),
+        );
 
         const dataSelector = SelectCharacterData(this.GetId());
         const disconnect = rootProducer.subscribe(dataSelector, proccessDataUpdate);
