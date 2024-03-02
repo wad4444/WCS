@@ -3,8 +3,6 @@
 import { RunService, Workspace } from "@rbxts/services";
 import { CreateServer, WCS_Server } from "exports";
 
-print(RunService.IsStudio());
-
 export = function () {
     let server!: WCS_Server;
 
