@@ -53,8 +53,8 @@ export interface SkillData {
     constructorArguments: unknown[];
     metadata: unknown;
 }
-export type AnySkill = Skill<any, any[], any, any, any>;
-export type UnknownSkill = Skill<unknown, unknown[], unknown, unknown, unknown>;
+export type AnySkill = SkillBase<any, any[], any, any, any>;
+export type UnknownSkill = SkillBase<unknown, unknown[], unknown, unknown, unknown>;
 
 const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
