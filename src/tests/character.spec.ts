@@ -3,7 +3,7 @@
 import { Janitor } from "@rbxts/janitor";
 import { shallowEqual } from "@rbxts/reflex";
 import { RunService, Workspace } from "@rbxts/services";
-import { Character, Skill, SkillDecorator, StatusEffect, StatusEffectDecorator } from "exports";
+import { Character, DamageContainer, Skill, SkillDecorator, StatusEffect, StatusEffectDecorator } from "exports";
 
 function haveKeys(object: object, keys: string[]) {
     // eslint-disable-next-line roblox-ts/no-array-pairs
@@ -136,7 +136,7 @@ export = function () {
             });
         });
 
-        it("should fire callbacks", () => {
+        it("should fire damage taken callback", () => {
             const char = makeChar();
             let pass = false;
             char.DamageTaken.Connect(() => (pass = true));
@@ -148,6 +148,35 @@ export = function () {
 
             RunService.Heartbeat.Wait();
             expect(pass).to.be.equal(true);
+        });
+
+        it("should fire damage dealt callback", () => {
+            const char1 = makeChar();
+            const char2 = makeChar();
+
+            @SkillDecorator
+            class __skill extends Skill {
+                protected OnStartServer(): void {
+                    char2.TakeDamage(this.CreateDamageContainer(10));
+                }
+            }
+
+            const skill = new __skill(char1);
+            let container = undefined as DamageContainer | undefined;
+            let enemy = undefined as Character | undefined;
+
+            char1.DamageDealt.Connect((_enemy, _container) => {
+                enemy = _enemy;
+                container = _container;
+            });
+
+            skill.Start();
+            RunService.Heartbeat.Wait();
+
+            expect(container).to.be.ok();
+            expect(enemy).to.be.equal(char2);
+            expect(container?.Damage).to.be.equal(10);
+            expect(container?.Source).to.be.equal(skill);
         });
     });
 
