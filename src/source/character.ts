@@ -498,54 +498,60 @@ export class Character {
         };
 
         this.janitor.Add(
-            observeEntity(rootProducer, SelectStatuses(this.GetId()), (Data, Id) => {
-                const constructor = GetRegisteredStatusEffectConstructor(Data.className);
-                if (!constructor) {
-                    logError(
-                        `Replication Error: Could not find a registered StatusEffect with name ${Data.className}. \n Try doing :RegisterDirectory() on the file directory.`,
+            rootProducer.observe(
+                SelectStatuses(this.GetId()),
+                (_, index) => index,
+                (Data, Id) => {
+                    const constructor = GetRegisteredStatusEffectConstructor(Data.className);
+                    if (!constructor) {
+                        logError(
+                            `Replication Error: Could not find a registered StatusEffect with name ${Data.className}. \n Try doing :RegisterDirectory() on the file directory.`,
+                        );
+                    }
+
+                    const status = new constructor!(
+                        {
+                            Character: this,
+                            Flag: {
+                                flag: Flags.CanAssignCustomId,
+                                data: Id,
+                            },
+                        } as never,
+                        ...(Data.constructorArgs as never[]),
                     );
-                }
 
-                const status = new constructor!(
-                    {
-                        Character: this,
-                        Flag: {
-                            flag: Flags.CanAssignCustomId,
-                            data: Id,
-                        },
-                    } as never,
-                    ...(Data.constructorArgs as never[]),
-                );
-
-                return (beforeState) => {
-                    status._processDataUpdate(undefined, beforeState);
-                    status.Destroy();
-                };
-            }),
+                    return () => {
+                        status.Destroy();
+                    };
+                },
+            ),
         );
 
         this.janitor.Add(
-            observeEntity(rootProducer, SelectSkills(this.GetId()), (Data, Name) => {
-                const constructor = GetRegisteredSkillConstructor(Name);
-                if (!constructor) {
-                    logError(
-                        `Replication Error: Could not find a registered Skill with name ${Name}. \n Try doing :RegisterDirectory() on the file directory.`,
+            rootProducer.observe(
+                SelectSkills(this.GetId()),
+                (_, index) => index,
+                (Data, Name) => {
+                    const constructor = GetRegisteredSkillConstructor(Name);
+                    if (!constructor) {
+                        logError(
+                            `Replication Error: Could not find a registered Skill with name ${Name}. \n Try doing :RegisterDirectory() on the file directory.`,
+                        );
+                    }
+
+                    const skill = new constructor!(
+                        {
+                            Character: this,
+                            Flag: Flags.CanInstantiateSkillClient,
+                        } as never,
+                        ...(Data.constructorArguments as never[]),
                     );
-                }
 
-                const skill = new constructor!(
-                    {
-                        Character: this,
-                        Flag: Flags.CanInstantiateSkillClient,
-                    } as never,
-                    ...(Data.constructorArguments as never[]),
-                );
-
-                return (beforeState) => {
-                    skill._processDataUpdate(undefined, beforeState);
-                    skill.Destroy();
-                };
-            }),
+                    return () => {
+                        skill.Destroy();
+                    };
+                },
+            ),
         );
 
         const dataSelector = SelectCharacterData(this.GetId());
