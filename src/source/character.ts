@@ -18,7 +18,6 @@ import { WCS_Server } from "./server";
 import { remotes } from "./remotes";
 import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
-import { observeEntity } from "./observe";
 
 export interface CharacterData {
     instance: Instance;
