@@ -8,6 +8,8 @@ import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
 import { Flags } from "./flags";
 import { rootProducer } from "state/rootProducer";
+import { UnknownSkill } from "./skill";
+import { UnknownStatus } from "./statusEffect";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -76,6 +78,36 @@ class Client {
                 character.DamageTaken.Fire({
                     Damage: Damage,
                     Source: undefined,
+                });
+            }
+        });
+
+        remotes._damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
+            const character = Character.GetCharacterFromId(CharacterId);
+            let source: UnknownSkill | UnknownStatus | undefined = undefined;
+
+            if (Type === "Skill") {
+                character?.GetSkills().every((skill) => {
+                    if (skill.GetId() === SourceId) {
+                        source = skill;
+                        return false;
+                    }
+                    return true;
+                });
+            } else if (Type === "Status") {
+                character?.GetAllStatusEffects().every((status) => {
+                    if (status.GetId() === SourceId) {
+                        source = status;
+                        return false;
+                    }
+                    return true;
+                });
+            }
+
+            if (character) {
+                character.DamageDealt.Fire(undefined, {
+                    Damage: Damage,
+                    Source: source,
                 });
             }
         });

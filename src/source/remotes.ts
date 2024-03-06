@@ -29,4 +29,10 @@ export const remotes = createRemotes({
         t.optional(t.any),
     ),
     _damageTaken: remote<Client, [CharacterId: string, Damage: number]>(t.string, t.number),
+    _damageDealt: remote<Client, [CharacterId: string, SourceId: string, Type: "Skill" | "Status", Damage: number]>(
+        t.string,
+        t.string,
+        t.literal("Skill", "Status"),
+        t.number,
+    ),
 });

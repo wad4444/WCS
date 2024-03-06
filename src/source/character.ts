@@ -10,7 +10,13 @@ import {
 } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectCharacterData, SelectSkills, SelectStatuses } from "state/selectors";
-import { AnyStatus, GetRegisteredStatusEffectConstructor, StatusData, UnknownStatus } from "./statusEffect";
+import {
+    AnyStatus,
+    GetRegisteredStatusEffectConstructor,
+    StatusData,
+    StatusEffect,
+    UnknownStatus,
+} from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
 import { AnySkill, GetRegisteredSkillConstructor, SkillData, UnknownSkill } from "./skill";
 import { rootProducer } from "state/rootProducer";
@@ -61,6 +67,11 @@ export class Character {
      * Container's source will always be nil on client
      */
     public readonly DamageTaken = new Signal<(Container: DamageContainer) => void>();
+    /**
+     * Enemy will always be nil on client
+     */
+    public readonly DamageDealt = new Signal<(Enemy: Character | undefined, Container: DamageContainer) => void>();
+
     public readonly Destroyed = new Signal();
     public readonly MovesetChanged = new Signal<
         (NewMoveset: string | undefined, OldMoveset: string | undefined) => void
@@ -135,6 +146,20 @@ export class Character {
                     });
                 }),
             );
+            this.janitor.Add(
+                this.DamageDealt.Connect((_, Container) => {
+                    Players.GetPlayers().forEach((Player) => {
+                        if (!server._filterReplicatedCharacters(Player, this)) return;
+                        remotes._damageDealt.fire(
+                            Player,
+                            this.id,
+                            Container.Source!.GetId(),
+                            Container.Source! instanceof StatusEffect ? "Status" : "Skill",
+                            Container.Damage,
+                        );
+                    });
+                }),
+            );
         }
     }
 
@@ -187,6 +212,7 @@ export class Character {
         };
 
         this.DamageTaken.Fire(container);
+        Container.Source?.Character.DamageDealt.Fire(this, container);
         return container;
     }
 

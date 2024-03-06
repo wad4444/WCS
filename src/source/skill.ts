@@ -303,6 +303,11 @@ export abstract class SkillBase<
         return this.Name;
     }
 
+    /** @internal @hidden */
+    public GetId() {
+        return this.Name;
+    }
+
     /**
      * Clears the metadata
      */
