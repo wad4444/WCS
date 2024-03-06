@@ -1,3 +1,4 @@
+import { SkillData, StatusData } from "exports";
 import { RootState } from "./rootProducer";
 
 export function SelectCharacterData(CharacterId: string) {
@@ -8,13 +9,13 @@ export function SelectCharacterData(CharacterId: string) {
 
 export function SelectStatuses(CharacterId: string) {
     return function (State: RootState) {
-        return State.replication.get(CharacterId)?.statusEffects;
+        return State.replication.get(CharacterId)?.statusEffects ?? new Map<string, StatusData>();
     };
 }
 
 export function SelectSkills(CharacterId: string) {
     return function (State: RootState) {
-        return State.replication.get(CharacterId)?.skills;
+        return State.replication.get(CharacterId)?.skills ?? new Map<string, SkillData>();
     };
 }
 
