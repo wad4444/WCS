@@ -517,9 +517,8 @@ export class Character {
                     ...(Data.constructorArgs as never[]),
                 );
 
-                return (newState, oldState) => {
-                    const [newStatusState, oldStatusState] = [newState?.get(Id), oldState?.get(Id)];
-                    status._processDataUpdate(newStatusState, oldStatusState);
+                return (beforeState) => {
+                    status._processDataUpdate(undefined, beforeState);
                     status.Destroy();
                 };
             }),
@@ -542,9 +541,8 @@ export class Character {
                     ...(Data.constructorArguments as never[]),
                 );
 
-                return (newState, oldState) => {
-                    const [newSkillState, oldSkillState] = [newState?.get(Name), oldState?.get(Name)];
-                    skill._processDataUpdate(newSkillState, oldSkillState);
+                return (beforeState) => {
+                    skill._processDataUpdate(undefined, beforeState);
                     skill.Destroy();
                 };
             }),
