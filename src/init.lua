@@ -179,13 +179,6 @@ type DamageContainer = {
     Source: AnySkill | AnyStatus | void;
 }
 
---[[
-        StarterParams = unknown,
-    ConstructorArguments extends unknown[] = unknown[],
-    Metadata = unknown,
-    ServerToClientMessage = unknown,
-    ClientToServerMessage = unknown,
-]]
 type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = {
     new: (any, ConstructorArguments...) -> Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
     ApplyCooldown: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> void,
@@ -342,6 +335,7 @@ export type Character = typeof(setmetatable({} :: {
 
     StatusEffectAdded: ReadonlySignal<(AnyStatus) -> void>;
     StatusEffectRemoved: ReadonlySignal<(AnyStatus) -> void>;
+    DamageDealt: ReadonlySignal<(Character?, DamageContainer) -> void>;
     DamageTaken: ReadonlySignal<(number) -> void>;
     Destroyed: ReadonlySignal<Callback>;
     MovesetChanged: ReadonlySignal<(string | void, string | void) -> void>;
