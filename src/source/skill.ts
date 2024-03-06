@@ -70,7 +70,7 @@ export abstract class SkillBase<
     protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();
     protected readonly CooldownTimer = new Timer(1);
-    protected readonly Character: Character;
+    public readonly Character: Character;
 
     public readonly Started = new Signal();
     public readonly Ended = new Signal();

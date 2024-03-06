@@ -77,7 +77,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
 
-    protected readonly Character: Character;
+    public readonly Character: Character;
     public DestroyOnEnd = true;
 
     private state: internal_statusEffectState = {
