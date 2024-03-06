@@ -74,6 +74,21 @@ export = function () {
             expect(char.GetSkillFromString(tostring(someSkill))).to.be.ok();
         });
 
+        it("should fire events", () => {
+            const char = makeChar();
+            let changed = 0;
+
+            janitor.Add(char.SkillAdded.Connect(() => changed++));
+            janitor.Add(char.SkillRemoved.Connect(() => changed++));
+
+            const x = new someSkill(char);
+            RunService.Heartbeat.Wait();
+            x.Destroy();
+            RunService.Heartbeat.Wait();
+
+            expect(changed).to.be.equal(2);
+        });
+
         it("should remove skills", () => {
             const char = makeChar();
             new someSkill(char);
@@ -103,6 +118,21 @@ export = function () {
             status.Start();
 
             expect(char.GetAllActiveStatusEffectsOfType(someStatus).size()).to.be.equal(1);
+        });
+
+        it("should fire events", () => {
+            const char = makeChar();
+            let changed = 0;
+
+            janitor.Add(char.StatusEffectAdded.Connect(() => changed++));
+            janitor.Add(char.StatusEffectRemoved.Connect(() => changed++));
+
+            const x = new someStatus(char);
+            RunService.Heartbeat.Wait();
+            x.Destroy();
+            RunService.Heartbeat.Wait();
+
+            expect(changed).to.be.equal(2);
         });
 
         it("should remove a status", () => {
