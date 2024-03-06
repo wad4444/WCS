@@ -12,7 +12,7 @@ import { Janitor } from "@rbxts/janitor";
 import { SelectCharacterData, SelectSkills, SelectStatuses } from "state/selectors";
 import { AnyStatus, GetRegisteredStatusEffectConstructor, StatusData, UnknownStatus } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
-import { AnySkill, GetRegisteredSkillConstructor, Skill, SkillData, UnknownSkill } from "./skill";
+import { AnySkill, GetRegisteredSkillConstructor, SkillData, UnknownSkill } from "./skill";
 import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
 import { remotes } from "./remotes";
