@@ -418,25 +418,21 @@ export abstract class SkillBase<
     }
 
     /** @hidden @internal */
-    public _processDataUpdate(NewData?: SkillData, OldData?: SkillData) {
-        if (!NewData) {
-            if (OldData) this._processDataUpdate(OldData);
-            return;
-        }
+    public _processDataUpdate(NewData?: SkillData, OldData: SkillData = this.packData()) {
+        if (!NewData) return;
 
-        const oldData = OldData || this.packData();
-        if (NewData.state !== oldData.state) {
+        if (NewData.state !== OldData.state) {
             freezeCheck(NewData.state);
             this.state = NewData.state;
-            this.StateChanged.Fire(NewData.state, oldData.state);
+            this.StateChanged.Fire(NewData.state, OldData.state);
         }
 
-        if (NewData.metadata !== oldData.metadata) {
+        if (NewData.metadata !== OldData.metadata) {
             if (t.table(NewData.metadata)) freezeCheck(NewData.metadata);
             this.metadata = NewData.metadata as Metadata | undefined;
             this.MetadataChanged.Fire(
                 NewData.metadata as Metadata | undefined,
-                oldData.metadata as Metadata | undefined,
+                OldData.metadata as Metadata | undefined,
             );
         }
     }

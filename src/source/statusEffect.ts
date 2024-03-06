@@ -439,33 +439,28 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /** @hidden @internal */
-    public _processDataUpdate(StatusData?: StatusData, PreviousData?: StatusData) {
-        if (!StatusData) {
-            if (PreviousData) this._processDataUpdate(PreviousData);
-            return;
-        }
+    public _processDataUpdate(StatusData?: StatusData, PreviousData: StatusData = this._packData()) {
+        if (!StatusData) return;
 
-        const previousData = PreviousData || this._packData();
-
-        if (StatusData.state !== previousData.state) {
+        if (StatusData.state !== PreviousData.state) {
             freezeCheck(StatusData.state);
             this.state = StatusData.state;
-            this.StateChanged.Fire(StatusData.state, previousData.state);
+            this.StateChanged.Fire(StatusData.state, PreviousData.state);
         }
 
-        if (StatusData.metadata !== previousData.metadata) {
+        if (StatusData.metadata !== PreviousData.metadata) {
             if (t.table(StatusData.metadata)) freezeCheck(StatusData.metadata);
             this.metadata = StatusData.metadata as Metadata | undefined;
             this.MetadataChanged.Fire(
                 StatusData.metadata as Metadata | undefined,
-                previousData.metadata as Metadata | undefined,
+                PreviousData.metadata as Metadata | undefined,
             );
         }
 
-        if (StatusData.humanoidData !== previousData.humanoidData) {
+        if (StatusData.humanoidData !== PreviousData.humanoidData) {
             if (StatusData.humanoidData) freezeCheck(StatusData.humanoidData);
             this.humanoidData = StatusData.humanoidData;
-            this.HumanoidDataChanged.Fire(StatusData.humanoidData, previousData.humanoidData);
+            this.HumanoidDataChanged.Fire(StatusData.humanoidData, PreviousData.humanoidData);
         }
     }
 
