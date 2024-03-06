@@ -219,7 +219,6 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (!this.GetState().IsActive) {
-            logWarning(`Cannot stop a non active status effect`);
             return;
         }
 
