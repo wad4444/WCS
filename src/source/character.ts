@@ -57,6 +57,9 @@ export class Character {
 
     private readonly janitor = new Janitor();
 
+    public readonly SkillAdded = new Signal<(Status: UnknownSkill) => void>();
+    public readonly SkillRemoved = new Signal<(Status: UnknownSkill) => void>();
+
     public readonly StatusEffectAdded = new Signal<(Status: UnknownStatus) => void>();
     public readonly StatusEffectRemoved = new Signal<(Status: UnknownStatus) => void>();
     /**
@@ -131,6 +134,8 @@ export class Character {
         this.janitor.Add(() => {
             this.StatusEffectAdded.Destroy();
             this.StatusEffectRemoved.Destroy();
+            this.SkillAdded.Destroy();
+            this.SkillRemoved.Destroy();
             this.HumanoidPropertiesUpdated.Destroy();
         });
 
@@ -269,7 +274,10 @@ export class Character {
         this.skills.set(name, Skill);
         Skill.Destroyed.Connect(() => {
             this.skills.delete(name);
+            this.SkillRemoved.Fire(Skill);
         });
+
+        this.SkillAdded.Fire(Skill);
     }
 
     /**

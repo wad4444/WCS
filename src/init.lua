@@ -333,6 +333,8 @@ export type Character = typeof(setmetatable({} :: {
     Humanoid: Humanoid;
     Player: Player?;
 
+    SkillAdded: ReadonlySignal<(AnySkill) -> void>;
+    SkillRemoved: ReadonlySignal<(AnyStatus) -> void>;
     StatusEffectAdded: ReadonlySignal<(AnyStatus) -> void>;
     StatusEffectRemoved: ReadonlySignal<(AnyStatus) -> void>;
     DamageDealt: ReadonlySignal<(Character?, DamageContainer) -> void>;
