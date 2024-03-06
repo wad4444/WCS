@@ -18,6 +18,7 @@ import { WCS_Server } from "./server";
 import { remotes } from "./remotes";
 import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
+import { observeEntity } from "./observe";
 
 export interface CharacterData {
     instance: Instance;
@@ -484,20 +485,20 @@ export class Character {
         if (!isClientContext()) return;
         if (!getActiveHandler()) return;
 
-        const proccessMovesetChange = (New: string | undefined, Old: string | undefined) => {
+        const processMovesetChange = (New: string | undefined, Old: string | undefined) => {
             this.moveset = New;
             this.MovesetChanged.Fire(New, Old);
         };
 
-        const proccessDataUpdate = (CharacterData: CharacterData | undefined) => {
+        const processDataUpdate = (CharacterData: CharacterData | undefined) => {
             if (!CharacterData) return;
 
-            if (CharacterData.moveset !== this.moveset) proccessMovesetChange(CharacterData.moveset, this.moveset);
+            if (CharacterData.moveset !== this.moveset) processMovesetChange(CharacterData.moveset, this.moveset);
             if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
         };
 
         this.janitor.Add(
-            rootProducer.observe(SelectStatuses(this.GetId()), (Data, Id) => {
+            observeEntity(rootProducer, SelectStatuses(this.GetId()), (Data, Id) => {
                 const constructor = GetRegisteredStatusEffectConstructor(Data.className);
                 if (!constructor) {
                     logError(
@@ -516,12 +517,16 @@ export class Character {
                     ...(Data.constructorArgs as never[]),
                 );
 
-                return () => status.Destroy();
+                return (newState, oldState) => {
+                    const [newStatusState, oldStatusState] = [newState?.get(Id), oldState?.get(Id)];
+                    status._processDataUpdate(newStatusState, oldStatusState);
+                    status.Destroy();
+                };
             }),
         );
 
         this.janitor.Add(
-            rootProducer.observe(SelectSkills(this.GetId()), (Data, Name) => {
+            observeEntity(rootProducer, SelectSkills(this.GetId()), (Data, Name) => {
                 const constructor = GetRegisteredSkillConstructor(Name);
                 if (!constructor) {
                     logError(
@@ -537,13 +542,17 @@ export class Character {
                     ...(Data.constructorArguments as never[]),
                 );
 
-                return () => skill.Destroy();
+                return (newState, oldState) => {
+                    const [newSkillState, oldSkillState] = [newState?.get(Name), oldState?.get(Name)];
+                    skill._processDataUpdate(newSkillState, oldSkillState);
+                    skill.Destroy();
+                };
             }),
         );
 
         const dataSelector = SelectCharacterData(this.GetId());
-        const disconnect = rootProducer.subscribe(dataSelector, proccessDataUpdate);
-        proccessDataUpdate(dataSelector(rootProducer.getState()));
+        const disconnect = rootProducer.subscribe(dataSelector, processDataUpdate);
+        processDataUpdate(dataSelector(rootProducer.getState()));
 
         this.janitor.Add(disconnect);
         this.updateHumanoidProps();

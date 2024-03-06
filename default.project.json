@@ -1,5 +1,5 @@
 {
-	"name": "wcs-framework",
+	"name": "wcs",
 	"globIgnorePaths": [
 		"**/package.json",
 		"**/tsconfig.json"

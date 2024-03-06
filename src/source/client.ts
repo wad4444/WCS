@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
-import { BroadcastReceiver, Broadcaster, createBroadcastReceiver, createBroadcaster } from "@rbxts/reflex";
-import { RunService } from "@rbxts/services";
+import { BroadcastReceiver, createBroadcastReceiver } from "@rbxts/reflex";
 import { t } from "@rbxts/t";
 import { isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
 import { remotes } from "./remotes";
@@ -87,6 +86,7 @@ class Client {
     private setupCharacterReplication() {
         rootProducer.observe(
             (state) => state.replication,
+            (_, index) => index,
             (data, id) => {
                 const character = new Character(data.instance, {
                     flag: Flags.CanCreateCharacterClient,

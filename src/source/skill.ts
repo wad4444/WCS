@@ -412,24 +412,25 @@ export abstract class SkillBase<
     }
 
     /** @hidden @internal */
-    public _proccessDataUpdate(NewData?: SkillData, OldData: SkillData = this.packData()) {
+    public _processDataUpdate(NewData?: SkillData, OldData?: SkillData) {
         if (!NewData) {
-            if (OldData) this._proccessDataUpdate(OldData);
+            if (OldData) this._processDataUpdate(OldData);
             return;
         }
 
-        if (NewData.state !== OldData.state) {
+        const oldData = OldData || this.packData();
+        if (NewData.state !== oldData.state) {
             freezeCheck(NewData.state);
             this.state = NewData.state;
-            this.StateChanged.Fire(NewData.state, OldData.state);
+            this.StateChanged.Fire(NewData.state, oldData.state);
         }
 
-        if (NewData.metadata !== OldData.metadata) {
+        if (NewData.metadata !== oldData.metadata) {
             if (t.table(NewData.metadata)) freezeCheck(NewData.metadata);
             this.metadata = NewData.metadata as Metadata | undefined;
             this.MetadataChanged.Fire(
                 NewData.metadata as Metadata | undefined,
-                OldData.metadata as Metadata | undefined,
+                oldData.metadata as Metadata | undefined,
             );
         }
     }
@@ -438,8 +439,8 @@ export abstract class SkillBase<
         if (!this.isReplicated) return;
 
         const dataSelector = SelectSkillData(this.Character.GetId(), this.Name);
-        this._proccessDataUpdate(dataSelector(rootProducer.getState()));
-        rootProducer.subscribe(dataSelector, (...args: [SkillData?, SkillData?]) => this._proccessDataUpdate(...args));
+        this._processDataUpdate(dataSelector(rootProducer.getState()));
+        rootProducer.subscribe(dataSelector, (...args: [SkillData?, SkillData?]) => this._processDataUpdate(...args));
     }
 
     /**

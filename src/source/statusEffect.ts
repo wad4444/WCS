@@ -47,11 +47,13 @@ export interface HumanoidData {
     Priority: number;
 }
 
+type StatusEffectConstructor = new (...args: [Character, ...constructorArgs: any[]]) => UnknownStatus;
+
 type ReadonlyState = ReadonlyDeep<StatusEffectState>;
 export type AnyStatus = StatusEffect<any, any[]>;
 export type UnknownStatus = StatusEffect<unknown, unknown[]>;
 
-const registeredStatuses: Map<string, Constructor<UnknownStatus>> = new Map();
+const registeredStatuses: Map<string, StatusEffectConstructor> = new Map();
 let nextId = 0;
 function generateId() {
     nextId += isServerContext() ? 1 : -1;
@@ -433,31 +435,33 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /** @hidden @internal */
-    public _proccessDataUpdate(StatusData?: StatusData, PreviousData: StatusData = this._packData()) {
+    public _processDataUpdate(StatusData?: StatusData, PreviousData?: StatusData) {
         if (!StatusData) {
-            if (PreviousData) this._proccessDataUpdate(PreviousData);
+            if (PreviousData) this._processDataUpdate(PreviousData);
             return;
         }
 
-        if (StatusData.state !== PreviousData.state) {
+        const previousData = PreviousData || this._packData();
+
+        if (StatusData.state !== previousData.state) {
             freezeCheck(StatusData.state);
             this.state = StatusData.state;
-            this.StateChanged.Fire(StatusData.state, PreviousData.state);
+            this.StateChanged.Fire(StatusData.state, previousData.state);
         }
 
-        if (StatusData.metadata !== PreviousData.metadata) {
+        if (StatusData.metadata !== previousData.metadata) {
             if (t.table(StatusData.metadata)) freezeCheck(StatusData.metadata);
             this.metadata = StatusData.metadata as Metadata | undefined;
             this.MetadataChanged.Fire(
                 StatusData.metadata as Metadata | undefined,
-                PreviousData.metadata as Metadata | undefined,
+                previousData.metadata as Metadata | undefined,
             );
         }
 
-        if (StatusData.humanoidData !== PreviousData.humanoidData) {
+        if (StatusData.humanoidData !== previousData.humanoidData) {
             if (StatusData.humanoidData) freezeCheck(StatusData.humanoidData);
             this.humanoidData = StatusData.humanoidData;
-            this.HumanoidDataChanged.Fire(StatusData.humanoidData, PreviousData.humanoidData);
+            this.HumanoidDataChanged.Fire(StatusData.humanoidData, previousData.humanoidData);
         }
     }
 
@@ -467,9 +471,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         const dataSelector = SelectStatusData(this.Character.GetId(), this.id);
 
         const subscription = rootProducer.subscribe(dataSelector, (...args: [StatusData?, StatusData?]) =>
-            this._proccessDataUpdate(...args),
+            this._processDataUpdate(...args),
         );
-        this._proccessDataUpdate(dataSelector(rootProducer.getState()));
+        this._processDataUpdate(dataSelector(rootProducer.getState()));
 
         this.janitor.Add(subscription);
     }
@@ -487,7 +491,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     protected OnEndServer() {}
 }
 
-export function StatusEffectDecorator<T extends Constructor<AnyStatus>>(Constructor: T) {
+export function StatusEffectDecorator<T extends StatusEffectConstructor>(Constructor: T) {
     const name = tostring(Constructor);
     if (registeredStatuses.has(name)) {
         logError(`StatusEffect with name ${name} was already registered before`);
