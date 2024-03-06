@@ -259,6 +259,12 @@ export abstract class SkillBase<
      * Destroys the skill and removes it from the character
      */
     public Destroy() {
+        this._setState({
+            IsActive: false,
+            Debounce: false,
+            StarterParams: undefined,
+        });
+
         if (isServerContext()) {
             rootProducer.deleteSkillData(this.Character.GetId(), this.Name);
         }

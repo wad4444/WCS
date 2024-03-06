@@ -385,7 +385,12 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      */
     public Destroy() {
         if (isServerContext()) {
+            this.End();
             rootProducer.deleteStatusData(this.Character.GetId(), this.id);
+        } else {
+            this._setState({
+                IsActive: false,
+            });
         }
 
         this.isDestroyed = true;
