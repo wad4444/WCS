@@ -23,7 +23,7 @@ under `[dependencies]` in your `wally.toml` file.
 
 ```md title="wally.toml"
 [dependencies]
-wcs = "cheetiedotpy/wcs@0.7.21"
+wcs = "cheetiedotpy/wcs@1.0.0"
 ```
 
 ### Roblox Studio Installation
