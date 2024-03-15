@@ -26,7 +26,7 @@ function getCurrentWCS_Character() {
 	const characterModel = Players.LocalPlayer.Character;
 	if (!characterModel) return;
 
-	return Character.GetCharacterFromInstance_TS(characterModel);
+	return Character.GetCharacterFromInstance(characterModel);
 }
 
 UserInputService.InputBegan.Connect((Input, GameProcessed) => {
