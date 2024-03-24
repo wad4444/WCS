@@ -30,9 +30,13 @@ export = CreateMoveset("Mage", [Fireball, Manashot, Flight]);
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local WCS = require(ReplicatedStorage.WCS)
-local Skills = require(ReplicatedStorage.Skills)
+local Skills = ReplicatedStorage.Skills
 
-return WCS.CreateMoveset("Mage", {Skills.Fireball, Skills.Manashot, Skills.Flight})
+local Fireball = require(Skills.Fireball)
+local Manashot = require(Skills.Manashot)
+local Flight = require(Skills.Flight)
+
+return WCS.CreateMoveset("Mage", {Fireball, Manashot, Flight})
 ```
 
 </TabItem>
