@@ -42,8 +42,6 @@ export function instanceofConstructor<T extends object>(constructor: Constructor
     let currentClass = constructor as ConstructorWithIndex;
     let metatable = getmetatable(currentClass) as ConstructorWithIndex;
 
-    print(metatable, currentClass);
-
     while (true) {
         if (currentClass === (constructor2 as never)) return true;
         if (!currentClass && !metatable) break;

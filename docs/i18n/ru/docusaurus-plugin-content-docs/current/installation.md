@@ -23,7 +23,7 @@ npm i @rbxts/wcs@latest
 
 ```md title="wally.toml"
 [dependencies]
-wcs = "cheetiedotpy/wcs@1.0.0"
+wcs = "cheetiedotpy/wcs@1.0.2"
 ```
 
 ### Скачать файл
