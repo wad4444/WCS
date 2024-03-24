@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import { Symbol } from "symbol";
 import { WCS_Client } from "./client";
 import { WCS_Server } from "./server";
@@ -43,8 +44,9 @@ export function instanceofConstructor<T extends object>(constructor: Constructor
 
     print(metatable, currentClass);
 
-    while (currentClass && metatable) {
+    while (true) {
         if (currentClass === (constructor2 as never)) return true;
+        if (!currentClass && !metatable) break;
 
         currentClass = metatable.__index as ConstructorWithIndex;
         metatable = getmetatable(currentClass) as ConstructorWithIndex;

@@ -1,6 +1,6 @@
 {
-  "name": "@rbxts/wcs",
-  "version": "1.0.0",
+  "name": "wcs",
+  "version": "1.0.11",
   "description": "WCS is an extensible framework that allows you create fully customizable combat systems easily by providing useful abstraction",
   "main": "out/init.lua",
   "scripts": {

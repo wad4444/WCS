@@ -22,7 +22,7 @@
 		"outDir": "out",
 		"baseUrl": "src",
 		"incremental": true,
-		"declaration": true,
+		"declaration": false,
 		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo",
 		"plugins": [
 			{"transform": "rbxts-transformer-private"},
