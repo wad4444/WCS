@@ -125,7 +125,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
                 this.stateDependentCallbacks(New as internal_statusEffectState, Old as internal_statusEffectState),
             ),
         );
-        this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd && this.Destroy()));
+        this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd && isServerContext() && this.Destroy()));
 
         this.janitor.Add(
             this.timer.completed.Connect(() => {
