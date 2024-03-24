@@ -1,5 +1,6 @@
-import { AnySkill, Skill, UnknownSkill } from "./skill";
-import { Constructor, freezeCheck, logError } from "./utility";
+import { t } from "@rbxts/t";
+import { AnySkill, Skill, SkillBase, UnknownSkill } from "./skill";
+import { Constructor, freezeCheck, instanceofConstructor, logError } from "./utility";
 
 export interface Moveset {
     readonly Name: string;
@@ -15,6 +16,13 @@ export function CreateMoveset(Name: string, Skills: Constructor<AnySkill>[]): Mo
     if (registeredMovesets.has(Name)) {
         logError(`StatusEffect with name ${Name} was already registered before`);
     }
+
+    if (!t.table(Skills)) logError(`Skills you provided is not a valid array`);
+    Skills.forEach((T) => {
+        if (!t.table(T) || !instanceofConstructor(T, SkillBase as never)) {
+            logError(`${T} is not a valid skill constructor`);
+        }
+    });
 
     const moveset = {
         Name: Name,

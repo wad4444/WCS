@@ -33,6 +33,26 @@ export function isClientContext() {
     return RunService.IsClient() && RunService.IsRunning();
 }
 
+interface ConstructorWithIndex extends Constructor {
+    __index: object;
+}
+
+export function instanceofConstructor<T extends object>(constructor: Constructor, constructor2: Constructor<T>) {
+    let currentClass = constructor as ConstructorWithIndex;
+    let metatable = getmetatable(currentClass) as ConstructorWithIndex;
+
+    print(metatable, currentClass);
+
+    while (currentClass && metatable) {
+        if (currentClass === (constructor2 as never)) return true;
+
+        currentClass = metatable.__index as ConstructorWithIndex;
+        metatable = getmetatable(currentClass) as ConstructorWithIndex;
+    }
+
+    return false;
+}
+
 export type Constructor<T extends object = object> = new (...args: never[]) => T;
 export type ReadonlyDeep<T extends object> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
 
