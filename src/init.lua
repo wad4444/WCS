@@ -317,6 +317,7 @@ type CharacterImpl = {
     GetAllActiveStatusStatusEffectsOfType: (Character, AnyStatusImpl) -> {AnyStatus};
     HasStatusEffects: (Character, {AnyStatusImpl}) -> boolean;
     GetSkillFromString: (Character, string) -> AnySkill?;
+    GetSkills: (Character) -> {AnySkill}?;
     GetSkillFromConstructor: (Character, AnySkillImpl) -> AnySkill?;
     ApplyMoveset: (Character, Moveset | string) -> void;
     GetMoveset: (Character) -> string | void;
