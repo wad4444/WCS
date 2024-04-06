@@ -36,8 +36,6 @@ Client:RegisterDirectory(game.ReplicatedStorage.statusEffects)
 </TabItem>
 </Tabs>
 
-
-
 ## `Start(attachDevTools)`
 Starts the handler.
 
