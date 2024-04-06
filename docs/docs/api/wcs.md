@@ -14,6 +14,9 @@ import TOCInline from "@theme/TOCInline";
 Creates a [Server](./server.md) object and returns it.
 If called more than once returns the same [server](./server.md) object.
 
+**`Returns:`**
+* [Server](./server.md)
+
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
 
@@ -30,9 +33,6 @@ local Server = WCS.CreateServer()
 
 </TabItem>
 </Tabs>
-
-**`Returns:`**
-* [Server](./server.md)
 
 ## `CreateClient()`
 Creates a [Client](./client.md) object and returns it.
@@ -66,6 +66,9 @@ Accepts the name and array of skills.
 * Name: `string`
 * Skills: ```{AnySkillConstructor}```
 
+**`Returns:`**
+* [Moveset](./moveset.md)
+
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
 
@@ -83,14 +86,14 @@ local Client = WCS.CreateMoveset("Mage", {Attack})
 </TabItem>
 </Tabs>
 
-**`Returns:`**
-* [Moveset](./moveset.md)
-
 ## `GetMovesetObjectByName(name)`
-Retrieves moveset object by its name if registered.
+Retrieves [moveset object](./moveset.md) by its name if registered.
 
 **`Parameters:`**
 * Name: `string`
+
+**`Returns:`**
+* Moveset: [`Moveset?`](./moveset.md)
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -109,21 +112,18 @@ local Moveset = WCS.GetMovesetObjectByName("Mage")
 </TabItem>
 </Tabs>
 
-**`Returns:`**
-* Moveset: [`Moveset?`](./moveset.md)
-
 ## `RegisterStatusEffect(name)`
 Registers a new [status effect](./statusEffect.md) with name specified in an argument.
 
 **`Parameters:`**
 * Name: `string`
 
+**`Returns:`**
+* [StatusEffect](./statusEffect.md)
+
 ```lua
 local SpeedBoost = WCS.RegisteredStatusEffect("SpeedBoost")
 ```
-
-**`Returns:`**
-* [StatusEffect](./statusEffect.md)
 
 ## `RegisterSkill(name)`
 Registers a new [skill](./skill.md) with name specified in an argument.
@@ -131,12 +131,12 @@ Registers a new [skill](./skill.md) with name specified in an argument.
 **`Parameters:`**
 * Name: `string`
 
+**`Returns:`**
+* [Skill](./skill.md)
+
 ```lua
 local Attack = WCS.RegisterSkill("Attack")
 ```
-
-**`Returns:`**
-* [Skill](./skill.md)
 
 ## `Character`
 An exported [character](./character.md) class. Cannot be changed.
