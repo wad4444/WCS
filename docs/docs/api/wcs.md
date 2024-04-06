@@ -58,6 +58,35 @@ local Client = WCS.CreateClient()
 **`Returns:`**
 * [Client](./client.md)
 
+## `RegisterStatusEffect(name)`
+Registers a new [status effect](./statusEffect.md) with name specified in an argument.
+
+**`Parameters:`**
+* Name: `string`
+
+**`Returns:`**
+* [StatusEffect](./statusEffect.md)
+
+```lua
+local SpeedBoost = WCS.RegisteredStatusEffect("SpeedBoost")
+```
+
+## `RegisterSkill(name)`
+Registers a new [skill](./skill.md) with name specified in an argument.
+
+**`Parameters:`**
+* Name: `string`
+
+**`Returns:`**
+* [Skill](./skill.md)
+
+```lua
+local Attack = WCS.RegisterSkill("Attack")
+```
+
+## `Character`
+An exported [character](./character.md) class. Cannot be changed.
+
 ## `CreateMoveset(name, skills)`
 Creates a [Moveset](./moveset.md) object and returns it.
 Accepts the name and array of skills.
@@ -87,7 +116,7 @@ local Client = WCS.CreateMoveset("Mage", {Attack})
 </Tabs>
 
 ## `GetMovesetObjectByName(name)`
-Retrieves [moveset object](./moveset.md) by its name if registered.
+Retrieves [moveset object](./) by its name if registered.
 
 **`Parameters:`**
 * Name: `string`
@@ -111,35 +140,6 @@ local Moveset = WCS.GetMovesetObjectByName("Mage")
 
 </TabItem>
 </Tabs>
-
-## `RegisterStatusEffect(name)`
-Registers a new [status effect](./statusEffect.md) with name specified in an argument.
-
-**`Parameters:`**
-* Name: `string`
-
-**`Returns:`**
-* [StatusEffect](./statusEffect.md)
-
-```lua
-local SpeedBoost = WCS.RegisteredStatusEffect("SpeedBoost")
-```
-
-## `RegisterSkill(name)`
-Registers a new [skill](./skill.md) with name specified in an argument.
-
-**`Parameters:`**
-* Name: `string`
-
-**`Returns:`**
-* [Skill](./skill.md)
-
-```lua
-local Attack = WCS.RegisterSkill("Attack")
-```
-
-## `Character`
-An exported [character](./character.md) class. Cannot be changed.
 
 ## `SkillType`
 An exported skill type enum.
