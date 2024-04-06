@@ -8,6 +8,8 @@ import TOCInline from "@theme/TOCInline";
 
 # Client
 
+<TOCInline toc={toc} />
+
 ## `RegisterDirectory(directory)`
 Requires all [module scripts](https://create.roblox.com/docs/reference/engine/classes/ModuleScript) in a directory when client starts.
 Can only be called *before* client has started.
