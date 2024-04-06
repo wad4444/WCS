@@ -228,7 +228,7 @@ Returns the current [moveset]'s name.
 Gets the skills that belong to a provided [moveset].
 
 **`Parameters:`**
-* MovesetName: `string` - A name of the [moveset] to get skills from. @defaults to the currently applied [moveset].
+* MovesetName: `string` - A name of the [moveset] to get skills from. `@defaults` to the currently applied [moveset].
 
 ### `ClearMoveset()`
 Clears the [moveset] and destroys all skills that belong to it.
