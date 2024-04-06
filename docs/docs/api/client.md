@@ -40,7 +40,7 @@ Client:RegisterDirectory(game.ReplicatedStorage.statusEffects)
 Starts the handler.
 
 **`Parameters:`**
-* attachDevTools: `boolean?` If true, attaches [**Reflex DevTools**](https://github.com/jackTabsCode/reflex-devtools) middleware upon starting
+* attachDevTools: `boolean?` If true, attaches [**Reflex DevTools**](https://github.com/jackTabsCode/reflex-devtools) middleware upon starting.
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
