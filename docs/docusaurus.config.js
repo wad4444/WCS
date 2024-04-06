@@ -70,6 +70,12 @@ const config = {
                         label: "Tutorial",
                     },
                     {
+                        type: "docSidebar",
+                        sidebarId: "apiSidebar",
+                        position: "left",
+                        label: "API",
+                    },
+                    {
                         type: "localeDropdown",
                         position: "right",
                     },
