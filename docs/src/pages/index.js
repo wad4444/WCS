@@ -18,7 +18,7 @@ function HomepageHeader() {
                     <Translate id="website.tagLine">A flexible combat system framework</Translate>
                 </p>
                 <div className={styles.buttons}>
-                    <Link className="button button--secondary button--lg" to="/docs/intro">
+                    <Link className="button button--secondary button--lg" to="/docs/tutorial/intro">
                         <Translate id="startButton.text">Get Started</Translate>
                     </Link>
                 </div>
