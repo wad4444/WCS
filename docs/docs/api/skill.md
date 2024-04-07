@@ -204,6 +204,10 @@ Fires on server when a message from client was received.
 **`Parameters:`**
 * Message: `ClientToServerMessage` - a generic type.
 
+:::danger
+**Always** validate client messages with *sensitive data*.
+:::
+
 ### `HandleServerMessage(message)` @override
 Fires on client when a message from server was received.
 
