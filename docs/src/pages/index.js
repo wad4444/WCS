@@ -32,7 +32,7 @@ export default function Home() {
     return (
         <Layout
             title={translate({
-                message: `${siteConfig.title} - Combat System Framework`,
+                message: `WCS - Combat System Framework`,
                 id: "homepage.shortTitle",
             })}
             description={translate({

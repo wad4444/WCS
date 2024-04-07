@@ -1,0 +1,38 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Basics": {
+    "message": "Basics",
+    "description": "The label for category Basics in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Basics.link.generated-index.description": {
+    "message": "Learn how to setup WCS for your project in the matter of few minutes.",
+    "description": "The generated-index page description for category Basics in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Abilities": {
+    "message": "Abilities",
+    "description": "The label for category Abilities in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Abilities.link.generated-index.description": {
+    "message": "Learn how to create skills/abilities with WCS and manipulate them.",
+    "description": "The generated-index page description for category Abilities in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Status Effects": {
+    "message": "Status Effects",
+    "description": "The label for category Status Effects in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Status Effects.link.generated-index.description": {
+    "message": "Learn everything about status effects and how to create them with WCS.",
+    "description": "The generated-index page description for category Status Effects in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Extras": {
+    "message": "Extras",
+    "description": "The label for category Extras in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Extras.link.generated-index.description": {
+    "message": "A collection of extra things and details you should probably know about.",
+    "description": "The generated-index page description for category Extras in sidebar tutorialSidebar"
+  }
+}
