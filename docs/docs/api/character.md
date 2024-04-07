@@ -8,7 +8,7 @@ import TOCInline from "@theme/TOCInline";
 
 # Character
 
-[moveset]: ../tutorial/extras/movesets.md
+[Moveset]: ../tutorial/extras/[Moveset]s.md
 
 <TOCInline toc={toc} />
 
@@ -101,7 +101,7 @@ Gets fired when any [skill](./skill.md) or [status effect](./statusEffect.md) th
 Gets fired when character gets destroyed.
 
 ### `MovesetChanged`
-Gets fired when character's current [moveset](./moveset.md) changed.
+Gets fired when character's current [Moveset] changed.
 
 **`Parameters:`**
 * NewMoveset: `string?` - a name of the new moveset.
@@ -237,29 +237,29 @@ Retrieves a skill instance based on the provided constructor.
  * Skill: `Skill?`
 
 ### `ApplyMoveset(moveset)`
-Applies a [moveset] to the character.
+Applies a [Moveset] to the character.
 
 **`Parameters:`**
-* Moveset: `Moveset | string` - A [moveset] object or it's name.
+* Moveset: `Moveset | string` - A [Moveset] object or it's name.
 
 ### `GetMoveset()`
-Returns the current [moveset]'s name.
+Returns the current [Moveset]'s name.
 
 **`Returns`**
  * Moveset: `string?`
 
 ### `GetMovesetSkills(name?)`
-Gets the skills that belong to a provided [moveset].
+Gets the skills that belong to a provided [Moveset].
 
 **`Parameters:`**
-* MovesetName: `string?` - A name of the [moveset] to get skills from. `@defaults` to the currently applied [moveset].
+* MovesetName: `string?` - A name of the [Moveset] to get skills from. `@defaults` to the currently applied [Moveset].
 
 ### `ClearMoveset()`
-Clears the [moveset] and destroys all skills that belong to it.
+Clears the [Moveset] and destroys all skills that belong to it.
 
 ### `ApplySkillsFromMoveset(moveset)`
-Adds the skills from a given [moveset].
-Does not set the [moveset].
+Adds the skills from a given [Moveset].
+Does not set the [Moveset].
 
 **`Parameters:`**
-* MovesetName: `Moveset` - The [moveset] to apply from.
+* MovesetName: `Moveset` - The [Moveset] to apply from.
