@@ -370,7 +370,7 @@ export class Character {
     }
 
     /**
-     * Checks if character has any active status effects of the speicified type.
+     * Checks if character has any active status effects of the specified type.
      */
     public HasStatusEffects(Constructors: Constructor<AnyStatus>[]) {
         for (const [_, Effect] of pairs(this.statusEffects)) {

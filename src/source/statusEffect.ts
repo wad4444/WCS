@@ -185,7 +185,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /**
-     * Paused the status effect.
+     * Pauses the status effect.
      */
     public Pause() {
         if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
@@ -259,7 +259,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /**
-     * Clear the humanoid data.
+     * Clears the humanoid data.
      */
     public ClearHumanoidData() {
         this.HumanoidDataChanged.Fire(undefined, this.humanoidData);
@@ -367,6 +367,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
     /**
      * Gets the id of the status effect
+     * @internal @hidden
      */
     public GetId() {
         return this.id;
