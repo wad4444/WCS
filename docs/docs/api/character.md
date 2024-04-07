@@ -117,6 +117,9 @@ Moveset object can get retrieved using `:GetMovesetObjectByName()`
 Accepts the instance and returns a new WCS Character.
 Instance must contain a [Humanoid](https://create.roblox.com/docs/reference/engine/classes/Humanoid).
 
+**`Parameters:`**
+* Instance
+
 ## Methods
 
 ### `Destroy()`
@@ -249,7 +252,7 @@ Returns the current [moveset]'s name.
 Gets the skills that belong to a provided [moveset].
 
 **`Parameters:`**
-* MovesetName: `string | nil` - A name of the [moveset] to get skills from. `@defaults` to the currently applied [moveset].
+* MovesetName: `string?` - A name of the [moveset] to get skills from. `@defaults` to the currently applied [moveset].
 
 ### `ClearMoveset()`
 Clears the [moveset] and destroys all skills that belong to it.

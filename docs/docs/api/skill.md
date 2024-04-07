@@ -32,7 +32,7 @@ Retrieved internally by `Players:GetPlayerFromCharacter(self.Character.Instance)
 A string value.
 
 ### `ConstructorArguments` @readonly
-A table of arguments provided after the character in `.new()`.
+A table of arguments provided after the [Character] in `.new()`.
 
 ### `CheckOthersActive`
 A boolean value. Checks whenever other skills should be non active for :Start() to proceed.
@@ -73,6 +73,14 @@ Fires whenever skill [metadata](../tutorial/extras/metadata.md) changes.
 * NewMeta: `Metadata?` - a generic type.
 * OldMeta: `Metadata?` - a generic type.
 
+## Constructors
+
+### constructor(character) -> Skill
+Accepts the [Character] and returns a new skill.
+
+**`Parameters:`**
+* [Character]
+
 ## Methods
 
 ### `Start(params)`
@@ -83,7 +91,7 @@ Client: Sends a request to server that will call :Start() on server.
 * Parameters: `StarterParams` - a generic type.
 
 ### `IsDestroyed()`
-Returns if the skill is destroyed / removed from the character.
+Returns true if the skill is destroyed / removed from the [Character].
 
 **`Returns:`**
 * boolean
@@ -177,6 +185,9 @@ Called after class gets instantiated on client.
 
 ### `ShouldStart()` @override
 Determines if the skill should start, when `Start()` is called.
+
+**`Returns:`**
+* boolean
 
 ### `OnStartServer(params)` @override
 Fires whenever skill starts on the server.
