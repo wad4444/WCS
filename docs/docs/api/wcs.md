@@ -8,6 +8,8 @@ import TOCInline from "@theme/TOCInline";
 
 # WCS
 
+[Moveset]: ../tutorial/extras/movesets.md
+
 <TOCInline toc={toc} />
 
 ## `CreateServer()`
@@ -88,7 +90,7 @@ local Attack = WCS.RegisterSkill("Attack")
 An exported [character](./character.md) class. Cannot be changed.
 
 ## `CreateMoveset(name, skills)`
-Creates a [Moveset](./moveset.md) object and returns it.
+Creates a [Moveset] object and returns it.
 Accepts the name and array of skills.
 
 **`Parameters:`**
@@ -96,7 +98,7 @@ Accepts the name and array of skills.
 * Skills: ```{AnySkillConstructor}```
 
 **`Returns:`**
-* [Moveset](./moveset.md)
+* [Moveset]
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -116,13 +118,13 @@ local Client = WCS.CreateMoveset("Mage", {Attack})
 </Tabs>
 
 ## `GetMovesetObjectByName(name)`
-Retrieves [moveset object](./) by its name if registered.
+Retrieves [Moveset] object by its name if registered.
 
 **`Parameters:`**
 * Name: `string`
 
 **`Returns:`**
-* Moveset: [`Moveset?`](./moveset.md)
+* Moveset: [`Moveset?`](../tutorial/extras/movesets.md)
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
