@@ -149,6 +149,27 @@ Sets default humanoid properties of the character.
 **`Parameters:`**
 * Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and it's `Value`.
 
+<Tabs groupId="languages">
+<TabItem value="TypeScript" default>
+
+```ts
+Char.SetDefaultProps({
+    WalkSpeed: 32,
+})
+```
+
+</TabItem>
+<TabItem value="Luau">
+
+```lua
+Char:SetDefaultProps({
+    WalkSpeed = 32,
+})
+```
+
+</TabItem>
+</Tabs>
+
 ### `GetDefaultProps()`
 Retrieves the default humanoid properties of the character.
 
@@ -224,11 +245,11 @@ Returns the current [moveset]'s name.
 **`Returns`**
  * Moveset: `string?`
 
-### `GetMovesetSkills(name)`
+### `GetMovesetSkills(name?)`
 Gets the skills that belong to a provided [moveset].
 
 **`Parameters:`**
-* MovesetName: `string` - A name of the [moveset] to get skills from. `@defaults` to the currently applied [moveset].
+* MovesetName: `string | nil` - A name of the [moveset] to get skills from. `@defaults` to the currently applied [moveset].
 
 ### `ClearMoveset()`
 Clears the [moveset] and destroys all skills that belong to it.
