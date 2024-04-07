@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ru" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-api/skill" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.1">
+<title data-rh="true">Skill | WCS</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://g1mmethemoney.github.io/WCS/ru/img/social-card.png"><meta data-rh="true" name="twitter:image" content="https://g1mmethemoney.github.io/WCS/ru/img/social-card.png"><meta data-rh="true" property="og:url" content="https://g1mmethemoney.github.io/WCS/ru/docs/api/skill"><meta data-rh="true" property="og:locale" content="ru"><meta data-rh="true" property="og:locale:alternate" content="en"><meta data-rh="true" name="docusaurus_locale" content="ru"><meta data-rh="true" name="docsearch:language" content="ru"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Skill | WCS"><meta data-rh="true" name="description" content="[Timer]//www.npmjs.com/package/@rbxts/timer"><meta data-rh="true" property="og:description" content="[Timer]//www.npmjs.com/package/@rbxts/timer"><link data-rh="true" rel="icon" href="/WCS/ru/img/logo.svg"><link data-rh="true" rel="canonical" href="https://g1mmethemoney.github.io/WCS/ru/docs/api/skill"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/skill" hreflang="en"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/ru/docs/api/skill" hreflang="ru"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/skill" hreflang="x-default"><link rel="stylesheet" href="/WCS/ru/assets/css/styles.7f09a7b9.css">
+<script src="/WCS/ru/assets/js/runtime~main.76f62d63.js" defer="defer"></script>
+<script src="/WCS/ru/assets/js/main.960246a6.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Перейти к основному содержимому"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Перейти к основному содержимому</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Переключить навигационную панель" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/WCS/ru/"><div class="navbar__logo"><img src="/WCS/ru/img/logo.svg" alt="WCS Лого" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/WCS/ru/img/logo.svg" alt="WCS Лого" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">WCS</b></a><a class="navbar__item navbar__link" href="/WCS/ru/docs/tutorial/intro">Туториал</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/WCS/ru/docs/api/wcs">API</a></div><div class="navbar__items navbar__items--right"><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href="#" aria-haspopup="true" aria-expanded="false" role="button" class="navbar__link"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" class="iconLanguage_nlXk"><path fill="currentColor" d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"></path></svg>Русский</a><ul class="dropdown__menu"><li><a href="/WCS/docs/api/skill" target="_self" rel="noopener noreferrer" class="dropdown__link" lang="en">English</a></li><li><a href="/WCS/ru/docs/api/skill" target="_self" rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang="ru">Русский</a></li></ul></div><a href="https://github.com/g1mmethemoney/WCSTypescript" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Переключение между темным и светлым режимом (сейчас используется Светлый режим)" aria-label="Переключение между темным и светлым режимом (сейчас используется Светлый режим)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Прокрутка к началу" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/wcs">WCS</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/server">Server</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/client">Client</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/character">Character</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/WCS/ru/docs/api/skill">Skill</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/statusEffect">StatusEffect</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Навигационная цепочка текущей страницы"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Главная страница" class="breadcrumbs__link" href="/WCS/ru/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Skill</span><meta itemprop="position" content="1"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">Содержание этой страницы</button></div><div class="theme-doc-markdown markdown"><h1>Skill</h1>
+<div class="tableOfContentsInline_prmo"><ul class="table-of-contents"><li><a href="#fields">Fields</a><ul><li><a href="#cooldowntimer-readonly"><code>CooldownTimer</code> @readonly</a></li><li><a href="#character-readonly"><code>Character</code> @readonly</a></li><li><a href="#player-readonly"><code>Player</code> @readonly</a></li><li><a href="#name-readonly"><code>Name</code> @readonly</a></li><li><a href="#constructorarguments-readonly"><code>ConstructorArguments</code> @readonly</a></li><li><a href="#checkothersactive"><code>CheckOthersActive</code></a></li><li><a href="#mutualexclusives"><code>MutualExclusives</code></a></li><li><a href="#requirements"><code>Requirements</code></a></li><li><a href="#checkclientstate"><code>CheckClientState</code></a></li></ul></li><li><a href="#events">Events</a><ul><li><a href="#started"><code>Started</code></a></li><li><a href="#ended"><code>Ended</code></a></li><li><a href="#statechanged"><code>StateChanged</code></a></li><li><a href="#destroyed"><code>Destroyed</code></a></li><li><a href="#metadatachanged"><code>MetadataChanged</code></a></li></ul></li><li><a href="#constructors">Constructors</a><ul><li><a href="#constructorcharacter---skill">constructor(character) -&gt; Skill</a></li></ul></li><li><a href="#methods">Methods</a><ul><li><a href="#startparams"><code>Start(params)</code></a></li><li><a href="#isdestroyed"><code>IsDestroyed()</code></a></li><li><a href="#end"><code>End()</code></a></li><li><a href="#getskilltype"><code>GetSkillType()</code></a></li><li><a href="#destroy"><code>Destroy()</code></a></li><li><a href="#getstate"><code>GetState()</code></a></li><li><a href="#getname"><code>GetName()</code></a></li><li><a href="#clearmetadata"><code>ClearMetadata()</code></a></li><li><a href="#setmetadatameta"><code>SetMetadata(meta)</code></a></li><li><a href="#getmetadata"><code>GetMetadata()</code></a></li><li><a href="#createdamagecontainerdmg"><code>CreateDamageContainer(dmg)</code></a></li><li><a href="#applycooldowncd"><code>ApplyCooldown(cd)</code></a></li><li><a href="#sendmessagetoclientmessage"><code>SendMessageToClient(message)</code></a></li><li><a href="#sendmessagetoservermessage"><code>SendMessageToServer(message)</code></a></li><li><a href="#onconstructargs-override"><code>OnConstruct(...args)</code> @override</a></li><li><a href="#onconstructserverargs-override"><code>OnConstructServer(...args)</code> @override</a></li><li><a href="#onconstructclientargs-override"><code>OnConstructClient(...args)</code> @override</a></li><li><a href="#shouldstart-override"><code>ShouldStart()</code> @override</a></li><li><a href="#onstartserverparams-override"><code>OnStartServer(params)</code> @override</a></li><li><a href="#onstartclientparams-override"><code>OnStartClient(params)</code> @override</a></li><li><a href="#onendserver-override"><code>OnEndServer()</code> @override</a></li><li><a href="#onendclient-override"><code>OnEndClient()</code> @override</a></li><li><a href="#handleclientmessagemessage-override"><code>HandleClientMessage(message)</code> @override</a></li><li><a href="#handleservermessagemessage-override"><code>HandleServerMessage(message)</code> @override</a></li></ul></li></ul></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="fields">Fields<a href="#fields" class="hash-link" aria-label="Прямая ссылка на Fields" title="Прямая ссылка на Fields">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="cooldowntimer-readonly"><code>CooldownTimer</code> @readonly<a href="#cooldowntimer-readonly" class="hash-link" aria-label="Прямая ссылка на cooldowntimer-readonly" title="Прямая ссылка на cooldowntimer-readonly">​</a></h3>
+<p>A <a href="https://www.npmjs.com/package/@rbxts/timer" target="_blank" rel="noopener noreferrer">Timer</a> object. Starts, when <code>ApplyCooldown()</code> gets invoked on server. Does not sync to client.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="character-readonly"><code>Character</code> @readonly<a href="#character-readonly" class="hash-link" aria-label="Прямая ссылка на character-readonly" title="Прямая ссылка на character-readonly">​</a></h3>
+<p>A <a href="/WCS/ru/docs/api/character">Character</a> object this skill is tied with.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="player-readonly"><code>Player</code> @readonly<a href="#player-readonly" class="hash-link" aria-label="Прямая ссылка на player-readonly" title="Прямая ссылка на player-readonly">​</a></h3>
+<p>A <a href="https://create.roblox.com/docs/reference/engine/classes/Player" target="_blank" rel="noopener noreferrer">Player</a> object the skill is associated with.
+Retrieved internally by <code>Players:GetPlayerFromCharacter(self.Character.Instance)</code>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="name-readonly"><code>Name</code> @readonly<a href="#name-readonly" class="hash-link" aria-label="Прямая ссылка на name-readonly" title="Прямая ссылка на name-readonly">​</a></h3>
+<p>A string value.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="constructorarguments-readonly"><code>ConstructorArguments</code> @readonly<a href="#constructorarguments-readonly" class="hash-link" aria-label="Прямая ссылка на constructorarguments-readonly" title="Прямая ссылка на constructorarguments-readonly">​</a></h3>
+<p>A table of arguments provided after the <a href="/WCS/ru/docs/api/character">Character</a> in <code>.new()</code>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="checkothersactive"><code>CheckOthersActive</code><a href="#checkothersactive" class="hash-link" aria-label="Прямая ссылка на checkothersactive" title="Прямая ссылка на checkothersactive">​</a></h3>
+<p>A boolean value. Checks whenever other skills should be non active for <!-- -->:Start<!-- -->() to proceed.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="mutualexclusives"><code>MutualExclusives</code><a href="#mutualexclusives" class="hash-link" aria-label="Прямая ссылка на mutualexclusives" title="Прямая ссылка на mutualexclusives">​</a></h3>
+<p><code>Constructor&lt;AnyStatus&gt;[]</code>. An array of <a href="/WCS/ru/docs/api/statusEffect">Status Effect</a> constructors. If any of them is applied to <a href="/WCS/ru/docs/api/character">Character</a> object whenever <code>Start()</code> is called,
+it will not proceed further and skill will not be started.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="requirements"><code>Requirements</code><a href="#requirements" class="hash-link" aria-label="Прямая ссылка на requirements" title="Прямая ссылка на requirements">​</a></h3>
+<p><code>Constructor&lt;AnyStatus&gt;[]</code>. An array of <a href="/WCS/ru/docs/api/statusEffect">Status Effect</a> constructors. Checks <a href="/WCS/ru/docs/api/character">Character</a> for the following
+effects to be applied before starting the skill.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="checkclientstate"><code>CheckClientState</code><a href="#checkclientstate" class="hash-link" aria-label="Прямая ссылка на checkclientstate" title="Прямая ссылка на checkclientstate">​</a></h3>
+<p>A boolean value. Checks whenever the start function should check if the skill is active/on cooldown on client side before firing a remote.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="events">Events<a href="#events" class="hash-link" aria-label="Прямая ссылка на Events" title="Прямая ссылка на Events">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="started"><code>Started</code><a href="#started" class="hash-link" aria-label="Прямая ссылка на started" title="Прямая ссылка на started">​</a></h3>
+<p>Fires whenever skill starts. Works on client and server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="ended"><code>Ended</code><a href="#ended" class="hash-link" aria-label="Прямая ссылка на ended" title="Прямая ссылка на ended">​</a></h3>
+<p>Fires whenever skill ends. Works on client and server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="statechanged"><code>StateChanged</code><a href="#statechanged" class="hash-link" aria-label="Прямая ссылка на statechanged" title="Прямая ссылка на statechanged">​</a></h3>
+<p>Fires whenever current <a href="/WCS/ru/docs/tutorial/skills/state">skill state</a> changes.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>NewState: <code>SkillState</code></li>
+<li>OldState: <code>SkillState</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="destroyed"><code>Destroyed</code><a href="#destroyed" class="hash-link" aria-label="Прямая ссылка на destroyed" title="Прямая ссылка на destroyed">​</a></h3>
+<p>Fires whenever skill gets destroyed (removed from the character).</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="metadatachanged"><code>MetadataChanged</code><a href="#metadatachanged" class="hash-link" aria-label="Прямая ссылка на metadatachanged" title="Прямая ссылка на metadatachanged">​</a></h3>
+<p>Fires whenever skill <a href="/WCS/ru/docs/tutorial/extras/metadata">metadata</a> changes.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>NewMeta: <code>Metadata?</code> - a generic type.</li>
+<li>OldMeta: <code>Metadata?</code> - a generic type.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="constructors">Constructors<a href="#constructors" class="hash-link" aria-label="Прямая ссылка на Constructors" title="Прямая ссылка на Constructors">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="constructorcharacter---skill">constructor(character) -&gt; Skill<a href="#constructorcharacter---skill" class="hash-link" aria-label="Прямая ссылка на constructor(character) -&gt; Skill" title="Прямая ссылка на constructor(character) -&gt; Skill">​</a></h3>
+<p>Accepts the <a href="/WCS/ru/docs/api/character">Character</a> and returns a new skill.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li><a href="/WCS/ru/docs/api/character">Character</a></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="methods">Methods<a href="#methods" class="hash-link" aria-label="Прямая ссылка на Methods" title="Прямая ссылка на Methods">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="startparams"><code>Start(params)</code><a href="#startparams" class="hash-link" aria-label="Прямая ссылка на startparams" title="Прямая ссылка на startparams">​</a></h3>
+<p>Server: Starts the skill.
+Client: Sends a request to server that will call <!-- -->:Start<!-- -->() on server.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Parameters: <code>StarterParams</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="isdestroyed"><code>IsDestroyed()</code><a href="#isdestroyed" class="hash-link" aria-label="Прямая ссылка на isdestroyed" title="Прямая ссылка на isdestroyed">​</a></h3>
+<p>Returns true if the skill is destroyed / removed from the <a href="/WCS/ru/docs/api/character">Character</a>.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>boolean</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="end"><code>End()</code><a href="#end" class="hash-link" aria-label="Прямая ссылка на end" title="Прямая ссылка на end">​</a></h3>
+<p>Force end the skill. This is automatically called after OnStartServer() is completed.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getskilltype"><code>GetSkillType()</code><a href="#getskilltype" class="hash-link" aria-label="Прямая ссылка на getskilltype" title="Прямая ссылка на getskilltype">​</a></h3>
+<p>Retrieves the skill type.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>Type: <code>SkillType</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="destroy"><code>Destroy()</code><a href="#destroy" class="hash-link" aria-label="Прямая ссылка на destroy" title="Прямая ссылка на destroy">​</a></h3>
+<p>Destroys the skill and removes it from the character.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getstate"><code>GetState()</code><a href="#getstate" class="hash-link" aria-label="Прямая ссылка на getstate" title="Прямая ссылка на getstate">​</a></h3>
+<p>Retrieves the current skill state.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>State: <code>SkillState</code> - <a href="/WCS/ru/docs/tutorial/skills/state">reference</a></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getname"><code>GetName()</code><a href="#getname" class="hash-link" aria-label="Прямая ссылка на getname" title="Прямая ссылка на getname">​</a></h3>
+<p>Retrieves the skill name.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>string</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="clearmetadata"><code>ClearMetadata()</code><a href="#clearmetadata" class="hash-link" aria-label="Прямая ссылка на clearmetadata" title="Прямая ссылка на clearmetadata">​</a></h3>
+<p>Clears the current <a href="/WCS/ru/docs/tutorial/extras/metadata">Metadata</a>. Only works on server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="setmetadatameta"><code>SetMetadata(meta)</code><a href="#setmetadatameta" class="hash-link" aria-label="Прямая ссылка на setmetadatameta" title="Прямая ссылка на setmetadatameta">​</a></h3>
+<p>Sets the current <a href="/WCS/ru/docs/tutorial/extras/metadata">Metadata</a>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Metadata: <code>Metadata</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getmetadata"><code>GetMetadata()</code><a href="#getmetadata" class="hash-link" aria-label="Прямая ссылка на getmetadata" title="Прямая ссылка на getmetadata">​</a></h3>
+<p>Retrieves the current <a href="/WCS/ru/docs/tutorial/extras/metadata">Metadata</a>.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>Metadata: <code>Metadata</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="createdamagecontainerdmg"><code>CreateDamageContainer(dmg)</code><a href="#createdamagecontainerdmg" class="hash-link" aria-label="Прямая ссылка на createdamagecontainerdmg" title="Прямая ссылка на createdamagecontainerdmg">​</a></h3>
+<p>Creates a damage container, with the current skill specified in <code>Source</code>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Damage: <code>number</code></li>
+</ul>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>Container: <code>DamageContainer</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="applycooldowncd"><code>ApplyCooldown(cd)</code><a href="#applycooldowncd" class="hash-link" aria-label="Прямая ссылка на applycooldowncd" title="Прямая ссылка на applycooldowncd">​</a></h3>
+<p>Applies a cooldown to the skill. Works only on server.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Cooldown: <code>number</code></li>
+</ul>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>boolean</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="sendmessagetoclientmessage"><code>SendMessageToClient(message)</code><a href="#sendmessagetoclientmessage" class="hash-link" aria-label="Прямая ссылка на sendmessagetoclientmessage" title="Прямая ссылка на sendmessagetoclientmessage">​</a></h3>
+<p>Sends a <a href="/WCS/ru/docs/tutorial/skills/messages">Message</a> from server to client.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Message: <code>ServerToClientMessage</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="sendmessagetoservermessage"><code>SendMessageToServer(message)</code><a href="#sendmessagetoservermessage" class="hash-link" aria-label="Прямая ссылка на sendmessagetoservermessage" title="Прямая ссылка на sendmessagetoservermessage">​</a></h3>
+<p>Sends a <a href="/WCS/ru/docs/tutorial/skills/messages">Message</a> from client to server.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Message: <code>ClientToServerMessage</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onconstructargs-override"><code>OnConstruct(...args)</code> @override<a href="#onconstructargs-override" class="hash-link" aria-label="Прямая ссылка на onconstructargs-override" title="Прямая ссылка на onconstructargs-override">​</a></h3>
+<p>Called after class gets instantiated (both client and server).</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>...args: <code>...ConstructorArguments</code> A tuple of arguments that was provided to <code>.new</code> after <code>Character</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onconstructserverargs-override"><code>OnConstructServer(...args)</code> @override<a href="#onconstructserverargs-override" class="hash-link" aria-label="Прямая ссылка на onconstructserverargs-override" title="Прямая ссылка на onconstructserverargs-override">​</a></h3>
+<p>Called after class gets instantiated on server.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>...args: <code>...ConstructorArguments</code> A tuple of arguments that was provided to <code>.new</code> after <code>Character</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onconstructclientargs-override"><code>OnConstructClient(...args)</code> @override<a href="#onconstructclientargs-override" class="hash-link" aria-label="Прямая ссылка на onconstructclientargs-override" title="Прямая ссылка на onconstructclientargs-override">​</a></h3>
+<p>Called after class gets instantiated on client.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>...args: <code>...ConstructorArguments</code> A tuple of arguments that was provided to <code>.new</code> after <code>Character</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="shouldstart-override"><code>ShouldStart()</code> @override<a href="#shouldstart-override" class="hash-link" aria-label="Прямая ссылка на shouldstart-override" title="Прямая ссылка на shouldstart-override">​</a></h3>
+<p>Determines if the skill should start, when <code>Start()</code> is called.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>boolean</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onstartserverparams-override"><code>OnStartServer(params)</code> @override<a href="#onstartserverparams-override" class="hash-link" aria-label="Прямая ссылка на onstartserverparams-override" title="Прямая ссылка на onstartserverparams-override">​</a></h3>
+<p>Fires whenever skill starts on the server.
+Accepts an argument passed to <code>Start()</code>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>StarterParams: <code>StarterParams</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onstartclientparams-override"><code>OnStartClient(params)</code> @override<a href="#onstartclientparams-override" class="hash-link" aria-label="Прямая ссылка на onstartclientparams-override" title="Прямая ссылка на onstartclientparams-override">​</a></h3>
+<p>Fires whenever skill starts on the client.
+Accepts an argument passed to <code>Start()</code>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>StarterParams: <code>StarterParams</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onendserver-override"><code>OnEndServer()</code> @override<a href="#onendserver-override" class="hash-link" aria-label="Прямая ссылка на onendserver-override" title="Прямая ссылка на onendserver-override">​</a></h3>
+<p>Fires whenever skill ends on server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onendclient-override"><code>OnEndClient()</code> @override<a href="#onendclient-override" class="hash-link" aria-label="Прямая ссылка на onendclient-override" title="Прямая ссылка на onendclient-override">​</a></h3>
+<p>Fires whenever skill ends on client.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="handleclientmessagemessage-override"><code>HandleClientMessage(message)</code> @override<a href="#handleclientmessagemessage-override" class="hash-link" aria-label="Прямая ссылка на handleclientmessagemessage-override" title="Прямая ссылка на handleclientmessagemessage-override">​</a></h3>
+<p>Fires on server when a message from client was received.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Message: <code>ClientToServerMessage</code> - a generic type.</li>
+</ul>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>осторожно</div><div class="admonitionContent_BuS1"><p><strong>Always</strong> validate client messages with <em>sensitive data</em>.</p></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="handleservermessagemessage-override"><code>HandleServerMessage(message)</code> @override<a href="#handleservermessagemessage-override" class="hash-link" aria-label="Прямая ссылка на handleservermessagemessage-override" title="Прямая ссылка на handleservermessagemessage-override">​</a></h3>
+<p>Fires on client when a message from server was received.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Message: <code>ServerToClientMessage</code> - a generic type.</li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Страница документа"><a class="pagination-nav__link pagination-nav__link--prev" href="/WCS/ru/docs/api/character"><div class="pagination-nav__sublabel">Предыдущая страница</div><div class="pagination-nav__label">Character</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/WCS/ru/docs/api/statusEffect"><div class="pagination-nav__sublabel">Следующая страница</div><div class="pagination-nav__label">StatusEffect</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#fields" class="table-of-contents__link toc-highlight">Fields</a><ul><li><a href="#cooldowntimer-readonly" class="table-of-contents__link toc-highlight"><code>CooldownTimer</code> @readonly</a></li><li><a href="#character-readonly" class="table-of-contents__link toc-highlight"><code>Character</code> @readonly</a></li><li><a href="#player-readonly" class="table-of-contents__link toc-highlight"><code>Player</code> @readonly</a></li><li><a href="#name-readonly" class="table-of-contents__link toc-highlight"><code>Name</code> @readonly</a></li><li><a href="#constructorarguments-readonly" class="table-of-contents__link toc-highlight"><code>ConstructorArguments</code> @readonly</a></li><li><a href="#checkothersactive" class="table-of-contents__link toc-highlight"><code>CheckOthersActive</code></a></li><li><a href="#mutualexclusives" class="table-of-contents__link toc-highlight"><code>MutualExclusives</code></a></li><li><a href="#requirements" class="table-of-contents__link toc-highlight"><code>Requirements</code></a></li><li><a href="#checkclientstate" class="table-of-contents__link toc-highlight"><code>CheckClientState</code></a></li></ul></li><li><a href="#events" class="table-of-contents__link toc-highlight">Events</a><ul><li><a href="#started" class="table-of-contents__link toc-highlight"><code>Started</code></a></li><li><a href="#ended" class="table-of-contents__link toc-highlight"><code>Ended</code></a></li><li><a href="#statechanged" class="table-of-contents__link toc-highlight"><code>StateChanged</code></a></li><li><a href="#destroyed" class="table-of-contents__link toc-highlight"><code>Destroyed</code></a></li><li><a href="#metadatachanged" class="table-of-contents__link toc-highlight"><code>MetadataChanged</code></a></li></ul></li><li><a href="#constructors" class="table-of-contents__link toc-highlight">Constructors</a><ul><li><a href="#constructorcharacter---skill" class="table-of-contents__link toc-highlight">constructor(character) -&gt; Skill</a></li></ul></li><li><a href="#methods" class="table-of-contents__link toc-highlight">Methods</a><ul><li><a href="#startparams" class="table-of-contents__link toc-highlight"><code>Start(params)</code></a></li><li><a href="#isdestroyed" class="table-of-contents__link toc-highlight"><code>IsDestroyed()</code></a></li><li><a href="#end" class="table-of-contents__link toc-highlight"><code>End()</code></a></li><li><a href="#getskilltype" class="table-of-contents__link toc-highlight"><code>GetSkillType()</code></a></li><li><a href="#destroy" class="table-of-contents__link toc-highlight"><code>Destroy()</code></a></li><li><a href="#getstate" class="table-of-contents__link toc-highlight"><code>GetState()</code></a></li><li><a href="#getname" class="table-of-contents__link toc-highlight"><code>GetName()</code></a></li><li><a href="#clearmetadata" class="table-of-contents__link toc-highlight"><code>ClearMetadata()</code></a></li><li><a href="#setmetadatameta" class="table-of-contents__link toc-highlight"><code>SetMetadata(meta)</code></a></li><li><a href="#getmetadata" class="table-of-contents__link toc-highlight"><code>GetMetadata()</code></a></li><li><a href="#createdamagecontainerdmg" class="table-of-contents__link toc-highlight"><code>CreateDamageContainer(dmg)</code></a></li><li><a href="#applycooldowncd" class="table-of-contents__link toc-highlight"><code>ApplyCooldown(cd)</code></a></li><li><a href="#sendmessagetoclientmessage" class="table-of-contents__link toc-highlight"><code>SendMessageToClient(message)</code></a></li><li><a href="#sendmessagetoservermessage" class="table-of-contents__link toc-highlight"><code>SendMessageToServer(message)</code></a></li><li><a href="#onconstructargs-override" class="table-of-contents__link toc-highlight"><code>OnConstruct(...args)</code> @override</a></li><li><a href="#onconstructserverargs-override" class="table-of-contents__link toc-highlight"><code>OnConstructServer(...args)</code> @override</a></li><li><a href="#onconstructclientargs-override" class="table-of-contents__link toc-highlight"><code>OnConstructClient(...args)</code> @override</a></li><li><a href="#shouldstart-override" class="table-of-contents__link toc-highlight"><code>ShouldStart()</code> @override</a></li><li><a href="#onstartserverparams-override" class="table-of-contents__link toc-highlight"><code>OnStartServer(params)</code> @override</a></li><li><a href="#onstartclientparams-override" class="table-of-contents__link toc-highlight"><code>OnStartClient(params)</code> @override</a></li><li><a href="#onendserver-override" class="table-of-contents__link toc-highlight"><code>OnEndServer()</code> @override</a></li><li><a href="#onendclient-override" class="table-of-contents__link toc-highlight"><code>OnEndClient()</code> @override</a></li><li><a href="#handleclientmessagemessage-override" class="table-of-contents__link toc-highlight"><code>HandleClientMessage(message)</code> @override</a></li><li><a href="#handleservermessagemessage-override" class="table-of-contents__link toc-highlight"><code>HandleServerMessage(message)</code> @override</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Авторские права © 2024 g1mmethemoney. Сделано с помощью Docusaurus ;)</div></div></div></footer></div>
+</body>
+</html>

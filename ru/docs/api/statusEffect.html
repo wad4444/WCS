@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ru" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-api/statusEffect" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.1">
+<title data-rh="true">StatusEffect | WCS</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://g1mmethemoney.github.io/WCS/ru/img/social-card.png"><meta data-rh="true" name="twitter:image" content="https://g1mmethemoney.github.io/WCS/ru/img/social-card.png"><meta data-rh="true" property="og:url" content="https://g1mmethemoney.github.io/WCS/ru/docs/api/statusEffect"><meta data-rh="true" property="og:locale" content="ru"><meta data-rh="true" property="og:locale:alternate" content="en"><meta data-rh="true" name="docusaurus_locale" content="ru"><meta data-rh="true" name="docsearch:language" content="ru"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="StatusEffect | WCS"><meta data-rh="true" name="description" content="[Humanoid Data]: ../tutorial/statuses/humanoid-data.md"><meta data-rh="true" property="og:description" content="[Humanoid Data]: ../tutorial/statuses/humanoid-data.md"><link data-rh="true" rel="icon" href="/WCS/ru/img/logo.svg"><link data-rh="true" rel="canonical" href="https://g1mmethemoney.github.io/WCS/ru/docs/api/statusEffect"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/statusEffect" hreflang="en"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/ru/docs/api/statusEffect" hreflang="ru"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/statusEffect" hreflang="x-default"><link rel="stylesheet" href="/WCS/ru/assets/css/styles.7f09a7b9.css">
+<script src="/WCS/ru/assets/js/runtime~main.76f62d63.js" defer="defer"></script>
+<script src="/WCS/ru/assets/js/main.960246a6.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Перейти к основному содержимому"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Перейти к основному содержимому</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Переключить навигационную панель" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/WCS/ru/"><div class="navbar__logo"><img src="/WCS/ru/img/logo.svg" alt="WCS Лого" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/WCS/ru/img/logo.svg" alt="WCS Лого" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">WCS</b></a><a class="navbar__item navbar__link" href="/WCS/ru/docs/tutorial/intro">Туториал</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/WCS/ru/docs/api/wcs">API</a></div><div class="navbar__items navbar__items--right"><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href="#" aria-haspopup="true" aria-expanded="false" role="button" class="navbar__link"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" class="iconLanguage_nlXk"><path fill="currentColor" d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"></path></svg>Русский</a><ul class="dropdown__menu"><li><a href="/WCS/docs/api/statusEffect" target="_self" rel="noopener noreferrer" class="dropdown__link" lang="en">English</a></li><li><a href="/WCS/ru/docs/api/statusEffect" target="_self" rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang="ru">Русский</a></li></ul></div><a href="https://github.com/g1mmethemoney/WCSTypescript" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Переключение между темным и светлым режимом (сейчас используется Светлый режим)" aria-label="Переключение между темным и светлым режимом (сейчас используется Светлый режим)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Прокрутка к началу" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/wcs">WCS</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/server">Server</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/client">Client</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/character">Character</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/ru/docs/api/skill">Skill</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/WCS/ru/docs/api/statusEffect">StatusEffect</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Навигационная цепочка текущей страницы"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Главная страница" class="breadcrumbs__link" href="/WCS/ru/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">StatusEffect</span><meta itemprop="position" content="1"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">Содержание этой страницы</button></div><div class="theme-doc-markdown markdown"><h1>StatusEffect</h1>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="fields">Fields<a href="#fields" class="hash-link" aria-label="Прямая ссылка на Fields" title="Прямая ссылка на Fields">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="character-readonly"><code>Character</code> @readonly<a href="#character-readonly" class="hash-link" aria-label="Прямая ссылка на character-readonly" title="Прямая ссылка на character-readonly">​</a></h3>
+<p>A <a href="/WCS/ru/docs/api/character">Character</a> object this status effect is tied with.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="constructorarguments-readonly"><code>ConstructorArguments</code> @readonly<a href="#constructorarguments-readonly" class="hash-link" aria-label="Прямая ссылка на constructorarguments-readonly" title="Прямая ссылка на constructorarguments-readonly">​</a></h3>
+<p>A table of arguments provided after the <a href="/WCS/ru/docs/api/character">Character</a> in <code>.new()</code>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="destroyonend"><code>DestroyOnEnd</code><a href="#destroyonend" class="hash-link" aria-label="Прямая ссылка на destroyonend" title="Прямая ссылка на destroyonend">​</a></h3>
+<p>A boolean value. Determines if <code>self:Destroy()</code> when <code>End</code> is fired.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="events">Events<a href="#events" class="hash-link" aria-label="Прямая ссылка на Events" title="Прямая ссылка на Events">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="started"><code>Started</code><a href="#started" class="hash-link" aria-label="Прямая ссылка на started" title="Прямая ссылка на started">​</a></h3>
+<p>Fires whenever status effect starts. Works on client and server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="ended"><code>Ended</code><a href="#ended" class="hash-link" aria-label="Прямая ссылка на ended" title="Прямая ссылка на ended">​</a></h3>
+<p>Fires whenever status effect ends. Works on client and server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="statechanged"><code>StateChanged</code><a href="#statechanged" class="hash-link" aria-label="Прямая ссылка на statechanged" title="Прямая ссылка на statechanged">​</a></h3>
+<p>Fires whenever current [status effect state](../tutorial/status effects/state.md) changes.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>NewState: <code>StatusEffectState</code></li>
+<li>OldState: <code>StatusEffectState</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="humanoiddatachanged"><code>HumanoidDataChanged</code><a href="#humanoiddatachanged" class="hash-link" aria-label="Прямая ссылка на humanoiddatachanged" title="Прямая ссылка на humanoiddatachanged">​</a></h3>
+<p>Fires whenever current <a href="/WCS/ru/docs/tutorial/statuses/humanoid-data">Humanoid Data</a>(../tutorial/status effects/state.md) changes.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>NewData: <code>HumanoidData?</code></li>
+<li>OldData: <code>HumanoidData?</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="destroyed"><code>Destroyed</code><a href="#destroyed" class="hash-link" aria-label="Прямая ссылка на destroyed" title="Прямая ссылка на destroyed">​</a></h3>
+<p>Fires whenever status effect gets destroyed (removed from the character).</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="metadatachanged"><code>MetadataChanged</code><a href="#metadatachanged" class="hash-link" aria-label="Прямая ссылка на metadatachanged" title="Прямая ссылка на metadatachanged">​</a></h3>
+<p>Fires whenever status effect <a href="/WCS/ru/docs/tutorial/extras/metadata">metadata</a> changes.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>NewMeta: <code>Metadata?</code> - a generic type.</li>
+<li>OldMeta: <code>Metadata?</code> - a generic type.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="constructors">Constructors<a href="#constructors" class="hash-link" aria-label="Прямая ссылка на Constructors" title="Прямая ссылка на Constructors">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="constructorcharacter---skill">constructor(character) -&gt; Skill<a href="#constructorcharacter---skill" class="hash-link" aria-label="Прямая ссылка на constructor(character) -&gt; Skill" title="Прямая ссылка на constructor(character) -&gt; Skill">​</a></h3>
+<p>Accepts the <a href="/WCS/ru/docs/api/character">Character</a> and returns a new status effect.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li><a href="/WCS/ru/docs/api/character">Character</a></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="methods">Methods<a href="#methods" class="hash-link" aria-label="Прямая ссылка на Methods" title="Прямая ссылка на Methods">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="starttime"><code>Start(time?)</code><a href="#starttime" class="hash-link" aria-label="Прямая ссылка на starttime" title="Прямая ссылка на starttime">​</a></h3>
+<p>Starts the status effect.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Time: <code>number?</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="stop"><code>Stop()</code><a href="#stop" class="hash-link" aria-label="Прямая ссылка на stop" title="Прямая ссылка на stop">​</a></h3>
+<p>Stops the status effect.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="end-alias"><code>End()</code> @alias<a href="#end-alias" class="hash-link" aria-label="Прямая ссылка на end-alias" title="Прямая ссылка на end-alias">​</a></h3>
+<p>Stops the status effect. Alias for <code>Stop()</code>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="pause"><code>Pause()</code><a href="#pause" class="hash-link" aria-label="Прямая ссылка на pause" title="Прямая ссылка на pause">​</a></h3>
+<p>Pauses the internal status effect <a href="https://www.npmjs.com/package/@rbxts/timer" target="_blank" rel="noopener noreferrer">Timer</a>.
+Warns if <code>time</code> wasn&#x27;t provided in <code>Start()</code>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="resume"><code>Resume()</code><a href="#resume" class="hash-link" aria-label="Пряма я ссылка на resume" title="Прямая ссылка на resume">​</a></h3>
+<p>Resumes the internal <a href="https://www.npmjs.com/package/@rbxts/timer" target="_blank" rel="noopener noreferrer">Timer</a>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="sethumanoiddatadata"><code>SetHumanoidData(data)</code><a href="#sethumanoiddatadata" class="hash-link" aria-label="Прямая ссылка на sethumanoiddatadata" title="Прямая ссылка на sethumanoiddatadata">​</a></h3>
+<p>Sets the currently applied <a href="/WCS/ru/docs/tutorial/statuses/humanoid-data">Humanoid Data</a>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Data: <code>HumanoidData</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="clearhumanoiddata"><code>ClearHumanoidData()</code><a href="#clearhumanoiddata" class="hash-link" aria-label="Прямая ссылка на clearhumanoiddata" title="Прямая ссылка на clearhumanoiddata">​</a></h3>
+<p>Clears the currently set <a href="/WCS/ru/docs/tutorial/statuses/humanoid-data">Humanoid Data</a>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="clearmetadata"><code>ClearMetadata()</code><a href="#clearmetadata" class="hash-link" aria-label="Прямая ссылка на clearmetadata" title="Прямая ссылка на clearmetadata">​</a></h3>
+<p>Clears the current <a href="/WCS/ru/docs/tutorial/extras/metadata">Metadata</a>. Only works on server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="setmetadatameta"><code>SetMetadata(meta)</code><a href="#setmetadatameta" class="hash-link" aria-label="Прямая ссылка на setmetadatameta" title="Прямая ссылка на setmetadatameta">​</a></h3>
+<p>Sets the current <a href="/WCS/ru/docs/tutorial/extras/metadata">Metadata</a>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Metadata: <code>Metadata</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getmetadata"><code>GetMetadata()</code><a href="#getmetadata" class="hash-link" aria-label="Прямая ссылка на getmetadata" title="Прямая ссылка на getmetadata">​</a></h3>
+<p>Retrieves the current <a href="/WCS/ru/docs/tutorial/extras/metadata">Metadata</a>.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>Metadata: <code>Metadata</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="gethumanoiddata"><code>GetHumanoidData()</code><a href="#gethumanoiddata" class="hash-link" aria-label="Прямая ссылка на gethumanoiddata" title="Прямая ссылка на gethumanoiddata">​</a></h3>
+<p>Retrieves the currently set <a href="/WCS/ru/docs/tutorial/statuses/humanoid-data">Humanoid Data</a>.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>Data: <code>HumanoidData</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getstate"><code>GetState()</code><a href="#getstate" class="hash-link" aria-label="Прямая ссылка на getstate" title="Прямая ссылка на getstate">​</a></h3>
+<p>Retrieves the current status effect state.
+State object looks like this:</p>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">{ IsActive: boolean }</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Скопировать в буфер обмена" title="Скопировать" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>State: <code>StatusEffectState</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="destroy"><code>Destroy()</code><a href="#destroy" class="hash-link" aria-label="Прямая ссылка на destroy" title="Прямая ссылка на destroy">​</a></h3>
+<p>Destroys the skill and removes it from the character.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="handledamagemodified-original-override"><code>HandleDamage(modified, original)</code> @override<a href="#handledamagemodified-original-override" class="hash-link" aria-label="Прямая ссылка на handledamagemodified-original-override" title="Прямая ссылка на handledamagemodified-original-override">​</a></h3>
+<p>Accepts 2 arguments: the previously modified and original damage.
+Should return modified damage.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Modified: <code>number</code> - a damage previously modified by other status effects.</li>
+<li>Original: <code>number</code> - original damage value from the container.</li>
+</ul>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>number</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="isdestroyed"><code>IsDestroyed()</code><a href="#isdestroyed" class="hash-link" aria-label="Прямая ссылка на isdestroyed" title="Прямая ссылка на isdestroyed">​</a></h3>
+<p>Returns if the status effect is destroyed / removed from the <a href="/WCS/ru/docs/api/character">Character</a>.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>boolean</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onconstructserverargs-override"><code>OnConstructServer(...args)</code> @override<a href="#onconstructserverargs-override" class="hash-link" aria-label="Прямая ссылка на onconstructserverargs-override" title="Прямая ссылка на onconstructserverargs-override">​</a></h3>
+<p>Called after class gets instantiated on server.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>...args: <code>...ConstructorArguments</code> A tuple of arguments that was provided to <code>.new</code> after <code>Character</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onconstructclientargs-override"><code>OnConstructClient(...args)</code> @override<a href="#onconstructclientargs-override" class="hash-link" aria-label="Прямая ссылка на onconstructclientargs-override" title="Прямая ссылка на onconstructclientargs-override">​</a></h3>
+<p>Called after class gets instantiated on client.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>...args: <code>...ConstructorArguments</code> A tuple of arguments that was provided to <code>.new</code> after <code>Character</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onstartserver-override"><code>OnStartServer()</code> @override<a href="#onstartserver-override" class="hash-link" aria-label="Прямая ссылка на onstartserver-override" title="Прямая ссылка на onstartserver-override">​</a></h3>
+<p>Fires whenever status effect starts on the server.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>StarterParams: <code>StarterParams</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onstartclient-override"><code>OnStartClient()</code> @override<a href="#onstartclient-override" class="hash-link" aria-label="Прямая ссылка на onstartclient-override" title="Прямая ссылка на onstartclient-override">​</a></h3>
+<p>Fires whenever status effect starts on the client.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>StarterParams: <code>StarterParams</code> - a generic type.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onendserver-override"><code>OnEndServer()</code> @override<a href="#onendserver-override" class="hash-link" aria-label="Прямая ссылка на onendserver-override" title="Прямая ссылка на onendserver-override">​</a></h3>
+<p>Fires whenever status effect ends on server.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="onendclient-override"><code>OnEndClient()</code> @override<a href="#onendclient-override" class="hash-link" aria-label="Прямая ссылка на onendclient-override" title="Прямая ссылка на onendclient-override">​</a></h3>
+<p>Fires whenever status effect ends on client.</p></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Страница документа"><a class="pagination-nav__link pagination-nav__link--prev" href="/WCS/ru/docs/api/skill"><div class="pagination-nav__sublabel">Предыдущая страница</div><div class="pagination-nav__label">Skill</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#fields" class="table-of-contents__link toc-highlight">Fields</a><ul><li><a href="#character-readonly" class="table-of-contents__link toc-highlight"><code>Character</code> @readonly</a></li><li><a href="#constructorarguments-readonly" class="table-of-contents__link toc-highlight"><code>ConstructorArguments</code> @readonly</a></li><li><a href="#destroyonend" class="table-of-contents__link toc-highlight"><code>DestroyOnEnd</code></a></li></ul></li><li><a href="#events" class="table-of-contents__link toc-highlight">Events</a><ul><li><a href="#started" class="table-of-contents__link toc-highlight"><code>Started</code></a></li><li><a href="#ended" class="table-of-contents__link toc-highlight"><code>Ended</code></a></li><li><a href="#statechanged" class="table-of-contents__link toc-highlight"><code>StateChanged</code></a></li><li><a href="#humanoiddatachanged" class="table-of-contents__link toc-highlight"><code>HumanoidDataChanged</code></a></li><li><a href="#destroyed" class="table-of-contents__link toc-highlight"><code>Destroyed</code></a></li><li><a href="#metadatachanged" class="table-of-contents__link toc-highlight"><code>MetadataChanged</code></a></li></ul></li><li><a href="#constructors" class="table-of-contents__link toc-highlight">Constructors</a><ul><li><a href="#constructorcharacter---skill" class="table-of-contents__link toc-highlight">constructor(character) -&gt; Skill</a></li></ul></li><li><a href="#methods" class="table-of-contents__link toc-highlight">Methods</a><ul><li><a href="#starttime" class="table-of-contents__link toc-highlight"><code>Start(time?)</code></a></li><li><a href="#stop" class="table-of-contents__link toc-highlight"><code>Stop()</code></a></li><li><a href="#end-alias" class="table-of-contents__link toc-highlight"><code>End()</code> @alias</a></li><li><a href="#pause" class="table-of-contents__link toc-highlight"><code>Pause()</code></a></li><li><a href="#resume" class="table-of-contents__link toc-highlight"><code>Resume()</code></a></li><li><a href="#sethumanoiddatadata" class="table-of-contents__link toc-highlight"><code>SetHumanoidData(data)</code></a></li><li><a href="#clearhumanoiddata" class="table-of-contents__link toc-highlight"><code>ClearHumanoidData()</code></a></li><li><a href="#clearmetadata" class="table-of-contents__link toc-highlight"><code>ClearMetadata()</code></a></li><li><a href="#setmetadatameta" class="table-of-contents__link toc-highlight"><code>SetMetadata(meta)</code></a></li><li><a href="#getmetadata" class="table-of-contents__link toc-highlight"><code>GetMetadata()</code></a></li><li><a href="#gethumanoiddata" class="table-of-contents__link toc-highlight"><code>GetHumanoidData()</code></a></li><li><a href="#getstate" class="table-of-contents__link toc-highlight"><code>GetState()</code></a></li><li><a href="#destroy" class="table-of-contents__link toc-highlight"><code>Destroy()</code></a></li><li><a href="#handledamagemodified-original-override" class="table-of-contents__link toc-highlight"><code>HandleDamage(modified, original)</code> @override</a></li><li><a href="#isdestroyed" class="table-of-contents__link toc-highlight"><code>IsDestroyed()</code></a></li><li><a href="#onconstructserverargs-override" class="table-of-contents__link toc-highlight"><code>OnConstructServer(...args)</code> @override</a></li><li><a href="#onconstructclientargs-override" class="table-of-contents__link toc-highlight"><code>OnConstructClient(...args)</code> @override</a></li><li><a href="#onstartserver-override" class="table-of-contents__link toc-highlight"><code>OnStartServer()</code> @override</a></li><li><a href="#onstartclient-override" class="table-of-contents__link toc-highlight"><code>OnStartClient()</code> @override</a></li><li><a href="#onendserver-override" class="table-of-contents__link toc-highlight"><code>OnEndServer()</code> @override</a></li><li><a href="#onendclient-override" class="table-of-contents__link toc-highlight"><code>OnEndClient()</code> @override</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Авторские права © 2024 g1mmethemoney. Сделано с помощью Docusaurus ;)</div></div></div></footer></div>
+</body>
+</html>

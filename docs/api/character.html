@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-api/character" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.1">
+<title data-rh="true">Character | WCS</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://g1mmethemoney.github.io/WCS/img/social-card.png"><meta data-rh="true" name="twitter:image" content="https://g1mmethemoney.github.io/WCS/img/social-card.png"><meta data-rh="true" property="og:url" content="https://g1mmethemoney.github.io/WCS/docs/api/character"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" property="og:locale:alternate" content="ru"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Character | WCS"><meta data-rh="true" name="description" content="[Moveset]: ../tutorial/extras/movesets.md"><meta data-rh="true" property="og:description" content="[Moveset]: ../tutorial/extras/movesets.md"><link data-rh="true" rel="icon" href="/WCS/img/logo.svg"><link data-rh="true" rel="canonical" href="https://g1mmethemoney.github.io/WCS/docs/api/character"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/character" hreflang="en"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/ru/docs/api/character" hreflang="ru"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/character" hreflang="x-default"><link rel="stylesheet" href="/WCS/assets/css/styles.7f09a7b9.css">
+<script src="/WCS/assets/js/runtime~main.39d48d90.js" defer="defer"></script>
+<script src="/WCS/assets/js/main.55cbd5d1.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/WCS/"><div class="navbar__logo"><img src="/WCS/img/logo.svg" alt="WCS Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/WCS/img/logo.svg" alt="WCS Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">WCS</b></a><a class="navbar__item navbar__link" href="/WCS/docs/tutorial/intro">Tutorial</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/WCS/docs/api/wcs">API</a></div><div class="navbar__items navbar__items--right"><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href="#" aria-haspopup="true" aria-expanded="false" role="button" class="navbar__link"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" class="iconLanguage_nlXk"><path fill="currentColor" d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"></path></svg>English</a><ul class="dropdown__menu"><li><a href="/WCS/docs/api/character" target="_self" rel="noopener noreferrer" class="dropdown__link dropdown__link--active" lang="en">English</a></li><li><a href="/WCS/ru/docs/api/character" target="_self" rel="noopener noreferrer" class="dropdown__link" lang="ru">Русский</a></li></ul></div><a href="https://github.com/g1mmethemoney/WCSTypescript" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/docs/api/wcs">WCS</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/docs/api/server">Server</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/docs/api/client">Client</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/WCS/docs/api/character">Character</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/docs/api/skill">Skill</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/WCS/docs/api/statusEffect">StatusEffect</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/WCS/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Character</span><meta itemprop="position" content="1"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><h1>Character</h1>
+<div class="tableOfContentsInline_prmo"><ul class="table-of-contents"><li><a href="#static-events--methods">Static Events / Methods</a><ul><li><a href="#charactercreated"><code>CharacterCreated</code></a></li><li><a href="#characterdestroyed"><code>CharacterDestroyed</code></a></li><li><a href="#getcharactermap"><code>GetCharacterMap()</code></a></li><li><a href="#getcharacterfrominstanceinstance"><code>GetCharacterFromInstance(instance)</code></a></li></ul></li><li><a href="#fields">Fields</a><ul><li><a href="#instance-readonly"><code>Instance</code> <strong>@readonly</strong></a></li><li><a href="#humanoid-readonly"><code>Humanoid</code> <strong>@readonly</strong></a></li><li><a href="#player-readonly"><code>Player?</code> <strong>@readonly</strong></a></li></ul></li><li><a href="#events">Events</a><ul><li><a href="#skilladded"><code>SkillAdded</code></a></li><li><a href="#skillremoved"><code>SkillRemoved</code></a></li><li><a href="#statuseffectadded"><code>StatusEffectAdded</code></a></li><li><a href="#statuseffectremoved"><code>StatusEffectRemoved</code></a></li><li><a href="#humanoidpropertiesupdated"><code>HumanoidPropertiesUpdated</code></a></li><li><a href="#damagetaken"><code>DamageTaken</code></a></li><li><a href="#damagedealt"><code>DamageDealt</code></a></li><li><a href="#destroyed"><code>Destroyed</code></a></li><li><a href="#movesetchanged"><code>MovesetChanged</code></a></li></ul></li><li><a href="#constructors">Constructors</a><ul><li><a href="#constructorinstance---character">constructor(instance) -&gt; Character</a></li></ul></li><li><a href="#methods">Methods</a><ul><li><a href="#destroy"><code>Destroy()</code></a></li><li><a href="#takedamagecontainer"><code>TakeDamage(container)</code></a></li><li><a href="#predictdamagecontainer"><code>PredictDamage(container)</code></a></li><li><a href="#setdefaultpropsprops"><code>SetDefaultProps(props)</code></a></li><li><a href="#getdefaultprops"><code>GetDefaultProps()</code></a></li><li><a href="#getallstatuseffect"><code>GetAllStatusEffect()</code></a></li><li><a href="#getallactivestatuseffect"><code>GetAllActiveStatusEffect()</code></a></li><li><a href="#getallstatuseffectsoftypeconstructor"><code>GetAllStatusEffectsOfType(constructor)</code></a></li><li><a href="#getallactivestatuseffectsoftypeconstructor"><code>GetAllActiveStatusEffectsOfType(constructor)</code></a></li><li><a href="#hasstatuseffectsstatuses"><code>HasStatusEffects(statuses)</code></a></li><li><a href="#getskills"><code>GetSkills()</code></a></li><li><a href="#getallactiveskills"><code>GetAllActiveSkills()</code></a></li><li><a href="#getskillfromstringname"><code>GetSkillFromString(name)</code></a></li><li><a href="#getskillfromconstructorconstructor"><code>GetSkillFromConstructor(constructor)</code></a></li><li><a href="#applymovesetmoveset"><code>ApplyMoveset(moveset)</code></a></li><li><a href="#getmoveset"><code>GetMoveset()</code></a></li><li><a href="#getmovesetskillsname"><code>GetMovesetSkills(name?)</code></a></li><li><a href="#clearmoveset"><code>ClearMoveset()</code></a></li><li><a href="#applyskillsfrommovesetmoveset"><code>ApplySkillsFromMoveset(moveset)</code></a></li></ul></li></ul></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="static-events--methods">Static Events / Methods<a href="#static-events--methods" class="hash-link" aria-label="Direct link to Static Events / Methods" title="Direct link to Static Events / Methods">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="charactercreated"><code>CharacterCreated</code><a href="#charactercreated" class="hash-link" aria-label="Direct link to charactercreated" title="Direct link to charactercreated">​</a></h3>
+<p><strong>An event.</strong> Fires whenever a character gets created.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Character: <code>Character</code> - a character that gets created.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="characterdestroyed"><code>CharacterDestroyed</code><a href="#characterdestroyed" class="hash-link" aria-label="Direct link to characterdestroyed" title="Direct link to characterdestroyed">​</a></h3>
+<p><strong>An event.</strong> Fires whenever a character gets destroyed.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Character: <code>Character</code> - a character that gets destroyed.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getcharactermap"><code>GetCharacterMap()</code><a href="#getcharactermap" class="hash-link" aria-label="Direct link to getcharactermap" title="Direct link to getcharactermap">​</a></h3>
+<p>Starts the handler.</p>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>CharacterMap: <code>Map</code>. A map where key is <code>Instance</code> and the value is <code>Character</code> attached to it.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getcharacterfrominstanceinstance"><code>GetCharacterFromInstance(instance)</code><a href="#getcharacterfrominstanceinstance" class="hash-link" aria-label="Direct link to getcharacterfrominstanceinstance" title="Direct link to getcharacterfrominstanceinstance">​</a></h3>
+<p>Retrieves the character associated with the given instance.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Instance: <code>Instance</code></li>
+</ul>
+<p><strong><code>Returns:</code></strong></p>
+<ul>
+<li>Character: <code>Character?</code>. A character associated with the provided instance.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="fields">Fields<a href="#fields" class="hash-link" aria-label="Direct link to Fields" title="Direct link to Fields">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="instance-readonly"><code>Instance</code> <strong>@readonly</strong><a href="#instance-readonly" class="hash-link" aria-label="Direct link to instance-readonly" title="Direct link to instance-readonly">​</a></h3>
+<p>An instance <em>Character</em> object is attached to.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="humanoid-readonly"><code>Humanoid</code> <strong>@readonly</strong><a href="#humanoid-readonly" class="hash-link" aria-label="Direct link to humanoid-readonly" title="Direct link to humanoid-readonly">​</a></h3>
+<p>A <a href="https://create.roblox.com/docs/reference/engine/classes/Humanoid" target="_blank" rel="noopener noreferrer">Humanoid</a> associated with character&#x27;s <em>instance</em>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="player-readonly"><code>Player?</code> <strong>@readonly</strong><a href="#player-readonly" class="hash-link" aria-label="Direct link to player-readonly" title="Direct link to player-readonly">​</a></h3>
+<p>A <a href="https://create.roblox.com/docs/reference/engine/classes/Player" target="_blank" rel="noopener noreferrer">Player</a> associated with the character.
+Retrieved internally by <code>Players:GetPlayerFromCharacter(self.Instance)</code>.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="events">Events<a href="#events" class="hash-link" aria-label="Direct link to Events" title="Direct link to Events">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="skilladded"><code>SkillAdded</code><a href="#skilladded" class="hash-link" aria-label="Direct link to skilladded" title="Direct link to skilladded">​</a></h3>
+<p><strong>An event</strong>. Gets fired when <a href="/WCS/docs/api/skill">a skill</a> gets added to the character.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Skill: <code>Skill</code> - <a href="/WCS/docs/api/skill">A skill</a> that got added.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="skillremoved"><code>SkillRemoved</code><a href="#skillremoved" class="hash-link" aria-label="Direct link to skillremoved" title="Direct link to skillremoved">​</a></h3>
+<p><strong>An event</strong>. Gets fired when <a href="/WCS/docs/api/skill">a skill</a> gets removed from the character.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Skill: <code>Skill</code> - <a href="/WCS/docs/api/skill">A skill</a> that got removed.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="statuseffectadded"><code>StatusEffectAdded</code><a href="#statuseffectadded" class="hash-link" aria-label="Direct link to statuseffectadded" title="Direct link to statuseffectadded">​</a></h3>
+<p><strong>An event</strong>. Gets fired when <a href="/WCS/docs/api/statusEffect">a status effect</a> gets added to the character.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Status: <code>StatusEffect</code> - <a href="/WCS/docs/api/skill">A status effect</a> that got removed.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="statuseffectremoved"><code>StatusEffectRemoved</code><a href="#statuseffectremoved" class="hash-link" aria-label="Direct link to statuseffectremoved" title="Direct link to statuseffectremoved">​</a></h3>
+<p>Gets fired when <a href="/WCS/docs/api/statusEffect">a status effect</a> gets removed from the character.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Status: <code>StatusEffect</code> - <a href="/WCS/docs/api/skill">A status effect</a> that got removed.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="humanoidpropertiesupdated"><code>HumanoidPropertiesUpdated</code><a href="#humanoidpropertiesupdated" class="hash-link" aria-label="Direct link to humanoidpropertiesupdated" title="Direct link to humanoidpropertiesupdated">​</a></h3>
+<p>Gets fired when character&#x27;s <a href="/WCS/docs/tutorial/statuses/humanoid-data">humanoid data</a> gets updated.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Props: <code>AffectableHumanoidProps</code> - a map of <code>propertyName</code> and it&#x27;s new <code>value</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="damagetaken"><code>DamageTaken</code><a href="#damagetaken" class="hash-link" aria-label="Direct link to damagetaken" title="Direct link to damagetaken">​</a></h3>
+<p>Gets fired when character takes damage from any <a href="/WCS/docs/api/skill">skill</a> / <a href="/WCS/docs/api/statusEffect">status effect</a>.
+Container&#x27;s source will always be <code>nil</code> on client</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Container: <code>DamageContainer</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="damagedealt"><code>DamageDealt</code><a href="#damagedealt" class="hash-link" aria-label="Direct link to damagedealt" title="Direct link to damagedealt">​</a></h3>
+<p>Gets fired when any <a href="/WCS/docs/api/skill">skill</a> or <a href="/WCS/docs/api/statusEffect">status effect</a> that belongs to this character damage another character.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Container: <code>DamageContainer</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="destroyed"><code>Destroyed</code><a href="#destroyed" class="hash-link" aria-label="Direct link to destroyed" title="Direct link to destroyed">​</a></h3>
+<p>Gets fired when character gets destroyed.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="movesetchanged"><code>MovesetChanged</code><a href="#movesetchanged" class="hash-link" aria-label="Direct link to movesetchanged" title="Direct link to movesetchanged">​</a></h3>
+<p>Gets fired when character&#x27;s current <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a> changed.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>NewMoveset: <code>string?</code> - a name of the new moveset.</li>
+<li>OldMoveset: <code>string?</code> - a name of the old moveset.</li>
+</ul>
+<div class="theme-admonition theme-admonition-note admonition_xJq3 alert alert--secondary"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg></span>note</div><div class="admonitionContent_BuS1"><p>Moveset object can get retrieved using <code>:GetMovesetObjectByName()</code></p></div></div>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="constructors">Constructors<a href="#constructors" class="hash-link" aria-label="Direct link to Constructors" title="Direct link to Constructors">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="constructorinstance---character">constructor(instance) -&gt; Character<a href="#constructorinstance---character" class="hash-link" aria-label="Direct link to constructor(instance) -&gt; Character" title="Direct link to constructor(instance) -&gt; Character">​</a></h3>
+<p>Accepts the instance and returns a new WCS Character.
+Instance must contain a <a href="https://create.roblox.com/docs/reference/engine/classes/Humanoid" target="_blank" rel="noopener noreferrer">Humanoid</a>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Instance</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="methods">Methods<a href="#methods" class="hash-link" aria-label="Direct link to Methods" title="Direct link to Methods">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="destroy"><code>Destroy()</code><a href="#destroy" class="hash-link" aria-label="Direct link to destroy" title="Direct link to destroy">​</a></h3>
+<p>Destroys the object and performs necessary cleanup tasks.
+You usually suppost to fire this manually when your <a href="https://create.roblox.com/docs/reference/engine/classes/Humanoid" target="_blank" rel="noopener noreferrer">humanoid</a> dies.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="takedamagecontainer"><code>TakeDamage(container)</code><a href="#takedamagecontainer" class="hash-link" aria-label="Direct link to takedamagecontainer" title="Direct link to takedamagecontainer">​</a></h3>
+<p>Calculates the damage based on <a href="/WCS/docs/api/statusEffect">status effects</a> and fires a <code>DamageTaken</code> event.
+Returns the calculated damage.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Container: <code>DamageContainer</code></li>
+</ul>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Container: <code>DamageContainer</code> - a container with calculated damage after <a href="/WCS/docs/api/statusEffect">status effect</a> affection.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="predictdamagecontainer"><code>PredictDamage(container)</code><a href="#predictdamagecontainer" class="hash-link" aria-label="Direct link to predictdamagecontainer" title="Direct link to predictdamagecontainer">​</a></h3>
+<p>Calculates the damage based on <a href="/WCS/docs/api/statusEffect">status effects</a>.
+Returns the calculated damage.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Container: <code>DamageContainer</code></li>
+</ul>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Container: <code>DamageContainer</code> - a container with calculated damage after <a href="/WCS/docs/api/statusEffect">status effect</a> affection.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="setdefaultpropsprops"><code>SetDefaultProps(props)</code><a href="#setdefaultpropsprops" class="hash-link" aria-label="Direct link to setdefaultpropsprops" title="Direct link to setdefaultpropsprops">​</a></h3>
+<p>Sets default humanoid properties of the character.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Properties: <code>AffectableHumanoidProps</code> - A map of a <code>PropertyName</code> and it&#x27;s <code>Value</code>.</li>
+</ul>
+<div class="tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">TypeScript</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Luau</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><div class="language-ts codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-ts codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Char</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">SetDefaultProps</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    WalkSpeed</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">32</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><div class="language-lua codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-lua codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Char</span><span class="token punctuation" style="color:#393A34">:</span><span class="token function" style="color:#d73a49">SetDefaultProps</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    WalkSpeed </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">32</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getdefaultprops"><code>GetDefaultProps()</code><a href="#getdefaultprops" class="hash-link" aria-label="Direct link to getdefaultprops" title="Direct link to getdefaultprops">​</a></h3>
+<p>Retrieves the default humanoid properties of the character.</p>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Properties: <code>AffectableHumanoidProps</code> - A map of a <code>PropertyName</code> and it&#x27;s <code>Value</code>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getallstatuseffect"><code>GetAllStatusEffect()</code><a href="#getallstatuseffect" class="hash-link" aria-label="Direct link to getallstatuseffect" title="Direct link to getallstatuseffect">​</a></h3>
+<p>Retrieves all status effects.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getallactivestatuseffect"><code>GetAllActiveStatusEffect()</code><a href="#getallactivestatuseffect" class="hash-link" aria-label="Direct link to getallactivestatuseffect" title="Direct link to getallactivestatuseffect">​</a></h3>
+<p>Retrieves all active status effects.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getallstatuseffectsoftypeconstructor"><code>GetAllStatusEffectsOfType(constructor)</code><a href="#getallstatuseffectsoftypeconstructor" class="hash-link" aria-label="Direct link to getallstatuseffectsoftypeconstructor" title="Direct link to getallstatuseffectsoftypeconstructor">​</a></h3>
+<p>Retrieves all status effects of a given type.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Constructor: <code>Constructor&lt;AnyStatus&gt;</code> - A status effect class to check.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getallactivestatuseffectsoftypeconstructor"><code>GetAllActiveStatusEffectsOfType(constructor)</code><a href="#getallactivestatuseffectsoftypeconstructor" class="hash-link" aria-label="Direct link to getallactivestatuseffectsoftypeconstructor" title="Direct link to getallactivestatuseffectsoftypeconstructor">​</a></h3>
+<p>Retrieves all active status effects of a specific type.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Constructor: <code>Constructor&lt;AnyStatus&gt;</code> - A status effect class to check.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="hasstatuseffectsstatuses"><code>HasStatusEffects(statuses)</code><a href="#hasstatuseffectsstatuses" class="hash-link" aria-label="Direct link to hasstatuseffectsstatuses" title="Direct link to hasstatuseffectsstatuses">​</a></h3>
+<p>Checks if character has any active status effects of the specified type.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Statuses: <code>Constructor&lt;AnyStatus&gt;[]</code> - A list of status effect classes to check.</li>
+</ul>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>boolean</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getskills"><code>GetSkills()</code><a href="#getskills" class="hash-link" aria-label="Direct link to getskills" title="Direct link to getskills">​</a></h3>
+<p>Retrieves the skills stored in the skills object and returns them as an array.</p>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Skills: <code>Constructor&lt;AnySkill&gt;[]</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getallactiveskills"><code>GetAllActiveSkills()</code><a href="#getallactiveskills" class="hash-link" aria-label="Direct link to getallactiveskills" title="Direct link to getallactiveskills">​</a></h3>
+<p>Retrieves all active skills and returns them as an array.</p>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Skills: <code>Constructor&lt;AnySkill&gt;[]</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getskillfromstringname"><code>GetSkillFromString(name)</code><a href="#getskillfromstringname" class="hash-link" aria-label="Direct link to getskillfromstringname" title="Direct link to getskillfromstringname">​</a></h3>
+<p>Retrieves the skill instance by its name.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Name: <code>string</code> - a name of the skill.</li>
+</ul>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Skill: <code>Skill?</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getskillfromconstructorconstructor"><code>GetSkillFromConstructor(constructor)</code><a href="#getskillfromconstructorconstructor" class="hash-link" aria-label="Direct link to getskillfromconstructorconstructor" title="Direct link to getskillfromconstructorconstructor">​</a></h3>
+<p>Retrieves a skill instance based on the provided constructor.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Constructor: <code>Constructor&lt;AnySkill&gt;</code> - A constructor of the skill class.</li>
+</ul>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Skill: <code>Skill?</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="applymovesetmoveset"><code>ApplyMoveset(moveset)</code><a href="#applymovesetmoveset" class="hash-link" aria-label="Direct link to applymovesetmoveset" title="Direct link to applymovesetmoveset">​</a></h3>
+<p>Applies a <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a> to the character.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>Moveset: <code>Moveset | string</code> - A <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a> object or it&#x27;s name.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getmoveset"><code>GetMoveset()</code><a href="#getmoveset" class="hash-link" aria-label="Direct link to getmoveset" title="Direct link to getmoveset">​</a></h3>
+<p>Returns the current <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a>&#x27;s name.</p>
+<p><strong><code>Returns</code></strong></p>
+<ul>
+<li>Moveset: <code>string?</code></li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getmovesetskillsname"><code>GetMovesetSkills(name?)</code><a href="#getmovesetskillsname" class="hash-link" aria-label="Direct link to getmovesetskillsname" title="Direct link to getmovesetskillsname">​</a></h3>
+<p>Gets the skills that belong to a provided <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>MovesetName: <code>string?</code> - A name of the <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a> to get skills from. <code>@defaults</code> to the currently applied <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a>.</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="clearmoveset"><code>ClearMoveset()</code><a href="#clearmoveset" class="hash-link" aria-label="Direct link to clearmoveset" title="Direct link to clearmoveset">​</a></h3>
+<p>Clears the <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a> and destroys all skills that belong to it.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="applyskillsfrommovesetmoveset"><code>ApplySkillsFromMoveset(moveset)</code><a href="#applyskillsfrommovesetmoveset" class="hash-link" aria-label="Direct link to applyskillsfrommovesetmoveset" title="Direct link to applyskillsfrommovesetmoveset">​</a></h3>
+<p>Adds the skills from a given <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a>.
+Does not set the <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a>.</p>
+<p><strong><code>Parameters:</code></strong></p>
+<ul>
+<li>MovesetName: <code>Moveset</code> - The <a href="/WCS/docs/tutorial/extras/movesets">Moveset</a> to apply from.</li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/WCS/docs/api/client"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Client</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/WCS/docs/api/skill"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Skill</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#static-events--methods" class="table-of-contents__link toc-highlight">Static Events / Methods</a><ul><li><a href="#charactercreated" class="table-of-contents__link toc-highlight"><code>CharacterCreated</code></a></li><li><a href="#characterdestroyed" class="table-of-contents__link toc-highlight"><code>CharacterDestroyed</code></a></li><li><a href="#getcharactermap" class="table-of-contents__link toc-highlight"><code>GetCharacterMap()</code></a></li><li><a href="#getcharacterfrominstanceinstance" class="table-of-contents__link toc-highlight"><code>GetCharacterFromInstance(instance)</code></a></li></ul></li><li><a href="#fields" class="table-of-contents__link toc-highlight">Fields</a><ul><li><a href="#instance-readonly" class="table-of-contents__link toc-highlight"><code>Instance</code> <strong>@readonly</strong></a></li><li><a href="#humanoid-readonly" class="table-of-contents__link toc-highlight"><code>Humanoid</code> <strong>@readonly</strong></a></li><li><a href="#player-readonly" class="table-of-contents__link toc-highlight"><code>Player?</code> <strong>@readonly</strong></a></li></ul></li><li><a href="#events" class="table-of-contents__link toc-highlight">Events</a><ul><li><a href="#skilladded" class="table-of-contents__link toc-highlight"><code>SkillAdded</code></a></li><li><a href="#skillremoved" class="table-of-contents__link toc-highlight"><code>SkillRemoved</code></a></li><li><a href="#statuseffectadded" class="table-of-contents__link toc-highlight"><code>StatusEffectAdded</code></a></li><li><a href="#statuseffectremoved" class="table-of-contents__link toc-highlight"><code>StatusEffectRemoved</code></a></li><li><a href="#humanoidpropertiesupdated" class="table-of-contents__link toc-highlight"><code>HumanoidPropertiesUpdated</code></a></li><li><a href="#damagetaken" class="table-of-contents__link toc-highlight"><code>DamageTaken</code></a></li><li><a href="#damagedealt" class="table-of-contents__link toc-highlight"><code>DamageDealt</code></a></li><li><a href="#destroyed" class="table-of-contents__link toc-highlight"><code>Destroyed</code></a></li><li><a href="#movesetchanged" class="table-of-contents__link toc-highlight"><code>MovesetChanged</code></a></li></ul></li><li><a href="#constructors" class="table-of-contents__link toc-highlight">Constructors</a><ul><li><a href="#constructorinstance---character" class="table-of-contents__link toc-highlight">constructor(instance) -&gt; Character</a></li></ul></li><li><a href="#methods" class="table-of-contents__link toc-highlight">Methods</a><ul><li><a href="#destroy" class="table-of-contents__link toc-highlight"><code>Destroy()</code></a></li><li><a href="#takedamagecontainer" class="table-of-contents__link toc-highlight"><code>TakeDamage(container)</code></a></li><li><a href="#predictdamagecontainer" class="table-of-contents__link toc-highlight"><code>PredictDamage(container)</code></a></li><li><a href="#setdefaultpropsprops" class="table-of-contents__link toc-highlight"><code>SetDefaultProps(props)</code></a></li><li><a href="#getdefaultprops" class="table-of-contents__link toc-highlight"><code>GetDefaultProps()</code></a></li><li><a href="#getallstatuseffect" class="table-of-contents__link toc-highlight"><code>GetAllStatusEffect()</code></a></li><li><a href="#getallactivestatuseffect" class="table-of-contents__link toc-highlight"><code>GetAllActiveStatusEffect()</code></a></li><li><a href="#getallstatuseffectsoftypeconstructor" class="table-of-contents__link toc-highlight"><code>GetAllStatusEffectsOfType(constructor)</code></a></li><li><a href="#getallactivestatuseffectsoftypeconstructor" class="table-of-contents__link toc-highlight"><code>GetAllActiveStatusEffectsOfType(constructor)</code></a></li><li><a href="#hasstatuseffectsstatuses" class="table-of-contents__link toc-highlight"><code>HasStatusEffects(statuses)</code></a></li><li><a href="#getskills" class="table-of-contents__link toc-highlight"><code>GetSkills()</code></a></li><li><a href="#getallactiveskills" class="table-of-contents__link toc-highlight"><code>GetAllActiveSkills()</code></a></li><li><a href="#getskillfromstringname" class="table-of-contents__link toc-highlight"><code>GetSkillFromString(name)</code></a></li><li><a href="#getskillfromconstructorconstructor" class="table-of-contents__link toc-highlight"><code>GetSkillFromConstructor(constructor)</code></a></li><li><a href="#applymovesetmoveset" class="table-of-contents__link toc-highlight"><code>ApplyMoveset(moveset)</code></a></li><li><a href="#getmoveset" class="table-of-contents__link toc-highlight"><code>GetMoveset()</code></a></li><li><a href="#getmovesetskillsname" class="table-of-contents__link toc-highlight"><code>GetMovesetSkills(name?)</code></a></li><li><a href="#clearmoveset" class="table-of-contents__link toc-highlight"><code>ClearMoveset()</code></a></li><li><a href="#applyskillsfrommovesetmoveset" class="table-of-contents__link toc-highlight"><code>ApplySkillsFromMoveset(moveset)</code></a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 g1mmethemoney. Built with Docusaurus & Love</div></div></div></footer></div>
+</body>
+</html>
