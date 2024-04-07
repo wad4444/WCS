@@ -8,7 +8,7 @@ import TOCInline from "@theme/TOCInline";
 
 # Character
 
-[Moveset]: ../tutorial/extras/[Moveset]s.md
+[Moveset]: ../tutorial/extras/movesets.md
 
 <TOCInline toc={toc} />
 
