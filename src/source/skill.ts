@@ -81,7 +81,7 @@ export abstract class SkillBase<
     >();
 
     /**
-     * Checks whenever other skills should be non active for :Start() to procceed.
+     * Checks whenever other skills should be non active for :Start() to proceed.
      */
     protected CheckOthersActive = true;
     protected MutualExclusives: Constructor<AnyStatus>[] = [];
@@ -90,7 +90,7 @@ export abstract class SkillBase<
     /** Whenever the start function should check if the skill is active/on cooldown on client side before firing a remote */
     protected CheckClientState = true;
 
-    public Player?: Player;
+    public readonly Player?: Player;
 
     /** @internal @hidden */
     protected readonly isReplicated: boolean;

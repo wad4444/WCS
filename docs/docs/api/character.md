@@ -8,7 +8,7 @@ import TOCInline from "@theme/TOCInline";
 
 # Character
 
-[moveset]: ./moveset.md
+[moveset]: ../tutorial/extras/movesets.md
 
 <TOCInline toc={toc} />
 
@@ -186,19 +186,19 @@ Retrieves all active status effects.
 Retrieves all status effects of a given type.
 
 **`Parameters:`**
-* Constructor: `Constructor<StatusEffect>` - A status effect class to check. 
+* Constructor: `Constructor<AnyStatus>` - A status effect class to check. 
 
 ### `GetAllActiveStatusEffectsOfType(constructor)`
 Retrieves all active status effects of a specific type.
 
 **`Parameters:`**
-* Constructor: `Constructor<StatusEffect>` - A status effect class to check. 
+* Constructor: `Constructor<AnyStatus>` - A status effect class to check. 
 
 ### `HasStatusEffects(statuses)`
 Checks if character has any active status effects of the specified type.
 
 **`Parameters:`**
-* Statuses: `Constructor<StatusEffect>[]` - A list of status effect classes to check. 
+* Statuses: `Constructor<AnyStatus>[]` - A list of status effect classes to check. 
 
 **`Returns`**
  * boolean
@@ -207,13 +207,13 @@ Checks if character has any active status effects of the specified type.
 Retrieves the skills stored in the skills object and returns them as an array.
 
 **`Returns`**
- * Skills: `Constructor<Skill>[]`
+ * Skills: `Constructor<AnySkill>[]`
  
 ### `GetAllActiveSkills()`
 Retrieves all active skills and returns them as an array.
 
 **`Returns`**
- * Skills: `Constructor<Skill>[]`
+ * Skills: `Constructor<AnySkill>[]`
 
 ### `GetSkillFromString(name)`
 Retrieves the skill instance by its name.
@@ -228,7 +228,7 @@ Retrieves the skill instance by its name.
 Retrieves a skill instance based on the provided constructor.
 
 **`Parameters:`**
-* Constructor: `Constructor<Skill>` - A constructor of the skill class.
+* Constructor: `Constructor<AnySkill>` - A constructor of the skill class.
 
 **`Returns`**
  * Skill: `Skill?`
