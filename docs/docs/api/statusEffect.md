@@ -33,14 +33,14 @@ Fires whenever status effect starts. Works on client and server.
 Fires whenever status effect ends. Works on client and server.
 
 ### `StateChanged`
-Fires whenever current [status effect state](../tutorial/statusEffects/state.md) changes.
+Fires whenever current status effect state changes.
 
 **`Parameters:`**
 * NewState: `StatusEffectState`
 * OldState: `StatusEffectState`
 
 ### `HumanoidDataChanged`
-Fires whenever current [Humanoid Data](../tutorial/statusEffects/state.md) changes.
+Fires whenever current [Humanoid Data](../tutorial/statuses/humanoid-data.md) changes.
 
 **`Parameters:`**
 * NewData: `HumanoidData?`
