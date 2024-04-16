@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.1.1">
 <title data-rh="true">StatusEffect | WCS</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://g1mmethemoney.github.io/WCS/ru/img/social-card.png"><meta data-rh="true" name="twitter:image" content="https://g1mmethemoney.github.io/WCS/ru/img/social-card.png"><meta data-rh="true" property="og:url" content="https://g1mmethemoney.github.io/WCS/ru/docs/api/statusEffect"><meta data-rh="true" property="og:locale" content="ru"><meta data-rh="true" property="og:locale:alternate" content="en"><meta data-rh="true" name="docusaurus_locale" content="ru"><meta data-rh="true" name="docsearch:language" content="ru"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="StatusEffect | WCS"><meta data-rh="true" name="description" content="[Humanoid Data]: ../tutorial/statuses/humanoid-data.md"><meta data-rh="true" property="og:description" content="[Humanoid Data]: ../tutorial/statuses/humanoid-data.md"><link data-rh="true" rel="icon" href="/WCS/ru/img/logo.svg"><link data-rh="true" rel="canonical" href="https://g1mmethemoney.github.io/WCS/ru/docs/api/statusEffect"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/statusEffect" hreflang="en"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/ru/docs/api/statusEffect" hreflang="ru"><link data-rh="true" rel="alternate" href="https://g1mmethemoney.github.io/WCS/docs/api/statusEffect" hreflang="x-default"><link rel="stylesheet" href="/WCS/ru/assets/css/styles.7f09a7b9.css">
-<script src="/WCS/ru/assets/js/runtime~main.76f62d63.js" defer="defer"></script>
+<script src="/WCS/ru/assets/js/runtime~main.5014db7c.js" defer="defer"></script>
 <script src="/WCS/ru/assets/js/main.960246a6.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -22,14 +22,14 @@
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="ended"><code>Ended</code><a href="#ended" class="hash-link" aria-label="Прямая ссылка на ended" title="Прямая ссылка на ended">​</a></h3>
 <p>Fires whenever status effect ends. Works on client and server.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="statechanged"><code>StateChanged</code><a href="#statechanged" class="hash-link" aria-label="Прямая ссылка на statechanged" title="Прямая ссылка на statechanged">​</a></h3>
-<p>Fires whenever current [status effect state](../tutorial/status effects/state.md) changes.</p>
+<p>Fires whenever current status effect state changes.</p>
 <p><strong><code>Parameters:</code></strong></p>
 <ul>
 <li>NewState: <code>StatusEffectState</code></li>
 <li>OldState: <code>StatusEffectState</code></li>
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="humanoiddatachanged"><code>HumanoidDataChanged</code><a href="#humanoiddatachanged" class="hash-link" aria-label="Прямая ссылка на humanoiddatachanged" title="Прямая ссылка на humanoiddatachanged">​</a></h3>
-<p>Fires whenever current <a href="/WCS/ru/docs/tutorial/statuses/humanoid-data">Humanoid Data</a>(../tutorial/status effects/state.md) changes.</p>
+<p>Fires whenever current <a href="/WCS/ru/docs/tutorial/statuses/humanoid-data">Humanoid Data</a> changes.</p>
 <p><strong><code>Parameters:</code></strong></p>
 <ul>
 <li>NewData: <code>HumanoidData?</code></li>
@@ -65,7 +65,7 @@
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="pause"><code>Pause()</code><a href="#pause" class="hash-link" aria-label="Прямая ссылка на pause" title="Прямая ссылка на pause">​</a></h3>
 <p>Pauses the internal status effect <a href="https://www.npmjs.com/package/@rbxts/timer" target="_blank" rel="noopener noreferrer">Timer</a>.
 Warns if <code>time</code> wasn&#x27;t provided in <code>Start()</code>.</p>
-<h3 class="anchor anchorWithStickyNavbar_LWe7" id="resume"><code>Resume()</code><a href="#resume" class="hash-link" aria-label="Пряма я ссылка на resume" title="Прямая ссылка на resume">​</a></h3>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="resume"><code>Resume()</code><a href="#resume" class="hash-link" aria-label="Прямая ссылка на resume" title="Прямая ссылка на resume">  ​</a></h3>
 <p>Resumes the internal <a href="https://www.npmjs.com/package/@rbxts/timer" target="_blank" rel="noopener noreferrer">Timer</a>.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="sethumanoiddatadata"><code>SetHumanoidData(data)</code><a href="#sethumanoiddatadata" class="hash-link" aria-label="Прямая ссылка на sethumanoiddatadata" title="Прямая ссылка на sethumanoiddatadata">​</a></h3>
 <p>Sets the currently applied <a href="/WCS/ru/docs/tutorial/statuses/humanoid-data">Humanoid Data</a>.</p>
@@ -83,7 +83,7 @@ Warns if <code>time</code> wasn&#x27;t provided in <code>Start()</code>.</p>
 <ul>
 <li>Metadata: <code>Metadata</code> - a generic type.</li>
 </ul>
-<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getmetadata"><code>GetMetadata()</code><a href="#getmetadata" class="hash-link" aria-label="Прямая ссылка на getmetadata" title="Прямая ссылка на getmetadata">​</a></h3>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="getmetadata"><code>GetMetadata()</code><a href="#getmetadata" class="hash-link" aria-label="Прямая ссылк а на getmetadata" title="Прямая ссылка на getmetadata">​</a></h3>
 <p>Retrieves the current <a href="/WCS/ru/docs/tutorial/extras/metadata">Metadata</a>.</p>
 <p><strong><code>Returns:</code></strong></p>
 <ul>
