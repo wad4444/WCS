@@ -44,7 +44,7 @@ export function instanceofConstructor<T extends object>(constructor: Constructor
 
     while (true) {
         if (currentClass === (constructor2 as never)) return true;
-        if (!currentClass && !metatable) break;
+        if (!currentClass || !metatable) break;
 
         currentClass = metatable.__index as ConstructorWithIndex;
         metatable = getmetatable(currentClass) as ConstructorWithIndex;

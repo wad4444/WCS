@@ -12,12 +12,27 @@ export = function () {
         protected OnStartServer(StarterParams: void): void {
             task.wait(1);
         }
+
+        public setCheckedByOthers(check: boolean) {
+            this.CheckedByOthers = check;
+        }
+    }
+
+    @SkillDecorator
+    class yieldingSkill2 extends Skill {
+        protected OnStartServer(StarterParams: void): void {
+            task.wait(1);
+        }
     }
 
     @SkillDecorator
     class emptySkill extends Skill<void, [], number> {
         public changeMeta(meta: number) {
             this.SetMetadata(meta);
+        }
+
+        public setCheckOthers(check: boolean): void {
+            this.CheckOthersActive = check;
         }
     }
 
@@ -67,6 +82,34 @@ export = function () {
 
             expect(changed).to.be.equal(true);
             expect(skill.GetState().IsActive).to.be.equal(true);
+        });
+
+        it("should check if other skills are active", () => {
+            const char = makeChar();
+            const skill_a = new yieldingSkill(char);
+            const skill_b = new yieldingSkill2(char);
+
+            skill_a.Start();
+            skill_b.Start();
+
+            RunService.Heartbeat.Wait();
+
+            expect(skill_b.GetState().IsActive).to.be.equal(false);
+        });
+
+        it("should respect checked by others", () => {
+            const char = makeChar();
+            const skill_a = new yieldingSkill(char);
+            const skill_b = new yieldingSkill2(char);
+
+            skill_a.setCheckedByOthers(false);
+
+            skill_a.Start();
+            skill_b.Start();
+
+            RunService.Heartbeat.Wait();
+
+            expect(skill_b.GetState().IsActive).to.be.equal(true);
         });
 
         it("should end a skill", () => {
