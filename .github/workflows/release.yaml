@@ -30,18 +30,6 @@ jobs:
           name: wcs
           path: wcs.rbxm
 
-      - name: Compile For NPM
-        run: npx rbxtsc --type package
-
-      - name: Build with Rojo
-        run: rojo build --output wcs-npm.rbxm default.project.json
-
-      - name: Upload NPM Build Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: wcs-npm
-          path: wcs-npm.rbxm
-
     release:
       name: Release
       needs: [build]
