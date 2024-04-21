@@ -250,7 +250,13 @@ export abstract class SkillBase<
             if (!activeEffects.find((T) => tostring(getmetatable(T)) === tostring(Requirement))) return;
         }
 
-        if (this.CheckOthersActive && this.Character.GetAllActiveSkills().size() > 0) return;
+        if (
+            this.CheckOthersActive &&
+            this.Character.GetAllActiveSkills()
+                .filter((T) => T.CheckedByOthers)
+                .size() > 0
+        )
+            return;
         if (!this.ShouldStart(StarterParams)) return;
 
         this._setState({
