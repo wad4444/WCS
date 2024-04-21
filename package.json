@@ -6,7 +6,8 @@
   "scripts": {
     "build": "rbxtsc",
     "watch": "rbxtsc -w",
-    "prepublishOnly": "npm run build",
+    "build-npm": "rbxtsc --type package",
+    "prepublishOnly": "npm run build-npm",
     "prepack": "npm run build",
     "test:watch": "rbxtsc -w --type=game -p testing -i testing/include",
     "test:build": "rbxtsc --type=game -p testing -i testing/include",
