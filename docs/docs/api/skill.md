@@ -37,6 +37,9 @@ A table of arguments provided after the [Character] in `.new()`.
 ### `CheckOthersActive`
 A boolean value. Checks whenever other skills should be non active for :Start() to proceed.
 
+### `CheckedByOthers`
+A boolean value. Determines if other skills should check if the skill is active to proceed.
+
 ### `MutualExclusives`
 `Constructor<AnyStatus>[]`. An array of [Status Effect] constructors. If any of them is applied to [Character] object whenever `Start()` is called,
 it will not proceed further and skill will not be started.
@@ -190,27 +193,27 @@ Determines if the skill should start, when `Start()` is called.
 * boolean
 
 ### `OnStartServer(params)` @override
-Fires whenever skill starts on the server.
+Called whenever skill starts on the server.
 Accepts an argument passed to `Start()`.
 
 **`Parameters:`**
 * StarterParams: `StarterParams` - a generic type.
 
 ### `OnStartClient(params)` @override
-Fires whenever skill starts on the client.
+Called whenever skill starts on the client.
 Accepts an argument passed to `Start()`.
 
 **`Parameters:`**
 * StarterParams: `StarterParams` - a generic type.
 
 ### `OnEndServer()` @override
-Fires whenever skill ends on server.
+Called whenever skill ends on server.
 
 ### `OnEndClient()` @override
-Fires whenever skill ends on client.
+Called whenever skill ends on client.
 
 ### `HandleClientMessage(message)` @override
-Fires on server when a message from client was received.
+Called whenever server when a message from client was received.
 
 **`Parameters:`**
 * Message: `ClientToServerMessage` - a generic type.
@@ -220,7 +223,7 @@ Fires on server when a message from client was received.
 :::
 
 ### `HandleServerMessage(message)` @override
-Fires on client when a message from server was received.
+Called whenever client when a message from server was received.
 
 **`Parameters:`**
 * Message: `ServerToClientMessage` - a generic type.

@@ -69,13 +69,24 @@ export abstract class SkillBase<
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
     protected readonly Janitor = new Janitor();
+    /**
+     * A Timer object. Starts, when ApplyCooldown() gets invoked on server. Does not sync to client.
+     */
     protected readonly CooldownTimer = new Timer(1);
+    /**
+     * A Character object this skill is tied with.
+     */
     public readonly Character: Character;
 
+    /** Fires whenever skill starts. Works on client and server. */
     public readonly Started = new Signal();
+    /** Fires whenever skill ends. Works on client and server. */
     public readonly Ended = new Signal();
+    /** Fires whenever current skill state changes. */
     public readonly StateChanged = new Signal<(NewState: SkillState, OldState: SkillState) => void>();
+    /** Fires whenever skill gets destroyed (removed from the character). */
     public readonly Destroyed = new Signal();
+    /** Fires whenever skill metadata changes. */
     public readonly MetadataChanged = new Signal<
         (NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
     >();
@@ -84,12 +95,27 @@ export abstract class SkillBase<
      * Checks whenever other skills should be non active for :Start() to proceed.
      */
     protected CheckOthersActive = true;
+    /**
+     * Determines if other skills should check if the skill is active to proceed.
+     */
+    protected CheckedByOthers = true;
+    /**
+     * An array of Status Effect constructors.
+     * If any of them is applied to Character object whenever Start() is called, it will not proceed further and skill will not be started.
+     */
     protected MutualExclusives: Constructor<AnyStatus>[] = [];
+    /**
+     * An array of Status Effect constructors.
+     * Checks Character for the following effects to be applied before starting the skill.
+     */
     protected Requirements: Constructor<AnyStatus>[] = [];
 
-    /** Whenever the start function should check if the skill is active/on cooldown on client side before firing a remote */
+    /** Checks whenever the start function should check if the skill is active/on cooldown on client side before firing a remote. */
     protected CheckClientState = true;
 
+    /**
+     * A Player object the skill is associated with. Retrieved internally by Players:GetPlayerFromCharacter(self.Character.Instance).
+     */
     public readonly Player?: Player;
 
     /** @internal @hidden */
@@ -102,6 +128,9 @@ export abstract class SkillBase<
     private destroyed = false;
     private metadata?: Metadata;
     protected readonly Name = tostring(getmetatable(this));
+    /**
+     * A table of arguments provided after the Character in .new().
+     */
     protected readonly ConstructorArguments: ConstructorArguments;
     /** @internal @hidden */
     protected _skillType = SkillType.Default;
@@ -231,6 +260,7 @@ export abstract class SkillBase<
         });
     }
 
+    /** Returns true if the skill is destroyed / removed from the Character. */
     public IsDestroyed() {
         return this.destroyed;
     }
@@ -295,10 +325,12 @@ export abstract class SkillBase<
         }
     }
 
+    /** Retrieves the current skill state. */
     public GetState() {
         return this.state as ReadonlyState;
     }
 
+    /** Retrieves the skill name. */
     public GetName() {
         return this.Name;
     }
@@ -309,7 +341,7 @@ export abstract class SkillBase<
     }
 
     /**
-     * Clears the metadata
+     * Clears the current Metadata. Only works on server.
      */
     protected ClearMetadata() {
         if (this.isReplicated) {
@@ -329,7 +361,7 @@ export abstract class SkillBase<
     }
 
     /**
-     * Sets the metadata of the skill.
+     * Sets the current Metadata.
      */
     protected SetMetadata(NewMeta: Metadata) {
         if (this.isReplicated) {
@@ -350,14 +382,14 @@ export abstract class SkillBase<
     }
 
     /**
-     * Gets the metadata of the skill
+     * Retrieves the current Metadata.
      * */
     public GetMetadata() {
         return this.metadata;
     }
 
     /**
-     * A shortcut for creating a damage container
+     * Creates a damage container, with the current skill specified in Source.
      */
     protected CreateDamageContainer(Damage: number): DamageContainer {
         return {
@@ -366,6 +398,9 @@ export abstract class SkillBase<
         };
     }
 
+    /**
+     * Applies a cooldown to the skill. Works only on server.
+     */
     protected ApplyCooldown(Duration: number) {
         if (!isServerContext()) {
             logWarning(`Cannot :ApplyCooldown() on client.`);
@@ -416,7 +451,7 @@ export abstract class SkillBase<
     }
 
     /**
-     * Determines whether the skill should start or not.
+     * Determines if the skill should start, when Start() is called.
      */
     protected ShouldStart(Params: StarterParams): boolean {
         return true;
@@ -451,7 +486,7 @@ export abstract class SkillBase<
     }
 
     /**
-     * Sends a message from the server to the client.
+     * Sends a Message from server to client.
      */
     protected SendMessageToClient(Message: ServerToClientMessage) {
         if (!this.Player) return;
@@ -465,7 +500,7 @@ export abstract class SkillBase<
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a Message from client to server.
      */
     protected SendMessageToServer(Message: ClientToServerMessage) {
         if (!this.Player) return;
@@ -492,11 +527,17 @@ export abstract class SkillBase<
     protected OnConstructClient(...Args: ConstructorArguments) {}
     /** Called after class gets instantiated on server */
     protected OnConstructServer(...Args: ConstructorArguments) {}
+    /** Called whenever skill starts on the server. Accepts an argument passed to Start(). */
     protected OnStartServer(StarterParams: StarterParams) {}
+    /** Called whenever skill starts on the client. Accepts an argument passed to Start(). */
     protected OnStartClient(StarterParams: StarterParams) {}
+    /** Called whenever server when a message from client was received. */
     protected HandleClientMessage(Message: ClientToServerMessage) {}
+    /** Called whenever client when a message from server was received. */
     protected HandleServerMessage(Message: ServerToClientMessage) {}
+    /** Called whenever skill ends on server. */
     protected OnEndClient() {}
+    /** Called whenever skill ends on client. */
     protected OnEndServer() {}
 }
 
