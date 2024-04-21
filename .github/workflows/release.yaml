@@ -2,6 +2,8 @@ name: Release
 
 on:
   push:
+    branches:
+     - master
     tags: ["v*"]
 
 jobs:
@@ -20,6 +22,12 @@ jobs:
 
       - name: Compile For Wally
         run: npx rbxtsc --type model
+
+      - name: Remove test files
+        run: rm -rf **/*.spec.lua
+
+      - name: Remove declaration files
+        run: rm -rf **/*.d.ts
 
       - name: Build with Rojo
         run: rojo build --output wcs.rbxm default.project.json
