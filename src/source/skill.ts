@@ -68,6 +68,9 @@ export abstract class SkillBase<
 > {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
+    /**
+     * A Janitor object. Cleans up everything after skill ends.
+     */
     protected readonly Janitor = new Janitor();
     /**
      * A Timer object. Starts, when ApplyCooldown() gets invoked on server. Does not sync to client.

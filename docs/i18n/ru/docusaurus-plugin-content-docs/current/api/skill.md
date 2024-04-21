@@ -13,10 +13,14 @@ import TOCInline from "@theme/TOCInline";
 [Status Effect]: ./statusEffect.md
 [Metadata]: ../tutorial/extras/metadata.md
 [Message]: ../tutorial/skills/messages.md
+[Janitor]: https://howmanysmall.github.io/Janitor/
 
 <TOCInline toc={toc} />
 
 ## Fields
+
+### `Janitor` @readonly
+A [Janitor] object. Cleans up everything after skill ends.
 
 ### `CooldownTimer` @readonly
 A [Timer] object. Starts, when `ApplyCooldown()` gets invoked on server. Does not sync to client.
