@@ -38,44 +38,44 @@ jobs:
           name: wcs
           path: wcs.rbxm
 
-    release:
-      name: Release
-      needs: [build]
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout Project
-          uses: actions/checkout@v3
+  release:
+    name: Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
 
-        - name: Download Wally Build
-          uses: actions/download-artifact@v3
-          with:
-            name: wcs
-            path: wcs.rbxm
+      - name: Download Wally Build
+        uses: actions/download-artifact@v3
+        with:
+          name: wcs
+          path: wcs.rbxm
 
-        - name: Create Release
-          uses: softprops/action-gh-release@v1
-          with:
-            name: WCS ${{ github.ref }}
-            body: |
-              WCS ${{ github.ref }} is now available!
-            files: |
-              wcs.rbxm
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: WCS ${{ github.ref }}
+          body: |
+            WCS ${{ github.ref }} is now available!
+          files: |
+            wcs.rbxm
 
-    publish-wally:
-      name: Publish on Wally
-      needs: [release]
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout Project
-          uses: actions/checkout@v3
+  publish-wally:
+    name: Publish on Wally
+    needs: [release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
 
-        - name: Install Aftman
-          uses: ok-nick/setup-aftman@v0.3.0
+      - name: Install Aftman
+        uses: ok-nick/setup-aftman@v0.3.0
 
-        - name: Publish WCS
-          run: wally publish --token ${{ secrets.WALLY_TOKEN }}
+      - name: Publish WCS
+        run: wally publish --token ${{ secrets.WALLY_TOKEN }}
 
-    publish-npm:
+  publish-npm:
       name: Publish on NPM
       needs: [release]
       runs-on: ubuntu-latest
