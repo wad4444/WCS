@@ -245,6 +245,7 @@ type SkillFields<StarterParams = any, Metadata = any, ClientToServerMessage = an
     Player: Player?,
     Character: Character,
     CheckOthersActive: boolean,
+    CheckedByOthers: boolean,
 }
 export type Skill<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = typeof(
     setmetatable(
@@ -267,6 +268,7 @@ export type AnySkill = typeof(
             Player: Player?,
             Character: Character,
             CheckOthersActive: boolean,
+            CheckedByOthers: boolean,
         },
         {} :: AnySkillImpl
     )
@@ -300,6 +302,7 @@ export type AnyHoldableSkill = typeof(setmetatable({} :: {
     Player: Player?,
     Character: Character,
     CheckOthersActive: boolean,
+    CheckedByOthers: boolean,
 }, {} :: AnyHoldableSkillImpl))
 
 
