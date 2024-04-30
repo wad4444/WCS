@@ -1,14 +1,12 @@
 {
   "name": "@rbxts/wcs",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "WCS is an extensible framework that allows you create fully customizable combat systems easily by providing useful abstraction",
   "main": "out/init.lua",
   "scripts": {
-    "build": "rbxtsc",
-    "watch": "rbxtsc -w",
+    "build-wally": "rbxtsc --type model",
     "build-npm": "rbxtsc --type package",
     "prepublishOnly": "npm run build-npm",
-    "prepack": "npm run build",
     "test:watch": "rbxtsc -w --type=game -p testing -i testing/include",
     "test:build": "rbxtsc --type=game -p testing -i testing/include",
     "serve": "rojo serve testing/testing.project.json"
