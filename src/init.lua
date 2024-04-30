@@ -46,6 +46,7 @@ export type HumanoidData = {
 }
 
 export type StatusEffectImpl<Metadata = any, ConstructorArguments... = ()> = {
+    __index: StatusEffectImpl<Metadata, ConstructorArguments...>,
     new: (Character, ConstructorArguments...) -> StatusEffect<Metadata, ConstructorArguments...>,
     Start: (StatusEffect<Metadata, ConstructorArguments...>, number?) -> void;
     End: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
@@ -69,9 +70,11 @@ export type StatusEffectImpl<Metadata = any, ConstructorArguments... = ()> = {
     OnEndClient: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     OnEndServer: (StatusEffect<Metadata, ConstructorArguments...>) -> void;
     CreateDamageContainer: (StatusEffect<Metadata, ConstructorArguments...>, number) -> DamageContainer,
+    GetModificationPriority: (StatusEffect<Metadata, ConstructorArguments...>) -> number,
 }
 
 type AnyStatusImpl = {
+    __index: AnyStatusImpl,
     new: (Character) -> AnyStatus,
     Start: (AnyStatus, number?) -> void;
     End: (AnyStatus) -> void;
@@ -95,6 +98,7 @@ type AnyStatusImpl = {
     OnEndClient: (AnyStatus) -> void;
     OnEndServer: (AnyStatus) -> void;
     CreateDamageContainer: (AnyStatus, number) -> any,
+    GetModificationPriority: (AnyStatus) -> number,
 }
 
 export type AnyStatus = typeof(setmetatable({} :: {
@@ -106,6 +110,7 @@ export type AnyStatus = typeof(setmetatable({} :: {
     Started: ReadonlySignal<Callback>;
     Ended: ReadonlySignal<Callback>;
     Character: Character;
+    DamageModificationPriority: number,
 
     DestroyOnEnd: boolean;
 }, {} :: AnyStatusImpl))
@@ -119,6 +124,7 @@ type StatusFields<Metadata> = {
     Started: ReadonlySignal<Callback>;
     Ended: ReadonlySignal<Callback>;
     Character: Character;
+    DamageModificationPriority: number,
 
     DestroyOnEnd: boolean;
 }
@@ -174,12 +180,13 @@ type Janitor = {
 	LinkToInstances: (self: Janitor, ...Instance) -> Janitor,
 }
 
-type DamageContainer = {
+export type DamageContainer = {
     Damage: number;
     Source: AnySkill | AnyStatus | void;
 }
 
 type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = {
+    __index: SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
     new: (any, ConstructorArguments...) -> Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
     ApplyCooldown: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> void,
     ShouldStart: (Skill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> boolean,
@@ -205,6 +212,7 @@ type SkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any,
 }
 
 type AnySkillImpl = {
+    __index: AnySkillImpl,
     new: (Character) -> AnySkill,
     ApplyCooldown: (AnySkill, number) -> void,
     ShouldStart: (AnySkill) -> boolean,
@@ -282,12 +290,14 @@ export type AffectableHumanoidProps = {
 }
 
 type HoldableSkillImpl<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = SkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...> & {
+    __index: HoldableSkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>,
     SetMaxHoldTime: (HoldableSkill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, number) -> void,
     GetMaxHoldTime: (HoldableSkill<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>) -> number,
 }
 export type HoldableSkill<StarterParams = any, Metadata = any, ClientToServerMessage = any, ServerToClientMessage = any, ConstructorArguments... = ()> = typeof(setmetatable({} :: SkillFields<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>, {} :: HoldableSkillImpl<StarterParams, Metadata, ClientToServerMessage, ServerToClientMessage, ConstructorArguments...>))
 
 type AnyHoldableSkillImpl = AnySkillImpl & {
+    __index: AnyHoldableSkillImpl,
     SetMaxHoldTime: (AnyHoldableSkill, number) -> void,
     GetMaxHoldTime: (AnyHoldableSkill) -> number,
 }
@@ -307,6 +317,7 @@ export type AnyHoldableSkill = typeof(setmetatable({} :: {
 
 
 type CharacterImpl = {
+    __index: CharacterImpl,
     new: (Instance) -> Character;
     CharacterCreated: ReadonlySignal<(Character) -> void>;
     CharacterDestroyed: ReadonlySignal<(Character) -> void>;
