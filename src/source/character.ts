@@ -201,15 +201,10 @@ export class Character {
      */
     public TakeDamage(Container: DamageContainer) {
         if (isClientContext()) {
-            logWarning(`Cannot use :TakeDamage() on client`);
-            return;
+            logError(`Cannot use :TakeDamage() on client`);
         }
 
-        const originalDamage = Container.Damage;
-        let modifiedDamage = originalDamage;
-        this.statusEffects.forEach((Status) => {
-            modifiedDamage = Status.HandleDamage(modifiedDamage, originalDamage);
-        });
+        const modifiedDamage = this.PredictDamage(Container).Damage;
 
         const container = {
             ...Container,
@@ -224,15 +219,17 @@ export class Character {
     /** Predicts the estimated damage in health after the status effect appliement */
     public PredictDamage(Container: DamageContainer) {
         if (isClientContext()) {
-            logWarning(`Cannot use :TakeDamage() on client`);
-            return;
+            logError(`Cannot use :TakeDamage() on client`);
         }
 
         const originalDamage = Container.Damage;
         let modifiedDamage = originalDamage;
-        this.statusEffects.forEach((Status) => {
-            modifiedDamage = Status.HandleDamage(modifiedDamage, originalDamage);
-        });
+
+        this.GetAllActiveStatusEffects()
+            .sort((a, b) => a.GetModificationPriority() < b.GetModificationPriority())
+            .forEach((Status) => {
+                modifiedDamage = Status.HandleDamage(modifiedDamage, originalDamage);
+            });
 
         const container = {
             ...Container,

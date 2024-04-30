@@ -18,10 +18,28 @@ export = function () {
     const janitor = new Janitor();
 
     @SkillDecorator
-    class someSkill extends Skill {}
+    class someSkill extends Skill {
+        protected DamageModificationPriority = 2;
+    }
 
     @StatusEffectDecorator
     class someStatus extends StatusEffect {}
+
+    @StatusEffectDecorator
+    class nullifyingStatus extends StatusEffect {
+        protected DamageModificationPriority = 2;
+
+        public HandleDamage(Modified: number, Original: number): number {
+            return 0;
+        }
+    }
+
+    @StatusEffectDecorator
+    class increaseStatus extends StatusEffect {
+        public HandleDamage(Modified: number, Original: number): number {
+            return Modified + 10;
+        }
+    }
 
     function makeChar() {
         const part = new Instance("Part");
@@ -178,6 +196,25 @@ export = function () {
 
             RunService.Heartbeat.Wait();
             expect(pass).to.be.equal(true);
+        });
+
+        it("should modify damage", () => {
+            const char = makeChar();
+            new increaseStatus(char).Start();
+
+            RunService.Heartbeat.Wait();
+
+            expect(char.PredictDamage({ Damage: 100, Source: undefined }).Damage).to.be.equal(110);
+        });
+
+        it("should respect modification priority", () => {
+            const char = makeChar();
+            new nullifyingStatus(char).Start();
+            new increaseStatus(char).Start();
+
+            RunService.Heartbeat.Wait();
+
+            expect(char.PredictDamage({ Damage: 100, Source: undefined }).Damage).to.be.equal(0);
         });
 
         it("should fire damage dealt callback", () => {

@@ -77,6 +77,8 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
 
+    protected DamageModificationPriority = 1;
+
     public readonly Character: Character;
     public DestroyOnEnd = true;
 
@@ -378,6 +380,13 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      */
     public HandleDamage(Modified: number, Original: number) {
         return Modified;
+    }
+
+    /**
+     * Returns the value of DamageMoficicationPriority.
+     */
+    public GetModificationPriority() {
+        return this.DamageModificationPriority;
     }
 
     /**
