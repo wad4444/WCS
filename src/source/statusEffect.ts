@@ -77,6 +77,10 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
 
+    /**
+     * A number value. Determines the position in which `HandleDamage()` is applied.
+     * The higher the value, the later it applies.
+     */
     protected DamageModificationPriority = 1;
 
     public readonly Character: Character;

@@ -24,6 +24,10 @@ A table of arguments provided after the [Character] in `.new()`.
 ### `DestroyOnEnd`
 A boolean value. Determines if `self:Destroy()` when `End` is fired.
 
+### `DamageModificationPriority`
+A number value. Determines the position in which `HandleDamage()` is applied.
+The higher the value, the later it applies.
+
 ## Events
 
 ### `Started`
@@ -135,6 +139,12 @@ Should return modified damage.
 **`Parameters:`**
 * Modified: `number` - a damage previously modified by other status effects.
 * Original: `number` - original damage value from the container.
+
+**`Returns:`**
+* number
+
+### `GetModificationPriority()`
+Returns the value of `DamageModificationPriority`.
 
 **`Returns:`**
 * number
