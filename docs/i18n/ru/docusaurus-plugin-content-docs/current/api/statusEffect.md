@@ -62,7 +62,7 @@ Fires whenever status effect [metadata](../tutorial/extras/metadata.md) changes.
 
 ## Constructors
 
-### constructor(character) -> Skill
+### new(character) -> Skill
 Accepts the [Character] and returns a new status effect.
 
 **`Parameters:`**

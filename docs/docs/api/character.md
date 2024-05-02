@@ -113,7 +113,7 @@ Moveset object can get retrieved using `:GetMovesetObjectByName()`
 
 ## Constructors
 
-### constructor(instance) -> Character
+### new(instance) -> Character
 Accepts the instance and returns a new WCS Character.
 Instance must contain a [Humanoid](https://create.roblox.com/docs/reference/engine/classes/Humanoid).
 
