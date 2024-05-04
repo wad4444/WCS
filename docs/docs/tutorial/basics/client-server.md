@@ -35,9 +35,9 @@ local WCS = require(ReplicatedStorage.WCS)
 
 local Server = WCS.CreateServer()
 
-Server:RegisterDirectory(ReplicatedStorage.TS.movesets)
-Server:RegisterDirectory(ReplicatedStorage.TS.skills)
-Server:RegisterDirectory(ReplicatedStorage.TS.statusEffects)
+Server:RegisterDirectory(ReplicatedStorage.movesets)
+Server:RegisterDirectory(ReplicatedStorage.skills)
+Server:RegisterDirectory(ReplicatedStorage.statusEffects)
 ```
 
 </TabItem>
