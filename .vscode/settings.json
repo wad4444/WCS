@@ -13,5 +13,10 @@
 	"eslint.format.enable": true,
 	"robloxLsp.diagnostics.disable": [
 		"undefined-type"
-	]
+	],
+	"luau-lsp.require.mode": "relativeToFile",
+	"luau-lsp.require.directoryAliases": {
+		"@lune/": "~/.lune/.typedefs/0.8.3/"
+	},
+	"luau-lsp.sourcemap.autogenerate": false
 }
