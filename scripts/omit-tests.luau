@@ -9,8 +9,8 @@ assert(fileName, "Missing filename!")
 local modelFile = fs.readFile(fileName)
 local instances = roblox.deserializeModel(modelFile)
 
-for i, instance in instances do
-	for k, descendant in instance:GetDescendants() do
+for _, instance in instances do
+	for _, descendant in instance:GetDescendants() do
 		if string.find(descendant.Name, ".spec") then
 			print(`Omitting {descendant.Name}`)
 			descendant:Destroy()
