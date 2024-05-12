@@ -353,17 +353,17 @@ export class Character {
     /**
      * Retrieves all status effects of a given type.
      */
-    public GetAllStatusEffectsOfType<T extends object>(Constructor: Constructor<T>) {
-        return mapToArray(this.statusEffects).filter((T) => tostring(getmetatable(T)) === tostring(Constructor));
+    public GetAllStatusEffectsOfType<T extends AnyStatus>(Constructor: Constructor<T>) {
+        return mapToArray(this.statusEffects).filter((T) => tostring(getmetatable(T)) === tostring(Constructor)) as T[];
     }
 
     /**
      * Retrieves all active status effects of a specific type.
      */
-    public GetAllActiveStatusEffectsOfType<T extends object>(Constructor: Constructor<T>) {
+    public GetAllActiveStatusEffectsOfType<T extends AnyStatus>(Constructor: Constructor<T>) {
         return mapToArray(this.statusEffects).filter(
             (T) => tostring(getmetatable(T)) === tostring(Constructor) && T.GetState().IsActive,
-        );
+        ) as T[];
     }
 
     /**
