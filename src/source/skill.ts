@@ -94,6 +94,8 @@ export abstract class SkillBase<
         (NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
     >();
 
+    private executionThread?: thread;
+
     /**
      * Checks whenever other skills should be non active for :Start() to proceed.
      */
@@ -318,17 +320,23 @@ export abstract class SkillBase<
 
         if (!PreviousState.IsActive && State.IsActive) {
             this.Started.Fire();
-            isClientContext()
-                ? this.OnStartClient(State.StarterParams as StarterParams)
-                : this.OnStartServer(State.StarterParams as StarterParams);
-            if (isServerContext()) this.End();
+            this.executionThread = task.spawn(() => {
+                isClientContext()
+                    ? this.OnStartClient(State.StarterParams as StarterParams)
+                    : this.OnStartServer(State.StarterParams as StarterParams);
+                this.executionThread = undefined;
+                if (isServerContext()) this.End();
+            });
         } else if (PreviousState.IsActive && !State.IsActive) {
+            if (this.executionThread) task.cancel(this.executionThread);
             isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
             this.Started.Fire();
-            this.OnStartClient(State.StarterParams as StarterParams);
+            const thread = task.spawn(() => this.OnStartClient(State.StarterParams as StarterParams));
+            task.cancel(thread);
+
             this.OnEndClient();
             this.Ended.Fire();
         }
