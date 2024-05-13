@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable roblox-ts/no-array-pairs */
-import { Players, RunService } from "@rbxts/services";
+import { Players, RunService, Workspace } from "@rbxts/services";
 import { Character, DamageContainer } from "./character";
 import { Flags } from "./flags";
 import {
@@ -26,7 +26,6 @@ export interface SkillState {
     IsActive: boolean;
     Debounce: boolean;
     MaxHoldTime?: number;
-    TimerEndTimestamp?: number;
     StarterParams?: unknown;
 }
 
@@ -43,6 +42,7 @@ export interface SkillProps {
 
 /** @internal @hidden */
 export interface _internal_SkillState extends SkillState {
+    _timerEndTimestamp?: number;
     _isActive_counter: number;
 }
 
@@ -342,6 +342,11 @@ export abstract class SkillBase<
         }
     }
 
+    public GetDebounceEndTimestamp() {
+        if (!this.state.Debounce) return;
+        return this.state._timerEndTimestamp;
+    }
+
     /** Retrieves the current skill state. */
     public GetState() {
         return this.state as ReadonlyState;
@@ -438,7 +443,7 @@ export abstract class SkillBase<
 
         this._setState({
             Debounce: true,
-            TimerEndTimestamp: this.CooldownTimer.getCurrentEndTimeUtc(),
+            _timerEndTimestamp: Workspace.GetServerTimeNow() + this.CooldownTimer.getTimeLeft(),
         });
     }
 
@@ -446,7 +451,7 @@ export abstract class SkillBase<
      * @internal Reserved for internal usage
      * @hidden
      */
-    protected _setState(Patch: Partial<SkillState>) {
+    protected _setState(Patch: Partial<_internal_SkillState>) {
         const newState = {
             ...this.state,
             ...Patch,
