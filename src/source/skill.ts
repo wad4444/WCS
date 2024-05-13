@@ -189,15 +189,12 @@ export abstract class SkillBase<
             );
         }
 
-        this._janitor.Add(
-            this.CooldownTimer.completed.Connect(() => {
-                if (!this.GetState().Debounce) return;
-                this._setState({
-                    Debounce: false,
-                });
-            }),
-            "Disconnect",
-        );
+        this.CooldownTimer.completed.Connect(() => {
+            if (!this.GetState().Debounce) return;
+            this._setState({
+                Debounce: false,
+            });
+        });
 
         this.Ended.Connect(() => this.Janitor.Cleanup());
 
@@ -210,10 +207,8 @@ export abstract class SkillBase<
             this.MetadataChanged.Destroy();
         });
 
-        this._janitor.Add(
-            this.StateChanged.Connect((New, Old) =>
-                this._stateDependentCallbacks(New as _internal_SkillState, Old as _internal_SkillState),
-            ),
+        this.StateChanged.Connect((New, Old) =>
+            this._stateDependentCallbacks(New as _internal_SkillState, Old as _internal_SkillState),
         );
 
         this.isReplicated = isClientContext();
@@ -246,13 +241,12 @@ export abstract class SkillBase<
             return;
         }
 
-        const activeEffects = this.Character.GetAllActiveStatusEffects();
         for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
-            if (activeEffects.find((T) => tostring(getmetatable(T)) === tostring(Exclusive))) return;
+            if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).isEmpty()) return;
         }
 
         for (const [_, Requirement] of pairs(this.Requirements)) {
-            if (!activeEffects.find((T) => tostring(getmetatable(T)) === tostring(Requirement))) return;
+            if (this.Character.GetAllActiveStatusEffectsOfType(Requirement).isEmpty()) return;
         }
 
         if (
