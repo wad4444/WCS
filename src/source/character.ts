@@ -82,7 +82,7 @@ export class Character {
 
     private readonly statusEffects: Map<string, UnknownStatus> = new Map();
     private readonly skills: Map<string, UnknownSkill> = new Map();
-    private defaultsProps: AffectableHumanoidProps = {
+    private defaultProps: AffectableHumanoidProps = {
         WalkSpeed: 16,
         JumpPower: 50,
         AutoRotate: true,
@@ -288,14 +288,15 @@ export class Character {
         return {
             instance: this.Instance,
             statusEffects: packedStatusEffect,
-            defaultProps: this.defaultsProps,
+            defaultProps: this.defaultProps,
             moveset: this.moveset,
             skills: new Map(),
         };
     }
 
     public SetDefaultProps(Props: AffectableHumanoidProps) {
-        this.defaultsProps = Props;
+        this.defaultProps = Props;
+        table.freeze(this.defaultProps);
         if (isServerContext()) {
             rootProducer.patchCharacterData(this.id, {
                 defaultProps: Props,
@@ -307,8 +308,8 @@ export class Character {
     /**
      * This function returns the default humanoid properties of the character.
      */
-    public GetDefaultsProps() {
-        return table.clone(this.defaultsProps);
+    public GetDefaultProps() {
+        return this.defaultProps;
     }
 
     /**
@@ -513,6 +514,51 @@ export class Character {
         });
     }
 
+    private statusObserver(Data: StatusData, Id: string) {
+        const constructor = GetRegisteredStatusEffectConstructor(Data.className);
+        if (!constructor) {
+            logError(
+                `Replication Error: Could not find a registered StatusEffect with name ${Data.className}. \n Try doing :RegisterDirectory() on the file directory.`,
+            );
+        }
+
+        const status = new constructor!(
+            {
+                Character: this,
+                Flag: {
+                    flag: Flags.CanAssignCustomId,
+                    data: Id,
+                },
+            } as never,
+            ...(Data.constructorArgs as never[]),
+        );
+
+        return () => {
+            status.Destroy();
+        };
+    }
+
+    private skillObserver(Data: SkillData, Name: string) {
+        const constructor = GetRegisteredSkillConstructor(Name);
+        if (!constructor) {
+            logError(
+                `Replication Error: Could not find a registered Skill with name ${Name}. \n Try doing :RegisterDirectory() on the file directory.`,
+            );
+        }
+
+        const skill = new constructor!(
+            {
+                Character: this,
+                Flag: Flags.CanInstantiateSkillClient,
+            } as never,
+            ...(Data.constructorArguments as never[]),
+        );
+
+        return () => {
+            skill.Destroy();
+        };
+    }
+
     private setupReplication_Client() {
         if (!isClientContext()) return;
         if (!getActiveHandler()) return;
@@ -526,36 +572,14 @@ export class Character {
             if (!CharacterData) return;
 
             if (CharacterData.moveset !== this.moveset) processMovesetChange(CharacterData.moveset, this.moveset);
-            if (CharacterData.defaultProps !== this.defaultsProps) this.SetDefaultProps(CharacterData.defaultProps);
+            if (CharacterData.defaultProps !== this.defaultProps) this.SetDefaultProps(CharacterData.defaultProps);
         };
 
         this.janitor.Add(
             rootProducer.observe(
                 SelectStatuses(this.GetId()),
                 (_, index) => index,
-                (Data, Id) => {
-                    const constructor = GetRegisteredStatusEffectConstructor(Data.className);
-                    if (!constructor) {
-                        logError(
-                            `Replication Error: Could not find a registered StatusEffect with name ${Data.className}. \n Try doing :RegisterDirectory() on the file directory.`,
-                        );
-                    }
-
-                    const status = new constructor!(
-                        {
-                            Character: this,
-                            Flag: {
-                                flag: Flags.CanAssignCustomId,
-                                data: Id,
-                            },
-                        } as never,
-                        ...(Data.constructorArgs as never[]),
-                    );
-
-                    return () => {
-                        status.Destroy();
-                    };
-                },
+                (item, id) => this.statusObserver(item, id),
             ),
         );
 
@@ -563,26 +587,7 @@ export class Character {
             rootProducer.observe(
                 SelectSkills(this.GetId()),
                 (_, index) => index,
-                (Data, Name) => {
-                    const constructor = GetRegisteredSkillConstructor(Name);
-                    if (!constructor) {
-                        logError(
-                            `Replication Error: Could not find a registered Skill with name ${Name}. \n Try doing :RegisterDirectory() on the file directory.`,
-                        );
-                    }
-
-                    const skill = new constructor!(
-                        {
-                            Character: this,
-                            Flag: Flags.CanInstantiateSkillClient,
-                        } as never,
-                        ...(Data.constructorArguments as never[]),
-                    );
-
-                    return () => {
-                        skill.Destroy();
-                    };
-                },
+                (Data, Name) => this.skillObserver(Data, Name),
             ),
         );
 
@@ -604,7 +609,7 @@ export class Character {
             }
         });
 
-        const propsToApply = this.GetDefaultsProps();
+        const propsToApply = this.GetDefaultProps();
         const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
             WalkSpeed: 0,
             JumpPower: 0,
