@@ -261,6 +261,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: this.humanoidData,
             });
+            rootProducer.flush();
         }
     }
 
@@ -275,6 +276,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: undefined,
             });
+            rootProducer.flush();
         }
     }
 
@@ -295,6 +297,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 metadata: undefined,
             });
+            rootProducer.flush();
         }
     }
 
@@ -317,6 +320,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 state: newState,
             });
+            rootProducer.flush();
         }
 
         this.StateChanged.Fire(newState, oldState);
@@ -340,6 +344,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             rootProducer.patchStatusData(this.Character.GetId(), this.id, {
                 metadata: NewMeta,
             });
+            rootProducer.flush();
         }
     }
 

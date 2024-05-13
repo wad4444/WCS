@@ -300,6 +300,7 @@ export class Character {
             rootProducer.patchCharacterData(this.id, {
                 defaultProps: Props,
             });
+            rootProducer.flush();
         }
     }
 
@@ -482,6 +483,7 @@ export class Character {
         rootProducer.patchCharacterData(this.id, {
             moveset: this.moveset,
         });
+        rootProducer.flush();
     }
 
     private cleanupMovesetSkills() {

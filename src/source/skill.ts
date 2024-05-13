@@ -379,6 +379,7 @@ export abstract class SkillBase<
             rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
                 metadata: undefined,
             });
+            rootProducer.flush();
         }
     }
 
@@ -400,6 +401,7 @@ export abstract class SkillBase<
             rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
                 metadata: NewMeta,
             });
+            rootProducer.flush();
         }
     }
 
@@ -467,6 +469,7 @@ export abstract class SkillBase<
             rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
                 state: newState,
             });
+            rootProducer.flush();
         }
 
         this.StateChanged.Fire(newState, oldState);
