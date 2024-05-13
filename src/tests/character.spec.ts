@@ -64,7 +64,7 @@ export = function () {
     describe("humanoid props", () => {
         it("should have valid humanoid props", () => {
             expect(
-                haveKeys(makeChar().GetDefaultsProps(), ["WalkSpeed", "JumpPower", "JumpHeight", "AutoRotate"]),
+                haveKeys(makeChar().GetDefaultProps(), ["WalkSpeed", "JumpPower", "JumpHeight", "AutoRotate"]),
             ).to.be.equal(true);
         });
 
@@ -77,7 +77,7 @@ export = function () {
                 AutoRotate: false,
             } as const;
             char.SetDefaultProps(props);
-            expect(shallowEqual(char.GetDefaultsProps(), props)).to.be.equal(true);
+            expect(shallowEqual(char.GetDefaultProps(), props)).to.be.equal(true);
         });
     });
 
