@@ -9,11 +9,11 @@ export const consolePrefix = `WCS`;
 const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`;
 
 export function logWarning(Message: string, DisplayTraceback = true) {
-    warn(`[${consolePrefix}]: ${Message} \n \n ${DisplayTraceback ?? debug.traceback()}`);
+    warn(`[${consolePrefix}]: ${Message} \n \n ${DisplayTraceback ? debug.traceback() : undefined}`);
 }
 
 export function logError(Message: string, DisplayTraceback = true): never {
-    return error(`\n ${errorString} \n ${Message} \n \n ${DisplayTraceback ?? debug.traceback()}`);
+    return error(`\n ${errorString} \n ${Message} \n \n ${DisplayTraceback ? debug.traceback() : undefined}`);
 }
 
 export function mapToArray<T extends defined, K extends defined>(Map: Map<T, K>) {
