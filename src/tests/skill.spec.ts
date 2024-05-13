@@ -26,7 +26,7 @@ export = function () {
     }
 
     @SkillDecorator
-    class emptySkill extends Skill<void, [], number> {
+    class emptySkill extends Skill<[], [], number> {
         public changeMeta(meta: number) {
             this.SetMetadata(meta);
         }
@@ -89,6 +89,25 @@ export = function () {
 
             expect(changed).to.be.equal(true);
             expect(skill.GetState().IsActive).to.be.equal(true);
+        });
+
+        it("should pass starter params", () => {
+            let param: number;
+
+            @SkillDecorator
+            class sum_skill_a extends Skill<[number]> {
+                protected OnStartServer(a: number): void {
+                    param = a;
+                }
+            }
+
+            const char = makeChar();
+            const skill = new sum_skill_a(char);
+            skill.Start(10);
+
+            RunService.Heartbeat.Wait();
+
+            expect(param!).to.be.equal(10);
         });
 
         it("should check if other skills are active", () => {

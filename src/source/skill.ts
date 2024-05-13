@@ -54,13 +54,13 @@ export interface SkillData {
     metadata: unknown;
 }
 export type AnySkill = SkillBase<any, any[], any, any, any>;
-export type UnknownSkill = SkillBase<unknown, unknown[], unknown, unknown, unknown>;
+export type UnknownSkill = SkillBase<unknown[], unknown[], unknown, unknown, unknown>;
 
 const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
 /** @hidden @internal */
 export abstract class SkillBase<
-    StarterParams = void,
+    StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
     ServerToClientMessage = void,
@@ -232,12 +232,12 @@ export abstract class SkillBase<
      * Server: Starts the skill
      * Client: Sends a request to server that will call :Start() on server
      */
-    public Start(StarterParams: StarterParams) {
+    public Start(...params: StarterParams) {
         const state = this.GetState();
         if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
         if (isClientContext()) {
-            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "Start", StarterParams);
+            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "Start", params);
             return;
         }
 
@@ -256,11 +256,11 @@ export abstract class SkillBase<
                 .size() > 0
         )
             return;
-        if (!this.ShouldStart(StarterParams)) return;
+        if (!this.ShouldStart(...params)) return;
 
         this._setState({
             IsActive: true,
-            StarterParams: StarterParams,
+            StarterParams: params,
             Debounce: false,
         });
     }
@@ -275,7 +275,7 @@ export abstract class SkillBase<
      */
     public End() {
         if (isClientContext()) {
-            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "End", undefined);
+            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "End", []);
             return;
         }
 
@@ -316,8 +316,8 @@ export abstract class SkillBase<
             this.Started.Fire();
             this.executionThread = task.spawn(() => {
                 isClientContext()
-                    ? this.OnStartClient(State.StarterParams as StarterParams)
-                    : this.OnStartServer(State.StarterParams as StarterParams);
+                    ? this.OnStartClient(...(State.StarterParams as StarterParams))
+                    : this.OnStartServer(...(State.StarterParams as StarterParams));
                 this.executionThread = undefined;
                 if (isServerContext()) this.End();
             });
@@ -328,7 +328,7 @@ export abstract class SkillBase<
         }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
             this.Started.Fire();
-            const thread = task.spawn(() => this.OnStartClient(State.StarterParams as StarterParams));
+            const thread = task.spawn(() => this.OnStartClient(...(State.StarterParams as StarterParams)));
             task.cancel(thread);
 
             this.OnEndClient();
@@ -472,7 +472,7 @@ export abstract class SkillBase<
     /**
      * Determines if the skill should start, when Start() is called.
      */
-    protected ShouldStart(Params: StarterParams): boolean {
+    protected ShouldStart(...params: StarterParams): boolean {
         return true;
     }
 
@@ -547,9 +547,9 @@ export abstract class SkillBase<
     /** Called after class gets instantiated on server */
     protected OnConstructServer(...Args: ConstructorArguments) {}
     /** Called whenever skill starts on the server. Accepts an argument passed to Start(). */
-    protected OnStartServer(StarterParams: StarterParams) {}
+    protected OnStartServer(...Params: StarterParams) {}
     /** Called whenever skill starts on the client. Accepts an argument passed to Start(). */
-    protected OnStartClient(StarterParams: StarterParams) {}
+    protected OnStartClient(...Params: StarterParams) {}
     /** Called whenever server when a message from client was received. */
     protected HandleClientMessage(Message: ClientToServerMessage) {}
     /** Called whenever client when a message from server was received. */
@@ -562,7 +562,7 @@ export abstract class SkillBase<
 
 /** A skill class. */
 export abstract class Skill<
-    StarterParams = void,
+    StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
     ServerToClientMessage = void,

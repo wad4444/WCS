@@ -12,12 +12,10 @@ export const remotes = createRemotes({
         ),
     ),
     _start: remote<Server, []>(),
-    _requestSkill: remote<Server, [CharacterId: string, Name: string, Action: "End" | "Start", StarterParams: unknown]>(
-        t.string,
-        t.string,
-        t.literal("End", "Start"),
-        t.optional(t.any),
-    ),
+    _requestSkill: remote<
+        Server,
+        [CharacterId: string, Name: string, Action: "End" | "Start", StarterParams: unknown[]]
+    >(t.string, t.string, t.literal("End", "Start"), t.array(t.any)),
     _messageToServer: remote<Server, [CharacterId: string, Name: string, Message: unknown]>(
         t.string,
         t.string,

@@ -7,10 +7,10 @@ import { isClientContext, isServerContext, logError } from "./utility";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyHoldableSkill = HoldableSkill<any, any[], any, any, any>;
-export type UnknownHoldableSkill = HoldableSkill<unknown, unknown[], unknown, unknown, unknown>;
+export type UnknownHoldableSkill = HoldableSkill<unknown[], unknown[], unknown, unknown, unknown>;
 
 export abstract class HoldableSkill<
-    StarterParams = void,
+    StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
     ServerToClientMessage = void,
@@ -50,8 +50,8 @@ export abstract class HoldableSkill<
         if (!PreviousState.IsActive && State.IsActive) {
             if (this.GetState().MaxHoldTime !== undefined) this.HoldTimer.start();
             isClientContext()
-                ? this.OnStartClient(State.StarterParams as StarterParams)
-                : this.OnStartServer(State.StarterParams as StarterParams);
+                ? this.OnStartClient(...(State.StarterParams as StarterParams))
+                : this.OnStartServer(...(State.StarterParams as StarterParams));
             this.Started.Fire();
         } else if (PreviousState.IsActive && !State.IsActive) {
             if (this.HoldTimer.getState() === TimerState.Running) this.HoldTimer.stop();
@@ -62,7 +62,7 @@ export abstract class HoldableSkill<
             if (State.MaxHoldTime) this.HoldTimer.setLength(State.MaxHoldTime);
         }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
-            this.OnStartClient(State.StarterParams as StarterParams);
+            this.OnStartClient(...(State.StarterParams as StarterParams));
             this.Started.Fire();
             this.OnEndClient();
             this.Ended.Fire();
