@@ -47,6 +47,13 @@ export = function () {
         }
     }
 
+    @SkillDecorator
+    class debounceSkill extends Skill {
+        protected OnStartServer() {
+            this.ApplyCooldown(2);
+        }
+    }
+
     function makeChar() {
         const part = new Instance("Part");
         new Instance("Humanoid", part);
@@ -174,6 +181,16 @@ export = function () {
 
             expect(skill.GetMetadata()).to.be.equal(5);
             expect(changed).to.be.equal(true);
+        });
+
+        it("should give end timestamp if is on cooldown", () => {
+            const skill = new debounceSkill(makeChar());
+            expect(skill.GetDebounceEndTimestamp()).to.never.be.ok();
+
+            skill.Start();
+            RunService.Heartbeat.Wait();
+
+            expect(skill.GetDebounceEndTimestamp()).to.be.a("number");
         });
 
         it("should fire callbacks", () => {
