@@ -89,11 +89,12 @@ Warns if `time` wasn't provided in `Start()`.
 ### `Resume()`
 Resumes the internal [Timer].
 
-### `SetHumanoidData(data)`
+### `SetHumanoidData(data, priority?)`
 Sets the currently applied [Humanoid Data].
 
 **`Parameters:`**
 * Data: `HumanoidData`
+* Priority: `number` - defaults to 1.
 
 ### `ClearHumanoidData()`
 Clears the currently set [Humanoid Data].
