@@ -3,12 +3,13 @@ import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { isClientContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { remotes } from "./remotes";
+import { ServerEvents, remotes } from "./networking";
 import { slices } from "state/slices";
 import { rootProducer } from "state/rootProducer";
 import { Character } from "./character";
 import { SelectCharacterData } from "state/selectors";
 import Immut from "@rbxts/immut";
+import { dispatchSerializer } from "./serdes";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -24,7 +25,8 @@ class Server {
         this.broadcaster = createBroadcaster({
             producers: slices,
             dispatch: (Player, Actions) => {
-                remotes._dispatch.fire(Player, Actions);
+                const serialized = dispatchSerializer.serialize(Actions);
+                ServerEvents.dispatch.fire(Player, serialized);
             },
             beforeHydrate: (Player, State) => {
                 return Immut.produce(State, (Draft) => {
@@ -47,8 +49,9 @@ class Server {
                 return Action;
             },
         });
+
         rootProducer.applyMiddleware(this.broadcaster.middleware);
-        remotes._start.connect((Player) => this.broadcaster.start(Player));
+        ServerEvents.start.connect((Player) => this.broadcaster.start(Player));
     }
 
     /** @internal @hidden */

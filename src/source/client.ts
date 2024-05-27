@@ -2,7 +2,7 @@
 import { BroadcastReceiver, createBroadcastReceiver } from "@rbxts/reflex";
 import { t } from "@rbxts/t";
 import { isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { remotes } from "./remotes";
+import { ClientEvents, remotes } from "./networking";
 import { slices } from "state/slices";
 import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
@@ -10,6 +10,7 @@ import { Flags } from "./flags";
 import { rootProducer } from "state/rootProducer";
 import { UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
+import { dispatchSerializer } from "./serdes";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -23,12 +24,13 @@ class Client {
 
         this.receiver = createBroadcastReceiver({
             start: () => {
-                remotes._start.fire();
+                ClientEvents.start.fire();
             },
         });
 
-        remotes._dispatch.connect((Actions) => {
-            this.receiver.dispatch(Actions);
+        ClientEvents.dispatch.connect((serialized) => {
+            const actions = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
+            this.receiver.dispatch(actions);
         });
         rootProducer.applyMiddleware(this.receiver.middleware);
         ApplyLoggerMiddleware && rootProducer.applyMiddleware(devToolsMiddleware);

@@ -1,0 +1,33 @@
+{
+	"version": 1,
+	"flameworkVersion": "1.2.2",
+	"identifiers": {
+		"@rbxts/wcs:out/source/statusEffect@StatusEffect": "@rbxts/wcs:source/statusEffect@StatusEffect",
+		"@rbxts/wcs:out/source/skill@SkillBase": "@rbxts/wcs:source/skill@SkillBase",
+		"@rbxts/wcs:out/source/skill@Skill": "@rbxts/wcs:source/skill@Skill",
+		"@rbxts/wcs:out/source/client@Client": "@rbxts/wcs:source/client@Client",
+		"@rbxts/wcs:out/source/server@Server": "@rbxts/wcs:source/server@Server",
+		"@rbxts/wcs:out/source/character@Character": "@rbxts/wcs:source/character@Character",
+		"@rbxts/wcs:out/source/holdableSkill@HoldableSkill": "@rbxts/wcs:source/holdableSkill@HoldableSkill",
+		"@rbxts/wcs:out/tests/character.spec@someSkill": "@rbxts/wcs:tests/character.spec@someSkill",
+		"@rbxts/wcs:out/tests/character.spec@someStatus": "@rbxts/wcs:tests/character.spec@someStatus",
+		"@rbxts/wcs:out/tests/character.spec@nullifyingStatus": "@rbxts/wcs:tests/character.spec@nullifyingStatus",
+		"@rbxts/wcs:out/tests/character.spec@increaseStatus": "@rbxts/wcs:tests/character.spec@increaseStatus",
+		"@rbxts/wcs:out/tests/character.spec@__skill": "@rbxts/wcs:tests/character.spec@__skill",
+		"@rbxts/wcs:out/tests/movesets.spec@someskill111": "@rbxts/wcs:tests/movesets.spec@someskill111",
+		"@rbxts/wcs:out/tests/skill.spec@yieldingSkill": "@rbxts/wcs:tests/skill.spec@yieldingSkill",
+		"@rbxts/wcs:out/tests/skill.spec@yieldingSkill2": "@rbxts/wcs:tests/skill.spec@yieldingSkill2",
+		"@rbxts/wcs:out/tests/skill.spec@emptySkill": "@rbxts/wcs:tests/skill.spec@emptySkill",
+		"@rbxts/wcs:out/tests/skill.spec@holdableSkill": "@rbxts/wcs:tests/skill.spec@holdableSkill",
+		"@rbxts/wcs:out/tests/skill.spec@debounceSkill": "@rbxts/wcs:tests/skill.spec@debounceSkill",
+		"@rbxts/wcs:out/tests/skill.spec@throw.to.emptySkill": "@rbxts/wcs:tests/skill.spec@throw.to.emptySkill",
+		"@rbxts/wcs:out/tests/skill.spec@sum_skill_a": "@rbxts/wcs:tests/skill.spec@sum_skill_a",
+		"@rbxts/wcs:out/tests/skill.spec@sumsumSkill": "@rbxts/wcs:tests/skill.spec@sumsumSkill",
+		"@rbxts/wcs:out/tests/skill.spec@skillWithCallback": "@rbxts/wcs:tests/skill.spec@skillWithCallback",
+		"@rbxts/wcs:out/tests/statusEffect.spec@emptyStatus": "@rbxts/wcs:tests/statusEffect.spec@emptyStatus",
+		"@rbxts/wcs:out/tests/statusEffect.spec@throw.to.emptyStatus": "@rbxts/wcs:tests/statusEffect.spec@throw.to.emptyStatus",
+		"@rbxts/wcs:out/tests/statusEffect.spec@statusWithCallback": "@rbxts/wcs:tests/statusEffect.spec@statusWithCallback"
+	},
+	"metadata": {},
+	"identifierPrefix": "@rbxts/wcs"
+}

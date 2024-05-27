@@ -15,7 +15,7 @@ import {
 } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
-import { remotes } from "./remotes";
+import { ClientEvents, remotes } from "./networking";
 import { rootProducer } from "state/rootProducer";
 import { AnyStatus } from "./statusEffect";
 import Signal from "@rbxts/signal";
@@ -237,7 +237,7 @@ export abstract class SkillBase<
         if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
         if (isClientContext()) {
-            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "Start", params);
+            ClientEvents.requestSkill.fire(this.Character.GetId(), this.Name, "Start", params);
             return;
         }
 
