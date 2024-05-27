@@ -21,7 +21,7 @@ import { FlagWithData, Flags } from "./flags";
 import { AnySkill, GetRegisteredSkillConstructor, SkillData, UnknownSkill } from "./skill";
 import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
-import { remotes } from "./remotes";
+import { remotes } from "./networking";
 import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
 
