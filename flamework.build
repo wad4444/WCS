@@ -26,7 +26,9 @@
 		"@rbxts/wcs:out/tests/skill.spec@skillWithCallback": "@rbxts/wcs:tests/skill.spec@skillWithCallback",
 		"@rbxts/wcs:out/tests/statusEffect.spec@emptyStatus": "@rbxts/wcs:tests/statusEffect.spec@emptyStatus",
 		"@rbxts/wcs:out/tests/statusEffect.spec@throw.to.emptyStatus": "@rbxts/wcs:tests/statusEffect.spec@throw.to.emptyStatus",
-		"@rbxts/wcs:out/tests/statusEffect.spec@statusWithCallback": "@rbxts/wcs:tests/statusEffect.spec@statusWithCallback"
+		"@rbxts/wcs:out/tests/statusEffect.spec@statusWithCallback": "@rbxts/wcs:tests/statusEffect.spec@statusWithCallback",
+		"@rbxts/wcs:out/source/networking@GlobalEvents": "@rbxts/wcs:source/networking@GlobalEvents",
+		"@rbxts/wcs:out/source/networking@GlobalFunctions": "@rbxts/wcs:source/networking@GlobalFunctions"
 	},
 	"metadata": {},
 	"identifierPrefix": "@rbxts/wcs"

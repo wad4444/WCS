@@ -2,7 +2,7 @@
 import { BroadcastReceiver, createBroadcastReceiver } from "@rbxts/reflex";
 import { t } from "@rbxts/t";
 import { isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { ClientEvents, remotes } from "./networking";
+import { ClientEvents } from "./networking";
 import { slices } from "state/slices";
 import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
@@ -74,7 +74,7 @@ class Client {
         setActiveHandler(this);
         this.setupCharacterReplication();
 
-        remotes._damageTaken.connect((CharacterId, Damage) => {
+        ClientEvents.damageTaken.connect((CharacterId, Damage) => {
             const character = Character.GetCharacterFromId(CharacterId);
             if (character) {
                 character.DamageTaken.Fire({
@@ -84,7 +84,7 @@ class Client {
             }
         });
 
-        remotes._damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
+        ClientEvents.damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
             const character = Character.GetCharacterFromId(CharacterId);
             let source: UnknownSkill | UnknownStatus | undefined = undefined;
 

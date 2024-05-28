@@ -3,13 +3,13 @@ import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { isClientContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { ServerEvents, remotes } from "./networking";
+import { ServerEvents } from "./networking";
 import { slices } from "state/slices";
 import { rootProducer } from "state/rootProducer";
 import { Character } from "./character";
 import { SelectCharacterData } from "state/selectors";
 import Immut from "@rbxts/immut";
-import { dispatchSerializer } from "./serdes";
+import { dispatchSerializer, skillRequestSerializer } from "./serdes";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -92,7 +92,11 @@ class Server {
         this.registeredModules.forEach((v) => require(v));
         table.clear(this.registeredModules);
 
-        remotes._requestSkill.connect((Player, CharacterId, SkillName, Action, Params) => {
+        ServerEvents.requestSkill.connect((Player, serialized) => {
+            const [CharacterId, SkillName, Action, Params] = skillRequestSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
             const characterData = SelectCharacterData(CharacterId)(rootProducer.getState());
             if (!characterData) return;
 
