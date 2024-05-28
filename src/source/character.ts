@@ -1,4 +1,4 @@
-import { Players, RunService } from "@rbxts/services";
+import { Players } from "@rbxts/services";
 import {
     Constructor,
     getActiveHandler,
@@ -116,7 +116,6 @@ export class Character {
         const humanoid = Instance.FindFirstChildOfClass("Humanoid");
         if (!humanoid) {
             logError(`Attempted to instantiate a character over an instance without humanoid.`);
-            error(``);
         }
 
         this.Instance = Instance;
@@ -137,34 +136,32 @@ export class Character {
             this.SkillAdded.Destroy();
             this.SkillRemoved.Destroy();
             this.HumanoidPropertiesUpdated.Destroy();
+            this.DamageDealt.Destroy();
+            this.DamageTaken.Destroy();
         });
 
         if (isServerContext()) {
             rootProducer.setCharacterData(this.id, this._packData());
 
             const server = getActiveHandler<WCS_Server>()!;
-            this.janitor.Add(
-                this.DamageTaken.Connect((Container) => {
-                    Players.GetPlayers().forEach((Player) => {
-                        if (!server._filterReplicatedCharacters(Player, this)) return;
-                        ServerEvents.damageTaken.fire(Player, this.id, Container.Damage);
-                    });
-                }),
-            );
-            this.janitor.Add(
-                this.DamageDealt.Connect((_, Container) => {
-                    Players.GetPlayers().forEach((Player) => {
-                        if (!server._filterReplicatedCharacters(Player, this)) return;
-                        ServerEvents.damageDealt.fire(
-                            Player,
-                            this.id,
-                            Container.Source!.GetId(),
-                            Container.Source! instanceof StatusEffect ? "Status" : "Skill",
-                            Container.Damage,
-                        );
-                    });
-                }),
-            );
+            this.DamageTaken.Connect((Container) => {
+                Players.GetPlayers().forEach((Player) => {
+                    if (!server._filterReplicatedCharacters(Player, this)) return;
+                    ServerEvents.damageTaken.fire(Player, this.id, Container.Damage);
+                });
+            });
+            this.DamageDealt.Connect((_, Container) => {
+                Players.GetPlayers().forEach((Player) => {
+                    if (!server._filterReplicatedCharacters(Player, this)) return;
+                    ServerEvents.damageDealt.fire(
+                        Player,
+                        this.id,
+                        Container.Source!.GetId(),
+                        Container.Source! instanceof StatusEffect ? "Status" : "Skill",
+                        Container.Damage,
+                    );
+                });
+            });
         }
     }
 
