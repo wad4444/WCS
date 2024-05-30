@@ -32,6 +32,7 @@ export abstract class HoldableSkill<
                 "Disconnect",
             );
         }
+        this._janitor.Add(this.HoldTimer, "destroy");
         this._init();
     }
 
