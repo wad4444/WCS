@@ -5,22 +5,22 @@ import { SerializedData } from "./serdes";
 interface ClientToServerEvents {
     start(): void;
     requestSkill(serialized: SerializedData): void;
-    message(serialized: SerializedData): void;
+    messageToServer(serialized: SerializedData): void;
 }
 
 interface ServerToClientEvents {
     dispatch(serialized: SerializedData): void;
-    message(serialized: SerializedData): void;
+    messageToClient(serialized: SerializedData): void;
     damageTaken(CharacterId: string, Damage: number): void;
     damageDealt(CharacterId: string, SourceId: string, Type: "Skill" | "Status", Damage: number): void;
 }
 
 interface ClientToServerFunctions {
-    message(serialized: SerializedData): any;
+    messageToServer(serialized: SerializedData): any;
 }
 
 interface ServerToClientFunctions {
-    message(serialized: SerializedData): any;
+    messageToClient(serialized: SerializedData): any;
 }
 
 export const GlobalFunctions = Networking.createFunction<ClientToServerFunctions, ServerToClientFunctions>();

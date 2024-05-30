@@ -41,7 +41,7 @@ export interface SkillProps {
     Flag: (typeof Flags)["CanInstantiateSkillClient"];
 }
 
-/** @internal @hidden */
+/** @hidden */
 export interface _internal_SkillState extends SkillState {
     _timerEndTimestamp?: number;
     _isActive_counter: number;
@@ -54,18 +54,16 @@ export interface SkillData {
     constructorArguments: unknown[];
     metadata: unknown;
 }
-export type AnySkill = SkillBase<any, any[], any, any, any>;
-export type UnknownSkill = SkillBase<unknown[], unknown[], unknown, unknown, unknown>;
+export type AnySkill = SkillBase<any, any[], any>;
+export type UnknownSkill = SkillBase<unknown[], unknown[], unknown>;
 
 const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
-/** @hidden @internal */
+/** @hidden */
 export abstract class SkillBase<
     StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
-    ServerToClientMessage = void,
-    ClientToServerMessage = void,
 > {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
@@ -538,9 +536,7 @@ export abstract class Skill<
     StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
-    ServerToClientMessage = void,
-    ClientToServerMessage = void,
-> extends SkillBase<StarterParams, ConstructorArguments, Metadata, ServerToClientMessage, ClientToServerMessage> {
+> extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
     constructor(Character: Character, ...Args: ConstructorArguments) {
         super(Character, ...Args);
         this._init();
@@ -564,4 +560,12 @@ export function SkillDecorator<T extends Constructor<AnySkill>>(Constructor: T) 
  */
 export function GetRegisteredSkillConstructor(Name: string) {
     return registeredSkills.get(Name);
+}
+
+/**
+ * @internal
+ * @hidden
+ */
+export function GetRegisteredSkills() {
+    return table.freeze(table.clone(registeredSkills)) as ReadonlyMap<string, Constructor<UnknownSkill>>;
 }

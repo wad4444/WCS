@@ -1,15 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { isClientContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { ServerEvents } from "./networking";
+import { ServerEvents, ServerFunctions } from "./networking";
 import { slices } from "state/slices";
 import { rootProducer } from "state/rootProducer";
 import { Character } from "./character";
 import { SelectCharacterData } from "state/selectors";
 import Immut from "@rbxts/immut";
-import { dispatchSerializer, skillRequestSerializer } from "./serdes";
+import { dispatchSerializer, messageSerializer, skillRequestSerializer } from "./serdes";
+import { RestoreArgs } from "./arg-converter";
+import { UnknownSkill } from "./skill";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -107,6 +110,45 @@ class Server {
             if (!skill) return;
 
             Action === "Start" ? skill.Start(Params as never) : skill.End();
+        });
+
+        ServerEvents.messageToServer.connect((Player, serialized) => {
+            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character || character.Player !== Player) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
+            method(skill, ...RestoreArgs(Args));
+        });
+
+        ServerFunctions.messageToServer.setCallback((Player, serialized) => {
+            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character || character.Player !== Player) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const method = skill[MethodName as never] as (
+                self: UnknownSkill,
+                ...args: unknown[]
+            ) => Promise<unknown> | unknown;
+            const returnedValue = method(skill, ...RestoreArgs(Args));
+            if (Promise.is(returnedValue)) {
+                const [_, value] = returnedValue.await();
+                return value;
+            }
+
+            return returnedValue;
         });
 
         setActiveHandler(this);

@@ -9,16 +9,21 @@ import { Flamework } from "@flamework/core";
 import { ClientEvents, ClientFunctions, ServerEvents, ServerFunctions } from "./networking";
 import { messageSerializer } from "./serdes";
 
-interface MessageOptions {
+/**
+ * @hidden
+ */
+export interface MessageOptions {
     Unreliable?: boolean;
     Destination: "Server" | "Client";
     Type: "Event" | "Request";
     Validators?: t.check<any>[];
 }
+
 type GetDesiredMethodType<T extends MessageOptions> = (
     ...args: any[]
 ) => T["Type"] extends "Request" ? Promise<any> : void;
 
+const registeredMessages = new Map<Record<string, any>, string[]>();
 const optionsGuard = Flamework.createGuard<MessageOptions>();
 
 export function Message<T extends MessageOptions>(Options: T) {
@@ -37,6 +42,10 @@ export function Message<T extends MessageOptions>(Options: T) {
         }
 
         if (!optionsGuard(Options)) logError(`Invalid message options. Your Options object did not pass the guard.`);
+
+        if (registeredMessages.get(ctor)?.includes(methodName))
+            logError(`Message ${methodName} is already registered.`);
+        registeredMessages.set(ctor, [...(registeredMessages.get(ctor) ?? []), methodName]);
 
         const current = RunService.IsServer() ? "Server" : "Client";
         if (current === Options.Destination) return;
@@ -62,19 +71,19 @@ export function Message<T extends MessageOptions>(Options: T) {
 
             if (Options.Type === "Event") {
                 if (RunService.IsServer()) {
-                    ServerEvents.message.fire(this.Player, serialized);
+                    ServerEvents.messageToClient.fire(this.Player, serialized);
                     return;
                 } else if (RunService.IsClient()) {
-                    ClientEvents.message.fire(serialized);
+                    ClientEvents.messageToServer.fire(serialized);
                     return;
                 }
                 return;
             }
 
             if (RunService.IsServer()) {
-                return ServerFunctions.message.invoke(this.Player, serialized);
+                return ServerFunctions.messageToClient.invoke(this.Player, serialized);
             } else if (RunService.IsClient()) {
-                return ClientFunctions.message.invoke(serialized);
+                return ClientFunctions.messageToServer.invoke(serialized);
             }
         };
     };
