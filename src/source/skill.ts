@@ -288,6 +288,11 @@ export abstract class SkillBase<
         });
     }
 
+    /** Alias for End() */
+    public Stop() {
+        this.End();
+    }
+
     /** Retrieves the skill type */
     public GetSkillType() {
         return this._skillType;

@@ -184,10 +184,10 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /**
-     * Stops the status effect.
+     * Ends the status effect.
      */
-    public End() {
-        this.Stop();
+    public Stop() {
+        this.End();
     }
 
     /**
@@ -219,9 +219,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /**
-     * Stops the status effect.
+     * Ends the status effect.
      */
-    public Stop() {
+    public End() {
         if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (!this.GetState().IsActive) {
