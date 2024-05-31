@@ -62,6 +62,12 @@ export class Character {
 
     public readonly StatusEffectAdded = new Signal<(Status: UnknownStatus) => void>();
     public readonly StatusEffectRemoved = new Signal<(Status: UnknownStatus) => void>();
+
+    public readonly SkillStarted = new Signal<(Status: UnknownSkill) => void>();
+    public readonly SkillEnded = new Signal<(Status: UnknownSkill) => void>();
+
+    public readonly StatusEffectStarted = new Signal<(Status: UnknownStatus) => void>();
+    public readonly StatusEffectEnded = new Signal<(Status: UnknownStatus) => void>();
     /**
      * Fires only on client if the character belongs to a player
      */
@@ -135,6 +141,10 @@ export class Character {
             this.StatusEffectRemoved.Destroy();
             this.SkillAdded.Destroy();
             this.SkillRemoved.Destroy();
+            this.SkillStarted.Destroy();
+            this.SkillEnded.Destroy();
+            this.StatusEffectStarted.Destroy();
+            this.StatusEffectEnded.Destroy();
             this.HumanoidPropertiesUpdated.Destroy();
             this.DamageDealt.Destroy();
             this.DamageTaken.Destroy();
@@ -241,18 +251,21 @@ export class Character {
      */
     public _addStatus(Status: AnyStatus) {
         this.statusEffects.set(Status.GetId(), Status);
-        this.StatusEffectAdded.Fire(Status);
-
         Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
         Status.StateChanged.Connect(() => {
             this.updateHumanoidProps();
         });
+
+        Status.Started.Connect(() => this.StatusEffectStarted.Fire(Status));
+        Status.Ended.Connect(() => this.StatusEffectEnded.Fire(Status));
 
         Status.Destroyed.Connect(() => {
             this.statusEffects.delete(Status.GetId());
             this.StatusEffectRemoved.Fire(Status);
             this.updateHumanoidProps();
         });
+
+        this.StatusEffectAdded.Fire(Status);
     }
 
     /**
@@ -264,6 +277,9 @@ export class Character {
         if (this.skills.has(name)) {
             logError(`Skill with name ${name} is already registered for character ${this.Instance}`);
         }
+
+        Skill.Started.Connect(() => this.SkillStarted.Fire(Skill));
+        Skill.Ended.Connect(() => this.SkillEnded.Fire(Skill));
 
         this.skills.set(name, Skill);
         Skill.Destroyed.Connect(() => {
