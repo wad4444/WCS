@@ -5,9 +5,9 @@
 		"@rbxts/wcs:out/source/statusEffect@StatusEffect": "@rbxts/wcs:source/statusEffect@StatusEffect",
 		"@rbxts/wcs:out/source/skill@SkillBase": "@rbxts/wcs:source/skill@SkillBase",
 		"@rbxts/wcs:out/source/skill@Skill": "@rbxts/wcs:source/skill@Skill",
-		"@rbxts/wcs:out/source/client@Client": "@rbxts/wcs:source/client@Client",
 		"@rbxts/wcs:out/source/server@Server": "@rbxts/wcs:source/server@Server",
 		"@rbxts/wcs:out/source/character@Character": "@rbxts/wcs:source/character@Character",
+		"@rbxts/wcs:out/source/client@Client": "@rbxts/wcs:source/client@Client",
 		"@rbxts/wcs:out/source/holdableSkill@HoldableSkill": "@rbxts/wcs:source/holdableSkill@HoldableSkill",
 		"@rbxts/wcs:out/tests/character.spec@someSkill": "@rbxts/wcs:tests/character.spec@someSkill",
 		"@rbxts/wcs:out/tests/character.spec@someStatus": "@rbxts/wcs:tests/character.spec@someStatus",
@@ -26,7 +26,9 @@
 		"@rbxts/wcs:out/tests/skill.spec@skillWithCallback": "@rbxts/wcs:tests/skill.spec@skillWithCallback",
 		"@rbxts/wcs:out/tests/statusEffect.spec@emptyStatus": "@rbxts/wcs:tests/statusEffect.spec@emptyStatus",
 		"@rbxts/wcs:out/tests/statusEffect.spec@throw.to.emptyStatus": "@rbxts/wcs:tests/statusEffect.spec@throw.to.emptyStatus",
-		"@rbxts/wcs:out/tests/statusEffect.spec@statusWithCallback": "@rbxts/wcs:tests/statusEffect.spec@statusWithCallback"
+		"@rbxts/wcs:out/tests/statusEffect.spec@statusWithCallback": "@rbxts/wcs:tests/statusEffect.spec@statusWithCallback",
+		"@rbxts/wcs:out/source/networking@GlobalFunctions": "@rbxts/wcs:source/networking@GlobalFunctions",
+		"@rbxts/wcs:out/source/networking@GlobalEvents": "@rbxts/wcs:source/networking@GlobalEvents"
 	},
 	"metadata": {},
 	"identifierPrefix": "@rbxts/wcs"

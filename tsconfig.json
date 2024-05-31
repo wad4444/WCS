@@ -16,6 +16,7 @@
 		"strict": true,
 		"target": "ESNext",
 		"typeRoots": ["node_modules/@rbxts", "node_modules/@flamework"],
+		"stripInternal": true,
 
 		// configurable
 		"rootDir": "src",

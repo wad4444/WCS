@@ -1,16 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { BroadcastReceiver, createBroadcastReceiver } from "@rbxts/reflex";
 import { t } from "@rbxts/t";
 import { isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { ClientEvents, remotes } from "./networking";
+import { ClientEvents, ClientFunctions } from "./networking";
 import { slices } from "state/slices";
 import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
 import { Flags } from "./flags";
 import { rootProducer } from "state/rootProducer";
-import { UnknownSkill } from "./skill";
+import { Skill, UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
-import { dispatchSerializer } from "./serdes";
+import { dispatchSerializer, messageSerializer } from "./serdes";
+import { RestoreArgs } from "./arg-converter";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -32,6 +34,7 @@ class Client {
             const actions = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
             this.receiver.dispatch(actions);
         });
+
         rootProducer.applyMiddleware(this.receiver.middleware);
         ApplyLoggerMiddleware && rootProducer.applyMiddleware(devToolsMiddleware);
     }
@@ -74,7 +77,7 @@ class Client {
         setActiveHandler(this);
         this.setupCharacterReplication();
 
-        remotes._damageTaken.connect((CharacterId, Damage) => {
+        ClientEvents.damageTaken.connect((CharacterId, Damage) => {
             const character = Character.GetCharacterFromId(CharacterId);
             if (character) {
                 character.DamageTaken.Fire({
@@ -84,7 +87,7 @@ class Client {
             }
         });
 
-        remotes._damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
+        ClientEvents.damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
             const character = Character.GetCharacterFromId(CharacterId);
             let source: UnknownSkill | UnknownStatus | undefined = undefined;
 
@@ -112,6 +115,45 @@ class Client {
                     Source: source,
                 });
             }
+        });
+
+        ClientEvents.messageToClient.connect((serialized) => {
+            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
+            method(skill, ...RestoreArgs(Args));
+        });
+
+        ClientFunctions.messageToClient.setCallback((serialized) => {
+            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const method = skill[MethodName as never] as (
+                self: UnknownSkill,
+                ...args: unknown[]
+            ) => Promise<unknown> | unknown;
+            const returnedValue = method(skill, ...RestoreArgs(Args));
+            if (Promise.is(returnedValue)) {
+                const [_, value] = returnedValue.await();
+                return value;
+            }
+
+            return returnedValue;
         });
 
         logMessage(`Started Client successfully`);
