@@ -81,6 +81,8 @@ export class Character {
      */
     public readonly DamageDealt = new Signal<(Enemy: Character | undefined, Container: DamageContainer) => void>();
 
+    public DisableSkills = false;
+
     public readonly Destroyed = new Signal();
     public readonly MovesetChanged = new Signal<
         (NewMoveset: string | undefined, OldMoveset: string | undefined) => void

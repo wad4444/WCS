@@ -232,13 +232,14 @@ export abstract class SkillBase<
      * Client: Sends a request to server that will call :Start() on server
      */
     public Start(...params: StarterParams) {
+        if (this.Character.DisableSkills) return;
+
         const state = this.GetState();
         if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
         if (isClientContext()) {
             const serialized = skillRequestSerializer.serialize([this.Character.GetId(), this.Name, "Start", params]);
             ClientEvents.requestSkill.fire(serialized);
-
             return;
         }
 
