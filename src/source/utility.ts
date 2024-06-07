@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-constant-condition */
 import { Symbol } from "symbol";
 import { WCS_Client } from "./client";
@@ -12,6 +13,15 @@ export function logWarning(Message: string, DisplayTraceback = true) {
     warn(`[${consolePrefix}]: ${Message} \n \n ${DisplayTraceback ? debug.traceback() : undefined}`);
 }
 
+export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+export type UnionToOvlds<U> = UnionToIntersection<U extends any ? (f: U) => void : never>;
+export type PopUnion<U> = UnionToOvlds<U> extends (a: infer A) => void ? A : never;
+export type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
+
+export type UnionToArray<T, A extends unknown[] = []> = IsUnion<T> extends true
+    ? UnionToArray<Exclude<T, PopUnion<T>>, [PopUnion<T>, ...A]>
+    : [T, ...A];
+
 export function logError(Message: string, DisplayTraceback = true): never {
     return error(`\n ${errorString} \n ${Message} \n \n ${DisplayTraceback ? debug.traceback() : undefined}`);
 }
@@ -20,6 +30,13 @@ export function mapToArray<T extends defined, K extends defined>(Map: Map<T, K>)
     const arr: K[] = [];
     Map.forEach((Value) => arr.push(Value));
     return arr;
+}
+
+export function createIdGenerator(initialValue = 0, increment = 1) {
+    return () => {
+        initialValue += increment;
+        return initialValue;
+    };
 }
 
 export function logMessage(Message: string) {

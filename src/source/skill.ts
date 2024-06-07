@@ -6,6 +6,7 @@ import { Flags } from "./flags";
 import {
     Constructor,
     ReadonlyDeep,
+    createIdGenerator,
     freezeCheck,
     getActiveHandler,
     isClientContext,
@@ -27,7 +28,7 @@ export interface SkillState {
     IsActive: boolean;
     Debounce: boolean;
     MaxHoldTime?: number;
-    StarterParams?: unknown;
+    StarterParams: unknown[];
 }
 
 export enum SkillType {
@@ -57,6 +58,7 @@ export interface SkillData {
 export type AnySkill = SkillBase<any, any[], any>;
 export type UnknownSkill = SkillBase<unknown[], unknown[], unknown>;
 
+const nextId = createIdGenerator();
 const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
 /** @hidden */
@@ -67,6 +69,9 @@ export abstract class SkillBase<
 > {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
+
+    /**@internal @hidden */
+    public readonly _id = nextId();
     /**
      * A Janitor object. Cleans up everything after skill ends.
      */
@@ -128,6 +133,7 @@ export abstract class SkillBase<
         _isActive_counter: 0,
         IsActive: false,
         Debounce: false,
+        StarterParams: [],
     };
     private destroyed = false;
     private metadata?: Metadata;
@@ -285,7 +291,7 @@ export abstract class SkillBase<
 
         this._setState({
             IsActive: false,
-            StarterParams: undefined,
+            StarterParams: [],
         });
     }
 
@@ -306,7 +312,7 @@ export abstract class SkillBase<
         this._setState({
             IsActive: false,
             Debounce: false,
-            StarterParams: undefined,
+            StarterParams: [],
         });
 
         if (isServerContext()) {
@@ -461,7 +467,7 @@ export abstract class SkillBase<
             ...this.state,
             ...Patch,
         };
-        if (Patch.IsActive !== undefined) newState._isActive_counter++;
+        if (Patch.IsActive !== undefined && this.state.IsActive !== Patch.IsActive) newState._isActive_counter++;
 
         const oldState = this.state;
 

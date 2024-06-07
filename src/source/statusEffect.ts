@@ -11,6 +11,7 @@ import {
     logError,
     logWarning,
     isClientContext,
+    createIdGenerator,
 } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
@@ -54,11 +55,7 @@ export type AnyStatus = StatusEffect<any, any[]>;
 export type UnknownStatus = StatusEffect<unknown, unknown[]>;
 
 const registeredStatuses: Map<string, StatusEffectConstructor> = new Map();
-let nextId = 0;
-function generateId() {
-    nextId += isServerContext() ? 1 : -1;
-    return tostring(nextId);
-}
+const nextId = createIdGenerator(0, isServerContext() ? 1 : -1);
 
 /**
  * A status effect class.
@@ -112,7 +109,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
                 ? (Props as StatusEffectProps)
                 : { Character: Props as Character, Flag: undefined };
 
-        this.id = Flag && Flag.flag === Flags.CanAssignCustomId ? Flag.data : generateId();
+        this.id = Flag && Flag.flag === Flags.CanAssignCustomId ? Flag.data : tostring(nextId());
         this.Character = Character;
 
         if (!this.Character || tostring(getmetatable(this.Character)) !== "Character") {

@@ -1,5 +1,5 @@
 import { t } from "@rbxts/t";
-import { AnySkill, Skill, SkillBase, UnknownSkill } from "./skill";
+import { AnySkill, SkillBase, UnknownSkill } from "./skill";
 import { Constructor, freezeCheck, instanceofConstructor, logError } from "./utility";
 
 export interface Moveset {
@@ -8,7 +8,6 @@ export interface Moveset {
 }
 
 const registeredMovesets = new Map<string, Moveset>();
-
 /**
  * Creates a moveset with the given name and skills.
  */

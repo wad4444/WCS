@@ -285,8 +285,10 @@ export class Character {
 
         this.skills.set(name, Skill);
         Skill.Destroyed.Connect(() => {
-            this.skills.delete(name);
             this.SkillRemoved.Fire(Skill);
+
+            if (this.skills.get(name)?._id !== Skill._id) return;
+            this.skills.delete(name);
         });
 
         this.SkillAdded.Fire(Skill);
