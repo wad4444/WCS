@@ -27,7 +27,7 @@ type Partial_StatusEffectState = {
 
 export type Moveset = {
 	Name: string,
-	Skills: { never },
+	Skills: { SkillImpl },
 }
 
 export type HumanoidPropsMode = "Set" | "Increment"
@@ -45,6 +45,7 @@ export type HumanoidData = {
 
 export type StatusEffectImpl = {
 	__index: StatusEffectImpl,
+	[any]: any,
 	new: (Character) -> StatusEffect,
 	Start: (StatusEffect, number?) -> (),
 	Pause: (StatusEffect) -> (),
@@ -71,6 +72,7 @@ export type StatusEffectImpl = {
 }
 
 type StatusFields = {
+	[any]: any,
 	ConstructorArguments: { any },
 	MetadataChanged: ReadonlySignal<(any?, any?) -> ()>,
 	StateChanged: ReadonlySignal<(StatusEffectState, StatusEffectState) -> ()>,
@@ -139,6 +141,7 @@ export type DamageContainer = {
 
 type SkillImpl = {
 	__index: SkillImpl,
+	[any]: any,
 	new: (Character) -> Skill,
 	ApplyCooldown: (Skill, number) -> (),
 	ShouldStart: (Skill) -> boolean,
@@ -162,6 +165,7 @@ type SkillImpl = {
 type Array<T> = { T }
 
 type SkillFields = {
+	[any]: any,
 	Janitor: Janitor,
 	Started: ReadonlySignal<Callback>,
 	Ended: ReadonlySignal<Callback>,

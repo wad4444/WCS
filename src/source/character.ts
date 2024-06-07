@@ -1,3 +1,4 @@
+/* eslint-disable roblox-ts/no-array-pairs */
 import { Players } from "@rbxts/services";
 import {
     Constructor,
@@ -455,28 +456,29 @@ export class Character {
     /**
      * Returns the current moveset name.
      */
-    public GetMoveset() {
+    public GetMovesetName() {
         return this.moveset;
+    }
+
+    /**
+     * Returns the current moveset.
+     */
+    public GetMoveset() {
+        return this.moveset ? GetMovesetObjectByName(this.moveset) : undefined;
     }
 
     /**
      * Gets the skills that belong to a provided moveset.
      * Default - Currently applied moveset
      */
-    public GetMovesetSkills(Moveset: string | undefined = this.moveset) {
+    public GetMovesetSkills(Moveset: Moveset | undefined = this.GetMoveset()) {
         if (!Moveset) return;
 
-        const movesetObject = GetMovesetObjectByName(Moveset);
-        if (!movesetObject) return;
-
-        const skills: AnySkill[] = [];
-        this.skills.forEach((Skill) => {
-            if (movesetObject.Skills.find((T) => tostring(T) === tostring(getmetatable(Skill)))) {
-                skills.push(Skill);
+        return mapToArray(this.skills).filter((skill) => {
+            for (const [_, ctor] of pairs(Moveset.Skills)) {
+                return skill instanceof ctor;
             }
         });
-
-        return skills;
     }
 
     /**
