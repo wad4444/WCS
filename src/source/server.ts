@@ -1,3 +1,4 @@
+/* eslint-disable roblox-ts/no-array-pairs */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
@@ -13,6 +14,8 @@ import Immut from "@rbxts/immut";
 import { dispatchSerializer, messageSerializer, skillRequestSerializer } from "./serdes";
 import { RestoreArgs } from "./arg-converter";
 import { UnknownSkill } from "./skill";
+import { Reflect } from "@flamework/core";
+import { ValidateArgs } from "./message";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -113,7 +116,7 @@ class Server {
         });
 
         ServerEvents.messageToServer.connect((Player, serialized) => {
-            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
             );
@@ -123,12 +126,20 @@ class Server {
             const skill = character.GetSkillFromString(Name);
             if (!skill) return;
 
+            const args = RestoreArgs(PackedArgs);
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args, MethodName)) return;
+            }
+
             const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
-            method(skill, ...RestoreArgs(Args));
+            method(skill, ...args);
         });
 
         ServerFunctions.messageToServer.setCallback((Player, serialized) => {
-            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
             );
@@ -137,12 +148,20 @@ class Server {
 
             const skill = character.GetSkillFromString(Name);
             if (!skill) return;
+
+            const args = RestoreArgs(PackedArgs);
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args, MethodName)) return;
+            }
 
             const method = skill[MethodName as never] as (
                 self: UnknownSkill,
                 ...args: unknown[]
             ) => Promise<unknown> | unknown;
-            const returnedValue = method(skill, ...RestoreArgs(Args));
+            const returnedValue = method(skill, ...args);
             if (Promise.is(returnedValue)) {
                 const [_, value] = returnedValue.await();
                 return value;

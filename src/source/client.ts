@@ -13,6 +13,8 @@ import { Skill, UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
 import { dispatchSerializer, messageSerializer } from "./serdes";
 import { RestoreArgs } from "./arg-converter";
+import { ValidateArgs } from "./message";
+import { Reflect } from "@flamework/core";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -118,7 +120,7 @@ class Client {
         });
 
         ClientEvents.messageToClient.connect((serialized) => {
-            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
             );
@@ -128,12 +130,21 @@ class Client {
             const skill = character.GetSkillFromString(Name);
             if (!skill) return;
 
+            const args = RestoreArgs(PackedArgs);
+
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args, MethodName)) return;
+            }
+
             const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
-            method(skill, ...RestoreArgs(Args));
+            method(skill, ...args);
         });
 
         ClientFunctions.messageToClient.setCallback((serialized) => {
-            const [CharacterId, Name, MethodName, Args] = messageSerializer.deserialize(
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
             );
@@ -142,12 +153,21 @@ class Client {
 
             const skill = character.GetSkillFromString(Name);
             if (!skill) return;
+
+            const args = RestoreArgs(PackedArgs);
+
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args, MethodName)) return;
+            }
 
             const method = skill[MethodName as never] as (
                 self: UnknownSkill,
                 ...args: unknown[]
             ) => Promise<unknown> | unknown;
-            const returnedValue = method(skill, ...RestoreArgs(Args));
+            const returnedValue = method(skill, ...args);
             if (Promise.is(returnedValue)) {
                 const [_, value] = returnedValue.await();
                 return value;

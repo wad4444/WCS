@@ -120,6 +120,12 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             logError(`Attempted to instantiate a character before server has started.`);
         }
 
+        if (!registeredStatuses.has(tostring(getmetatable(this)))) {
+            logError(
+                `${tostring(getmetatable(this))} is not a valid status effect. Did you forget to apply a decorator?`,
+            );
+        }
+
         this.isReplicated = isClientContext() && tonumber(this.id)! > 0;
         this.ConstructorArguments = Args;
 
