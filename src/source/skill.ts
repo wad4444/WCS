@@ -166,6 +166,10 @@ export abstract class SkillBase<
             logError(`Attempted to instantiate a skill before server has started.`);
         }
 
+        if (!registeredSkills.has(tostring(getmetatable(this)))) {
+            logError(`${tostring(getmetatable(this))} is not a valid skill. Did you forget to apply a decorator?`);
+        }
+
         if (isClientContext() && Flag !== Flags.CanInstantiateSkillClient) {
             logError(`Attempted to instantiate a skill on client`);
         }
@@ -376,9 +380,7 @@ export abstract class SkillBase<
      */
     protected ClearMetadata() {
         if (this.isReplicated) {
-            logError(
-                `Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
-            );
+            logError(`Cannot :ClearMetadata() of skill on client! \n This can lead to a possible desync`);
         }
 
         this.MetadataChanged.Fire(undefined, this.metadata);
@@ -397,9 +399,7 @@ export abstract class SkillBase<
      */
     protected SetMetadata(NewMeta: Metadata) {
         if (this.isReplicated) {
-            logError(
-                `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
-            );
+            logError(`Cannot :SetMetadata() of skill on client! \n This can lead to a possible desync`);
         }
         if (t.table(NewMeta)) freezeCheck(NewMeta);
 
