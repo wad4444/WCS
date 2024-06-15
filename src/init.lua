@@ -264,7 +264,16 @@ type CharacterFields = {
 	MovesetChanged: ReadonlySignal<(string?, string?) -> ()>,
 }
 
+type Validator<T = any> = (data: T) -> boolean
+type MessageConfig = {
+	Destination: "Client" | "Server",
+	Type: "Event" | "Request",
+	Unreliable: boolean,
+	Validators: {Validator}
+}
+
 export type Character = typeof(setmetatable({} :: CharacterFields, {} :: CharacterImpl))
+type AnyFunction = (...any) -> any
 
 export type WCS = {
 	CreateServer: () -> Server,
@@ -274,6 +283,7 @@ export type WCS = {
 	RegisterSkill: (string) -> SkillImpl,
 	RegisterHoldableSkill: (string) -> HoldableSkillImpl,
 	GetMovesetObjectByName: (string) -> Moveset?,
+	DefineMessage: (AnyFunction, MessageConfig) -> SkillImpl,
 	Character: CharacterImpl,
 	SkillType: SkillTypeEnum,
 }
