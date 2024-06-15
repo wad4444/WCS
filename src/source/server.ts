@@ -131,7 +131,7 @@ class Server {
                 | t.check<any>[]
                 | undefined;
             if (validators) {
-                if (!ValidateArgs(validators, args, MethodName)) return;
+                if (!ValidateArgs(validators, args)) return;
             }
 
             const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
@@ -154,7 +154,7 @@ class Server {
                 | t.check<any>[]
                 | undefined;
             if (validators) {
-                if (!ValidateArgs(validators, args, MethodName)) return;
+                if (!ValidateArgs(validators, args)) return;
             }
 
             const method = skill[MethodName as never] as (

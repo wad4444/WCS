@@ -33,13 +33,8 @@ const registeredMessages = new Map<Record<string, any>, string[]>();
 const optionsGuard = Flamework.createGuard<MessageOptions>();
 
 /** @internal @hidden */
-export function ValidateArgs(validators: t.check<any>[], args: unknown[], methodName: string) {
-    for (const [Index, Validator] of pairs(validators)) {
-        if (args[Index] && !Validator(args[Index])) {
-            RunService.IsStudio() && logWarning(`Argument ${Index + 1} in message ${methodName} is not valid`);
-            return false;
-        }
-    }
+export function ValidateArgs(validators: t.check<any>[], args: unknown[]) {
+    if (!t.strictArray(...validators)(args)) return false;
     return true;
 }
 
