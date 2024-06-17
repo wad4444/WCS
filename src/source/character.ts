@@ -98,7 +98,7 @@ export class Character {
         AutoRotate: true,
         JumpHeight: 7.2,
     };
-    private currentlyAppliedProps = this.defaultProps;
+    private currentlyAppliedProps = this.GetDefaultProps();
     private id;
     private moveset?: string;
     private destroyed = false;

@@ -79,6 +79,28 @@ export = function () {
             char.SetDefaultProps(props);
             expect(shallowEqual(char.GetDefaultProps(), props)).to.be.equal(true);
         });
+
+        it("should calculate props", () => {
+            @StatusEffectDecorator
+            class propsChangingStatus extends StatusEffect {
+                protected OnConstructServer(): void {
+                    this.SetHumanoidData({
+                        WalkSpeed: [0, "Set"],
+                    });
+                }
+            }
+
+            const char = makeChar();
+            const status = new propsChangingStatus(char);
+            status.Start();
+            RunService.Heartbeat.Wait();
+
+            expect(char.GetAppliedProps().WalkSpeed).to.be.equal(0);
+            status.Destroy();
+
+            RunService.Heartbeat.Wait();
+            expect(char.GetAppliedProps().WalkSpeed).to.be.equal(16);
+        });
     });
 
     describe("skills", () => {

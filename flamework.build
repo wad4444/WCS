@@ -61,7 +61,8 @@
 		"@rbxts/wcs:out/src/tests/skill.spec@sum_skill_b": "@rbxts/wcs:src/tests/skill.spec@sum_skill_b",
 		"@rbxts/wcs:out/src/tests/skill.spec@yieldingSkill3": "@rbxts/wcs:src/tests/skill.spec@yieldingSkill3",
 		"@rbxts/wcs:out/src/tests/movesets.spec@someskill": "@rbxts/wcs:src/tests/movesets.spec@someskill",
-		"@rbxts/wcs:out/src/tests/movesets.spec@test_skill1": "@rbxts/wcs:src/tests/movesets.spec@test_skill1"
+		"@rbxts/wcs:out/src/tests/movesets.spec@test_skill1": "@rbxts/wcs:src/tests/movesets.spec@test_skill1",
+		"@rbxts/wcs:out/src/tests/character.spec@propsChangingStatus": "@rbxts/wcs:src/tests/character.spec@propsChangingStatus"
 	},
 	"metadata": {},
 	"identifierPrefix": "@rbxts/wcs"
