@@ -11,11 +11,11 @@ import { rootProducer } from "state/rootProducer";
 import { Character } from "./character";
 import { SelectCharacterData } from "state/selectors";
 import Immut from "@rbxts/immut";
-import { dispatchSerializer, messageSerializer, skillRequestSerializer } from "./serdes";
+import { SerializedData, dispatchSerializer, messageSerializer, skillRequestSerializer } from "./serdes";
 import { RestoreArgs } from "./arg-converter";
 import { UnknownSkill } from "./skill";
 import { Reflect } from "@flamework/core";
-import { ValidateArgs } from "./message";
+import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -115,7 +115,7 @@ class Server {
             Action === "Start" ? skill.Start(Params as never) : skill.End();
         });
 
-        ServerEvents.messageToServer.connect((Player, serialized) => {
+        const eventHandler = (Player: Player, serialized: SerializedData) => {
             const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
@@ -136,7 +136,9 @@ class Server {
 
             const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
             method(skill, ...args);
-        });
+        };
+        ServerEvents.messageToServer.connect(eventHandler);
+        ServerEvents.messageToServer_urel.connect(eventHandler);
 
         ServerFunctions.messageToServer.setCallback((Player, serialized) => {
             const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
@@ -154,7 +156,7 @@ class Server {
                 | t.check<any>[]
                 | undefined;
             if (validators) {
-                if (!ValidateArgs(validators, args)) return;
+                if (!ValidateArgs(validators, args)) return INVALID_MESSAGE_STR;
             }
 
             const method = skill[MethodName as never] as (

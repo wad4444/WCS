@@ -240,7 +240,7 @@ type CharacterImpl = {
 	GetMoveset: (Character) -> string?,
 	ClearMoveset: (Character) -> (),
 	ApplySkillsFromMoveset: (Character, Moveset) -> (),
-	GetMovesetSkills: (Character, Moveset?) -> {Skill},
+	GetMovesetSkills: (Character, Moveset?) -> { Skill },
 	GetAppliedProps: (Character) -> AffectableHumanoidProps,
 	TakeDamage: (Character, DamageContainer) -> DamageContainer,
 	PredictDamage: (Character, DamageContainer) -> DamageContainer,
@@ -272,7 +272,8 @@ type MessageConfig = {
 	Destination: "Client" | "Server",
 	Type: "Event" | "Request",
 	Unreliable: boolean,
-	Validators: { Validator },
+	Validators: { Validator }?,
+	ValueValidator: Validator?,
 }
 
 export type Character = typeof(setmetatable({} :: CharacterFields, {} :: CharacterImpl))

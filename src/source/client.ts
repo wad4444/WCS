@@ -11,9 +11,9 @@ import { Flags } from "./flags";
 import { rootProducer } from "state/rootProducer";
 import { Skill, UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
-import { dispatchSerializer, messageSerializer } from "./serdes";
+import { SerializedData, dispatchSerializer, messageSerializer } from "./serdes";
 import { RestoreArgs } from "./arg-converter";
-import { ValidateArgs } from "./message";
+import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
 import { Reflect } from "@flamework/core";
 
 let currentInstance: Client | undefined = undefined;
@@ -119,7 +119,7 @@ class Client {
             }
         });
 
-        ClientEvents.messageToClient.connect((serialized) => {
+        const eventHandler = (serialized: SerializedData) => {
             const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
@@ -141,7 +141,9 @@ class Client {
 
             const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
             method(skill, ...args);
-        });
+        };
+        ClientEvents.messageToClient.connect(eventHandler);
+        ClientEvents.messageToClient_urel.connect(eventHandler);
 
         ClientFunctions.messageToClient.setCallback((serialized) => {
             const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
@@ -160,7 +162,7 @@ class Client {
                 | t.check<any>[]
                 | undefined;
             if (validators) {
-                if (!ValidateArgs(validators, args)) return;
+                if (!ValidateArgs(validators, args)) return INVALID_MESSAGE_STR;
             }
 
             const method = skill[MethodName as never] as (

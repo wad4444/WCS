@@ -6,11 +6,13 @@ interface ClientToServerEvents {
     start(): void;
     requestSkill(serialized: SerializedData): void;
     messageToServer(serialized: SerializedData): void;
+    messageToServer_urel: Networking.Unreliable<(serialized: SerializedData) => void>;
 }
 
 interface ServerToClientEvents {
     dispatch(serialized: SerializedData): void;
     messageToClient(serialized: SerializedData): void;
+    messageToClient_urel: Networking.Unreliable<(serialized: SerializedData) => void>;
     damageTaken(CharacterId: string, Damage: number): void;
     damageDealt(CharacterId: string, SourceId: string, Type: "Skill" | "Status", Damage: number): void;
 }
