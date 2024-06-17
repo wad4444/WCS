@@ -146,6 +146,29 @@ export = function () {
             expect(skill_b.GetState().IsActive).to.be.equal(false);
         });
 
+        it("should cancel the execution thread on end", () => {
+            let thread!: thread;
+
+            @SkillDecorator
+            class yieldingSkill3 extends Skill {
+                protected OnStartServer(): void {
+                    thread = coroutine.running();
+                    task.wait(5);
+                }
+            }
+
+            const skill = new yieldingSkill3(makeChar());
+            skill.Start();
+
+            RunService.Heartbeat.Wait();
+            expect(thread).to.be.a("thread");
+
+            skill.End();
+            RunService.Heartbeat.Wait();
+
+            expect(coroutine.status(thread)).to.be.equal("dead");
+        });
+
         it("should respect checked by others", () => {
             const char = makeChar();
             const skill_a = new yieldingSkill(char);
