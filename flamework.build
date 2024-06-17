@@ -58,7 +58,8 @@
 		"@rbxts/wcs:out/src/source/networking@GlobalEvents": "@rbxts/wcs:src/source/networking@GlobalEvents",
 		"@rbxts/wcs:out/src/tests/skill.spec@wrongSkill": "@rbxts/wcs:src/tests/skill.spec@wrongSkill",
 		"@rbxts/wcs:out/src/tests/statusEffect.spec@wrongStatus": "@rbxts/wcs:src/tests/statusEffect.spec@wrongStatus",
-		"@rbxts/wcs:out/src/tests/skill.spec@sum_skill_b": "@rbxts/wcs:src/tests/skill.spec@sum_skill_b"
+		"@rbxts/wcs:out/src/tests/skill.spec@sum_skill_b": "@rbxts/wcs:src/tests/skill.spec@sum_skill_b",
+		"@rbxts/wcs:out/src/tests/skill.spec@yieldingSkill3": "@rbxts/wcs:src/tests/skill.spec@yieldingSkill3"
 	},
 	"metadata": {},
 	"identifierPrefix": "@rbxts/wcs"
