@@ -3,3 +3,4 @@
 /include
 *.tsbuildinfo
 /testing/out
+flamework.build
