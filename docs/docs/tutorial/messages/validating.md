@@ -20,7 +20,7 @@ To attach *validators* to a message, you need to specify them inside your *messa
 
 ```ts title="attack.ts" showLineNumbers {9}
 import { Skill, SkillDecorator } from "@rbxts/wcs";
-import t from "@rbxts/t";
+import { t } from "@rbxts/t";
 
 @SkillDecorator
 export class Attack extends Skill {
