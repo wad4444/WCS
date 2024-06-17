@@ -178,7 +178,7 @@ type SkillFields = {
 	Character: Character,
 	CheckOthersActive: boolean,
 	CheckedByOthers: boolean,
-	ParamValidators: { (any) -> boolean }, -- don't know why, but `Validator` type throws a recursive generic error?? ❔❓
+	ParamValidators: { ((any) -> boolean) }, -- don't know why, but `Validator` type throws a recursive generic error?? (old solver shenanigans) ❔❓
 }
 
 export type Skill = typeof(setmetatable({} :: SkillFields, {} :: SkillImpl))
@@ -293,7 +293,7 @@ export type WCS = {
 }
 
 local TS = script:FindFirstChild("include")
-		and require(script:WaitForChild("include"):WaitForChild("RuntimeLib") :: ModuleScript)
+		and (require)(script:WaitForChild("include"):WaitForChild("RuntimeLib") :: ModuleScript)
 	or _G[script]
 
 local exports = {}
