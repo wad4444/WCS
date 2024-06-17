@@ -60,7 +60,7 @@ export function GetParamsFromMoveset(moveset: Moveset, skill: Constructor<AnySki
 }
 
 export function instanceofConstructor<T extends object>(constructor: Constructor, constructor2: Constructor<T>) {
-    let currentClass = constructor as ConstructorWithIndex;
+    let currentClass = constructor;
     let metatable = getmetatable(currentClass) as ConstructorWithIndex;
 
     while (true) {
