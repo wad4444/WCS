@@ -61,6 +61,10 @@ export type UnknownSkill = SkillBase<unknown[], unknown[], unknown>;
 const nextId = createIdGenerator();
 const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
+type ValidatorArray<T extends unknown[]> = T extends [infer First, ...infer Rest]
+    ? readonly [t.check<First>, ...ValidatorArray<Rest>]
+    : [];
+
 /** @hidden */
 export abstract class SkillBase<
     StarterParams extends unknown[] = [],
@@ -122,6 +126,8 @@ export abstract class SkillBase<
     /** Checks whenever the start function should check if the skill is active/on cooldown on client side before firing a remote. */
     protected CheckClientState = true;
 
+    protected readonly ParamValidators?: ValidatorArray<StarterParams>;
+
     /**
      * A Player object the skill is associated with. Retrieved internally by Players:GetPlayerFromCharacter(self.Character.Instance).
      */
@@ -177,27 +183,6 @@ export abstract class SkillBase<
         this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
         this.ConstructorArguments = Args;
 
-        if (isServerContext()) {
-            /*this._janitor.Add(
-                remotes._messageToServer.connect((Player, CharacterId, SkillName, Message) => {
-                    if (Player !== this.Player) return;
-                    if (SkillName !== this.Name) return;
-                    if (CharacterId !== this.Character.GetId()) return;
-
-
-                }),
-            );*/
-        } else {
-            /*this._janitor.Add(
-                remotes._messageToClient.connect((CharacterId, SkillName, Message) => {
-                    if (SkillName !== this.Name) return;
-                    if (CharacterId !== this.Character.GetId()) return;
-
-
-                }),
-            );*/
-        }
-
         this.CooldownTimer.completed.Connect(() => {
             if (!this.GetState().Debounce) return;
             this._setState({
@@ -252,6 +237,8 @@ export abstract class SkillBase<
             ClientEvents.requestSkill.fire(serialized);
             return;
         }
+
+        if (this.ParamValidators && !t.strictArray(...this.ParamValidators)(params)) return;
 
         for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
             if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).isEmpty()) return;
@@ -347,6 +334,7 @@ export abstract class SkillBase<
         }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
             this.Started.Fire();
+
             const thread = task.spawn(() => this.OnStartClient(...(State.StarterParams as StarterParams)));
             task.cancel(thread);
 

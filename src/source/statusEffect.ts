@@ -89,6 +89,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     };
     private metadata?: Metadata;
     private humanoidData?: HumanoidData;
+    private executionThread?: thread;
 
     private isDestroyed = false;
     private readonly timer = new Timer(1);
@@ -444,17 +445,23 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     private stateDependentCallbacks(State: internal_statusEffectState, PreviousState: internal_statusEffectState) {
         if (PreviousState.IsActive === State.IsActive) return;
         if (!PreviousState.IsActive && State.IsActive) {
-            isClientContext() ? this.OnStartClient() : this.OnStartServer();
             this.Started.Fire();
-            isServerContext() ?? this.OnEndServer();
+            this.executionThread = task.spawn(() => {
+                isClientContext() ? this.OnStartClient() : this.OnStartServer();
+                this.executionThread = undefined;
+            });
         } else if (PreviousState.IsActive && !State.IsActive) {
+            if (this.executionThread) task.cancel(this.executionThread);
             isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
 
         if (PreviousState.IsActive === this.state.IsActive && this.isReplicated) {
-            this.OnStartClient();
             this.Started.Fire();
+
+            const thread = task.spawn(() => this.OnStartClient());
+            task.cancel(thread);
+
             this.OnEndClient();
             this.Ended.Fire();
         }

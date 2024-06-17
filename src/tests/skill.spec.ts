@@ -2,6 +2,7 @@
 
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
+import { t } from "@rbxts/t";
 import { SkillDecorator, Skill, Character, SkillType, HoldableSkill } from "exports";
 
 export = function () {
@@ -69,6 +70,11 @@ export = function () {
             expect(new emptySkill(makeChar())).to.be.ok();
         });
 
+        it("should check for applied decorator", () => {
+            class wrongSkill extends Skill {}
+            expect(() => new wrongSkill(makeChar())).to.throw("decorator");
+        });
+
         it("should not allow double registration", () => {
             expect(() => {
                 @SkillDecorator
@@ -108,6 +114,23 @@ export = function () {
             RunService.Heartbeat.Wait();
 
             expect(param!).to.be.equal(10);
+        });
+
+        it("should validate starter params", () => {
+            @SkillDecorator
+            class sum_skill_b extends Skill<[number]> {
+                protected readonly ParamValidators = [t.number] as const;
+                protected OnStartServer(a: number) {
+                    task.wait(1);
+                }
+            }
+
+            const skill = new sum_skill_b(makeChar());
+            skill.Start("" as never);
+
+            RunService.Heartbeat.Wait();
+
+            expect(skill.GetState().IsActive).to.be.equal(false);
         });
 
         it("should check if other skills are active", () => {

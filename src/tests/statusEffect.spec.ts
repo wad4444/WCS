@@ -37,6 +37,11 @@ export = function () {
                 class emptyStatus extends StatusEffect {}
             }).to.throw();
         });
+
+        it("should check for applied decorator", () => {
+            class wrongStatus extends StatusEffect {}
+            expect(() => new wrongStatus(makeChar())).to.throw("decorator");
+        });
     });
 
     describe("startup / ending", () => {

@@ -8,34 +8,15 @@ export interface Moveset {
     readonly Skills: Constructor<UnknownSkill>[];
 }
 
-/**type Parameters<T> = T extends new (...args: infer C) => AnySkill ? C : never;
-type TrimFirst<T> = T extends [any, ...infer Rest] ? Rest : never;
-type ConstructorWithArgs<T> = T | [T, ...TrimFirst<Parameters<T>>];
-
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
-
-// Converts union to overloaded function
-type UnionToOvlds<U> = UnionToIntersection<U extends any ? (f: U) => void : never>;
-
-type PopUnion<U> = UnionToOvlds<U> extends (a: infer A) => void ? A : never;
-
-type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
-
-// Finally me)
-type UnionToArray<T, A extends unknown[] = []> = IsUnion<T> extends true
-    ? UnionToArray<Exclude<T, PopUnion<T>>, [PopUnion<T>, ...A]>
-    : [T, ...A];
-
-type ConvertCtors<T, C = []> = T extends [infer First, ...infer Rest]
-    ? [ConstructorWithArgs<First>, ...ConvertCtors<Rest, C>]
-    : [];
-**/
-
 const registeredMovesets = new Map<string, Moveset>();
 /**
  * Creates a moveset with the given name and skills.
  */
-export function CreateMoveset(Name: string, Skills: Constructor<AnySkill>[]): Moveset {
+export function CreateMoveset(
+    Name: string,
+    Skills: Constructor<AnySkill>[],
+    ConstructorParams?: Record<string, any[] | undefined> | Map<Constructor<AnySkill>, any[]>,
+): Moveset {
     if (registeredMovesets.has(Name)) {
         logError(`StatusEffect with name ${Name} was already registered before`);
     }
