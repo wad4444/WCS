@@ -3,7 +3,7 @@
 	<br>
 	<h style="font-size:2em;"><strong>WCS - A combat system framework<strong/></h>
 	<br>
-	<a style="font-size: 1.5em" href="https://wad4444.github.io/refx/"><strong>View docs &rarr;</strong></a>
+	<a style="font-size: 1.5em" href="https://wad4444.github.io/WCS/"><strong>View docs &rarr;</strong></a>
   <br><br><br>
 
   Made with love by [@wAD](https://github.com/wad4444)❤️
