@@ -5,6 +5,9 @@ import { WCS_Client } from "./client";
 import { WCS_Server } from "./server";
 import { DeepReadonly } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
+import { Moveset } from "./moveset";
+import { AnySkill } from "./skill";
+import { t } from "@rbxts/t";
 
 export const consolePrefix = `WCS`;
 const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`;
@@ -12,15 +15,6 @@ const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`
 export function logWarning(Message: string, DisplayTraceback = true) {
     warn(`[${consolePrefix}]: ${Message} \n \n ${DisplayTraceback ? debug.traceback() : undefined}`);
 }
-
-export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
-export type UnionToOvlds<U> = UnionToIntersection<U extends any ? (f: U) => void : never>;
-export type PopUnion<U> = UnionToOvlds<U> extends (a: infer A) => void ? A : never;
-export type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
-
-export type UnionToArray<T, A extends unknown[] = []> = IsUnion<T> extends true
-    ? UnionToArray<Exclude<T, PopUnion<T>>, [PopUnion<T>, ...A]>
-    : [T, ...A];
 
 export function logError(Message: string, DisplayTraceback = true): never {
     return error(`\n ${errorString} \n ${Message} \n \n ${DisplayTraceback ? debug.traceback() : undefined}`);
@@ -53,6 +47,16 @@ export function isClientContext() {
 
 interface ConstructorWithIndex extends Constructor {
     __index: object;
+}
+
+export function GetParamsFromMoveset(moveset: Moveset, skill: Constructor<AnySkill>): any[] | undefined {
+    if (!moveset.ConstructorParams) return;
+    const params = (rawget(moveset.ConstructorParams, skill) || rawget(moveset.ConstructorParams, `${skill}`)) as
+        | any[]
+        | undefined;
+
+    if (!t.intersection(t.table, t.nil)(params)) return;
+    return params;
 }
 
 export function instanceofConstructor<T extends object>(constructor: Constructor, constructor2: Constructor<T>) {

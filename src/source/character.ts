@@ -2,6 +2,7 @@
 import { Players } from "@rbxts/services";
 import {
     Constructor,
+    GetParamsFromMoveset,
     getActiveHandler,
     isClientContext,
     isServerContext,
@@ -444,7 +445,8 @@ export class Character {
         this.cleanupMovesetSkills();
 
         movesetObject.Skills.forEach((SkillConstructor) => {
-            new SkillConstructor(this as never);
+            const params = (GetParamsFromMoveset(movesetObject, SkillConstructor) ?? []) as never[];
+            new SkillConstructor(this as never, ...params);
         });
 
         const oldMoveset = this.moveset;
@@ -529,7 +531,8 @@ export class Character {
             this.skills.get(name)?.Destroy();
             this.skills.delete(name);
 
-            new SkillConstructor(this as never);
+            const params = (GetParamsFromMoveset(Moveset, SkillConstructor) ?? []) as never[];
+            new SkillConstructor(this as never, ...params);
         });
     }
 

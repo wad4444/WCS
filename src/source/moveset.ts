@@ -6,6 +6,7 @@ import { Constructor, freezeCheck, instanceofConstructor, logError } from "./uti
 export interface Moveset {
     readonly Name: string;
     readonly Skills: Constructor<UnknownSkill>[];
+    readonly ConstructorParams?: Record<string, any[] | undefined> | Map<Constructor<AnySkill>, any[]>;
 }
 
 const registeredMovesets = new Map<string, Moveset>();
@@ -31,6 +32,7 @@ export function CreateMoveset(
     const moveset = {
         Name: Name,
         Skills: Skills,
+        ConstructorParams: ConstructorParams,
     } as const;
 
     registeredMovesets.set(Name, moveset);
