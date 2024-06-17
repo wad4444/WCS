@@ -55,7 +55,7 @@ export function GetParamsFromMoveset(moveset: Moveset, skill: Constructor<AnySki
         | any[]
         | undefined;
 
-    if (!t.intersection(t.table, t.nil)(params)) return;
+    if (params && !typeIs(params, "table")) return;
     return params;
 }
 
