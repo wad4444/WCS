@@ -240,6 +240,8 @@ type CharacterImpl = {
 	GetMoveset: (Character) -> string?,
 	ClearMoveset: (Character) -> (),
 	ApplySkillsFromMoveset: (Character, Moveset) -> (),
+	GetMovesetSkills: (Character, Moveset?) -> {Skill},
+	GetAppliedProps: (Character) -> AffectableHumanoidProps,
 	TakeDamage: (Character, DamageContainer) -> DamageContainer,
 	PredictDamage: (Character, DamageContainer) -> DamageContainer,
 	Destroy: (Character) -> (),

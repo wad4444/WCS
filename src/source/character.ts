@@ -98,6 +98,7 @@ export class Character {
         AutoRotate: true,
         JumpHeight: 7.2,
     };
+    private currentlyAppliedProps = this.defaultProps;
     private id;
     private moveset?: string;
     private destroyed = false;
@@ -624,7 +625,7 @@ export class Character {
     private updateHumanoidProps() {
         if (isServerContext() && this.Player) return;
 
-        const propsToApply = this.GetAppliedProps();
+        const propsToApply = this.calculateAppliedProps();
 
         this.HumanoidPropertiesUpdated.Fire(propsToApply);
         for (const [PropertyName, Value] of pairs(propsToApply)) {
@@ -632,7 +633,7 @@ export class Character {
         }
     }
 
-    public GetAppliedProps() {
+    private calculateAppliedProps() {
         const statuses: UnknownStatus[] = [];
         this.statusEffects.forEach((Status) => {
             if (Status.GetHumanoidData() && Status.GetState().IsActive) {
@@ -640,7 +641,7 @@ export class Character {
             }
         });
 
-        const propsToApply = this.GetDefaultProps();
+        const propsToApply = table.clone(this.GetDefaultProps());
         const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
             WalkSpeed: 0,
             JumpPower: 0,
@@ -662,7 +663,13 @@ export class Character {
                 }
             }
         });
+        table.freeze(propsToApply);
 
+        this.currentlyAppliedProps = propsToApply;
         return propsToApply;
+    }
+
+    public GetAppliedProps() {
+        return this.currentlyAppliedProps;
     }
 }
