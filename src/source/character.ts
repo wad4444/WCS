@@ -621,6 +621,15 @@ export class Character {
     private updateHumanoidProps() {
         if (isServerContext() && this.Player) return;
 
+        const propsToApply = this.GetAppliedProps();
+
+        this.HumanoidPropertiesUpdated.Fire(propsToApply);
+        for (const [PropertyName, Value] of pairs(propsToApply)) {
+            this.Humanoid[PropertyName as never] = Value as never;
+        }
+    }
+
+    public GetAppliedProps() {
         const statuses: UnknownStatus[] = [];
         this.statusEffects.forEach((Status) => {
             if (Status.GetHumanoidData() && Status.GetState().IsActive) {
@@ -651,9 +660,6 @@ export class Character {
             }
         });
 
-        this.HumanoidPropertiesUpdated.Fire(propsToApply);
-        for (const [PropertyName, Value] of pairs(propsToApply)) {
-            this.Humanoid[PropertyName as never] = Value as never;
-        }
+        return propsToApply;
     }
 }
