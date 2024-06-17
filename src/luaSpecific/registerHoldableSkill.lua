@@ -5,12 +5,16 @@ local skillLib = require(source.skill)
 local holdableSkill = require(source.holdableSkill)
 local utility = require(source.utility)
 
-function RegisterHoldableSkill(Name)
+function RegisterHoldableSkill(Name, ExtendsFrom)
     if typeof(Name) ~= "string" then
         utility.logError("Not provided a valid name for RegisterSkill")
     end
 
-    local super = holdableSkill.HoldableSkill
+	if ExtendsFrom and not utility.instanceofConstructor(ExtendsFrom, skillLib.SkillBase) then
+		utility.logError(`{ExtendsFrom} is not a valid skill class!`)
+	end
+
+	local super = ExtendsFrom or holdableSkill.HoldableSkill
     local class = setmetatable({}, {
         __tostring = function()
             return Name

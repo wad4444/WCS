@@ -46,7 +46,7 @@ export type HumanoidData = {
 export type StatusEffectImpl = {
 	__index: StatusEffectImpl,
 	[any]: any,
-	new: (Character) -> StatusEffect,
+	new: (Character, ...any) -> StatusEffect,
 	Start: (StatusEffect, number?) -> (),
 	Pause: (StatusEffect) -> (),
 	Resume: (StatusEffect) -> (),
@@ -142,7 +142,7 @@ export type DamageContainer = {
 type SkillImpl = {
 	__index: SkillImpl,
 	[any]: any,
-	new: (Character) -> Skill,
+	new: (Character, ...any) -> Skill,
 	ApplyCooldown: (Skill, number) -> (),
 	ShouldStart: (Skill) -> boolean,
 	GetName: (Skill) -> string,
@@ -178,7 +178,7 @@ type SkillFields = {
 	Character: Character,
 	CheckOthersActive: boolean,
 	CheckedByOthers: boolean,
-	ParamValidators: {((any) -> boolean)}, -- don't know why, but `Validator` type throws a recursive generic error?? ❔❓
+	ParamValidators: { (any) -> boolean }, -- don't know why, but `Validator` type throws a recursive generic error?? ❔❓
 }
 
 export type Skill = typeof(setmetatable({} :: SkillFields, {} :: SkillImpl))
@@ -255,10 +255,10 @@ type CharacterFields = {
 	SkillRemoved: ReadonlySignal<(StatusEffect) -> ()>,
 	StatusEffectAdded: ReadonlySignal<(StatusEffect) -> ()>,
 	StatusEffectRemoved: ReadonlySignal<(StatusEffect) -> ()>,
-    SkillStarted: ReadonlySignal<(Skill) -> ()>,
-    SkillEnded: ReadonlySignal<(Skill) -> ()>,
-    StatusEffectStarted: ReadonlySignal<(Skill) -> ()>,
-    StatusEffectEnded: ReadonlySignal<(Skill) -> ()>,
+	SkillStarted: ReadonlySignal<(Skill) -> ()>,
+	SkillEnded: ReadonlySignal<(Skill) -> ()>,
+	StatusEffectStarted: ReadonlySignal<(Skill) -> ()>,
+	StatusEffectEnded: ReadonlySignal<(Skill) -> ()>,
 	DamageDealt: ReadonlySignal<(Character?, DamageContainer) -> ()>,
 	DamageTaken: ReadonlySignal<(number) -> ()>,
 	Destroyed: ReadonlySignal<Callback>,
@@ -270,7 +270,7 @@ type MessageConfig = {
 	Destination: "Client" | "Server",
 	Type: "Event" | "Request",
 	Unreliable: boolean,
-	Validators: {Validator}
+	Validators: { Validator },
 }
 
 export type Character = typeof(setmetatable({} :: CharacterFields, {} :: CharacterImpl))
@@ -279,10 +279,10 @@ type AnyFunction = (...any) -> any
 export type WCS = {
 	CreateServer: () -> Server,
 	CreateClient: () -> Client,
-	CreateMoveset: (string, { SkillImpl }) -> Moveset,
-	RegisterStatusEffect: (string) -> StatusEffectImpl,
-	RegisterSkill: (string) -> SkillImpl,
-	RegisterHoldableSkill: (string) -> HoldableSkillImpl,
+	CreateMoveset: (string, { SkillImpl }, { SkillImpl: { any } }?) -> Moveset,
+	RegisterStatusEffect: (string, StatusEffectImpl?) -> StatusEffectImpl,
+	RegisterSkill: (string, SkillImpl?) -> SkillImpl,
+	RegisterHoldableSkill: (string, SkillImpl?) -> HoldableSkillImpl,
 	GetMovesetObjectByName: (string) -> Moveset?,
 	DefineMessage: (AnyFunction, MessageConfig) -> SkillImpl,
 	Character: CharacterImpl,
