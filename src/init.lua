@@ -287,7 +287,7 @@ export type WCS = {
 	RegisterSkill: (string, SkillImpl?) -> SkillImpl,
 	RegisterHoldableSkill: (string, SkillImpl?) -> HoldableSkillImpl,
 	GetMovesetObjectByName: (string) -> Moveset?,
-	DefineMessage: (AnyFunction, MessageConfig) -> SkillImpl,
+	DefineMessage: (AnyFunction, MessageConfig) -> (),
 	Character: CharacterImpl,
 	SkillType: SkillTypeEnum,
 }
