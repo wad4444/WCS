@@ -178,6 +178,7 @@ type SkillFields = {
 	Character: Character,
 	CheckOthersActive: boolean,
 	CheckedByOthers: boolean,
+	ParamValidators: {((any) -> boolean)}, -- don't know why, but `Validator` type throws a recursive generic error?? ❔❓
 }
 
 export type Skill = typeof(setmetatable({} :: SkillFields, {} :: SkillImpl))
