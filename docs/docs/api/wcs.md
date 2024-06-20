@@ -26,23 +26,35 @@ If called more than once returns the same [client](./client.md) object.
 **`Returns:`**
 * [Client](./client.md)
 
-## `RegisterStatusEffect(name)`
+## `RegisterStatusEffect(name, extendsFrom)`
 Registers a new [status effect](./statusEffect.md) with name specified in an argument.
 
 **`Parameters:`**
 * Name: `string`
+* ExtendsFrom: `StatusEffectImpl` 
 
 **`Returns:`**
 * [StatusEffect](./statusEffect.md)
 
-## `RegisterSkill(name)`
+## `RegisterSkill(name, extendsFrom)`
 Registers a new [skill](./skill.md) with name specified in an argument.
 
 **`Parameters:`**
 * Name: `string`
+* ExtendsFrom: `Skill` 
 
 **`Returns:`**
 * [Skill](./skill.md)
+
+## `RegisterHoldableSkill(name, extendsFrom)`
+Registers a new [holdable skill](../tutorial/skills/holdable.md) with name specified in an argument.
+
+**`Parameters:`**
+* Name: `string`
+* ExtendsFrom: `Skill` 
+
+**`Returns:`**
+* [Holdable Skill](../tutorial/skills/holdable.md)
 
 ## `DefineMessage(fn, config)`
 Registers a [message](../tutorial/messages/intro.md).
