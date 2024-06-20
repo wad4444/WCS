@@ -21,7 +21,7 @@
     "out",
     "!**/*.tsbuildinfo"
   ],
-  "author": "g1mmethemoney",
+  "author": "wad4444",
   "license": "MIT",
   "devDependencies": {
     "@rbxts/compiler-types": "^2.3.0-types.0",
@@ -39,7 +39,7 @@
     "typescript": "^5.2.2"
   },
   "types": "out/index.d.ts",
-  "repository": "https://github.com/g1mmethemoney/WCSTypescript",
+  "repository": "https://github.com/wad4444/WCS",
   "publishConfig": {
     "access": "public"
   },
