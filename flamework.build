@@ -62,7 +62,13 @@
 		"@rbxts/wcs:out/src/tests/skill.spec@yieldingSkill3": "@rbxts/wcs:src/tests/skill.spec@yieldingSkill3",
 		"@rbxts/wcs:out/src/tests/movesets.spec@someskill": "@rbxts/wcs:src/tests/movesets.spec@someskill",
 		"@rbxts/wcs:out/src/tests/movesets.spec@test_skill1": "@rbxts/wcs:src/tests/movesets.spec@test_skill1",
-		"@rbxts/wcs:out/src/tests/character.spec@propsChangingStatus": "@rbxts/wcs:src/tests/character.spec@propsChangingStatus"
+		"@rbxts/wcs:out/src/tests/character.spec@propsChangingStatus": "@rbxts/wcs:src/tests/character.spec@propsChangingStatus",
+		"@rbxts/wcs:out/tests/character.spec@propsChangingStatus": "@rbxts/wcs:tests/character.spec@propsChangingStatus",
+		"@rbxts/wcs:out/tests/movesets.spec@test_skill1": "@rbxts/wcs:tests/movesets.spec@test_skill1",
+		"@rbxts/wcs:out/tests/skill.spec@wrongSkill": "@rbxts/wcs:tests/skill.spec@wrongSkill",
+		"@rbxts/wcs:out/tests/skill.spec@sum_skill_b": "@rbxts/wcs:tests/skill.spec@sum_skill_b",
+		"@rbxts/wcs:out/tests/skill.spec@yieldingSkill3": "@rbxts/wcs:tests/skill.spec@yieldingSkill3",
+		"@rbxts/wcs:out/tests/statusEffect.spec@wrongStatus": "@rbxts/wcs:tests/statusEffect.spec@wrongStatus"
 	},
 	"metadata": {},
 	"identifierPrefix": "@rbxts/wcs"
