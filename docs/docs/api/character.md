@@ -45,6 +45,9 @@ Retrieves the character associated with the given instance.
 ### `Instance` **@readonly**
 An instance *Character* object is attached to.
 
+### `DisableSkills`
+A boolean value. Character's skills cannot be started if true.
+
 ### `Humanoid` **@readonly**
 A [Humanoid](https://create.roblox.com/docs/reference/engine/classes/Humanoid) associated with character's *instance*.
 
