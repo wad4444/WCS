@@ -272,6 +272,12 @@ Applies a [Moveset] to the character.
 * Moveset: `Moveset | string` - A [Moveset] object or it's name.
 
 ### `GetMoveset()`
+Returns the current [Moveset].
+
+**`Returns`**
+ * Moveset: `Moveset?`
+
+### `GetMovesetName()`
 Returns the current [Moveset]'s name.
 
 **`Returns`**
