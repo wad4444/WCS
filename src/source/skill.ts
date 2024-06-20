@@ -63,7 +63,7 @@ const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
 type ValidatorArray<T extends unknown[]> = T extends [infer First, ...infer Rest]
     ? readonly [t.check<First>, ...ValidatorArray<Rest>]
-    : [];
+    : readonly [];
 
 /** @hidden */
 export abstract class SkillBase<

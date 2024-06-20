@@ -8,7 +8,6 @@ import { ConvertArgs } from "./arg-converter";
 import { Flamework, Reflect } from "@flamework/core";
 import { ClientEvents, ClientFunctions, ServerEvents, ServerFunctions } from "./networking";
 import { messageSerializer } from "./serdes";
-import { NetworkingFunctionError } from "@flamework/networking";
 
 /**
  * @hidden
@@ -18,7 +17,7 @@ export interface MessageOptions<T extends "Event" | "Request" = "Event" | "Reque
     Destination: "Server" | "Client";
     Type: T;
     Validators?: t.check<any>[];
-    ValueValidator: T extends "Request" ? t.check<any> | undefined : void;
+    ValueValidator?: T extends "Request" ? t.check<any> : undefined;
 }
 
 export const INVALID_MESSAGE_STR = "__WCS_INVALID_MESSAGE";
@@ -92,10 +91,12 @@ export function Message<T extends MessageOptions>(Options: T) {
 
             if (Options.Type === "Event") {
                 if (RunService.IsServer()) {
-                    ServerEvents[`messageToClient${Options.Unreliable ? "_urel" : ""}`].fire(this.Player, serialized);
+                    const event = Options.Unreliable ? ServerEvents.messageToClient_urel : ServerEvents.messageToClient;
+                    event.fire(this.Player, serialized);
                     return;
                 } else if (RunService.IsClient()) {
-                    ClientEvents[`messageToServer${Options.Unreliable ? "_urel" : ""}`].fire(serialized);
+                    const event = Options.Unreliable ? ClientEvents.messageToServer_urel : ClientEvents.messageToServer;
+                    event.fire(serialized);
                     return;
                 }
                 return;
@@ -110,7 +111,7 @@ export function Message<T extends MessageOptions>(Options: T) {
 
             return new Promise<any>((resolve, reject) => {
                 promise.andThen(
-                    (value) =>
+                    (value: unknown) =>
                         value === INVALID_MESSAGE_STR || (Options.ValueValidator && !Options.ValueValidator(value))
                             ? reject("Arguments did not pass validation.")
                             : resolve(value),

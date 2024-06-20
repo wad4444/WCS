@@ -112,7 +112,7 @@ class Server {
             const skill = character.GetSkillFromString(SkillName);
             if (!skill) return;
 
-            Action === "Start" ? skill.Start(Params as never) : skill.End();
+            Action === "Start" ? skill.Start(...Params) : skill.End();
         });
 
         const eventHandler = (Player: Player, serialized: SerializedData) => {
