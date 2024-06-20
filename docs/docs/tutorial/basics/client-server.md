@@ -89,9 +89,9 @@ local WCS = require(ReplicatedStorage.WCS)
 
 local Client = WCS.CreateClient()
 
-Client:RegisterDirectory(ReplicatedStorage.TS.movesets)
-Client:RegisterDirectory(ReplicatedStorage.TS.skills)
-Client:RegisterDirectory(ReplicatedStorage.TS.statusEffects)
+Client:RegisterDirectory(ReplicatedStorage.movesets)
+Client:RegisterDirectory(ReplicatedStorage.skills)
+Client:RegisterDirectory(ReplicatedStorage.statusEffects)
 
 Client:Start()
 ```
