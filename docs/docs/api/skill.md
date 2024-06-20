@@ -44,6 +44,9 @@ A boolean value. Checks whenever other skills should be non active for :Start() 
 ### `CheckedByOthers`
 A boolean value. Determines if other skills should check if the skill is active to proceed.
 
+### `ParamValidators`
+An array of `Validator` functions that validate your starter params.
+
 ### `MutualExclusives`
 `Constructor<AnyStatus>[]`. An array of [Status Effect] constructors. If any of them is applied to [Character] object whenever `Start()` is called,
 it will not proceed further and skill will not be started.
