@@ -29,7 +29,7 @@ function DefineMessage(fn, options)
 		utility.logError("Provided function is not a valid skill method.")
 	end
 
-	message.Message(foundCtor, methodName, {
+	message.Message(options)(foundCtor, methodName, {
 		value = foundCtor[methodName],
 	})
 end
