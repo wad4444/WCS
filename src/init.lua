@@ -80,6 +80,8 @@ type StatusFields = {
 	Destroyed: ReadonlySignal<Callback>,
 	Started: ReadonlySignal<Callback>,
 	Ended: ReadonlySignal<Callback>,
+	Janitor: Janitor,
+	Player: Player?,
 	Character: Character,
 	DamageModificationPriority: number,
 
@@ -203,19 +205,7 @@ type AnyHoldableSkillImpl = SkillImpl & {
 	GetMaxHoldTime: (AnyHoldableSkill) -> number,
 }
 export type AnyHoldableSkill = typeof(setmetatable(
-	{} :: {
-		Janitor: Janitor,
-		Started: ReadonlySignal<Callback>,
-		Ended: ReadonlySignal<Callback>,
-		StateChanged: ReadonlySignal<(NewState: SkillState, OldState: SkillState) -> ()>,
-		Destroyed: ReadonlySignal<Callback>,
-		MutualExclusives: { Skill },
-		Requirements: { Skill },
-		Player: Player?,
-		Character: Character,
-		CheckOthersActive: boolean,
-		CheckedByOthers: boolean,
-	},
+	{} :: SkillFields,
 	{} :: AnyHoldableSkillImpl
 ))
 
