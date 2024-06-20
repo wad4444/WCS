@@ -106,6 +106,9 @@ Returns true if the skill is destroyed / removed from the [Character].
 ### `End()`
 Force end the skill. This is automatically called after OnStartServer() is completed.
 
+### `Stop()` @alias
+Ends the skill. Alias for `End()`.
+
 ### `GetSkillType()`
 Retrieves the skill type.
 

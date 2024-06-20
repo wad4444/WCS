@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
-import { RunService } from "@rbxts/services";
+import { Players, RunService } from "@rbxts/services";
 import {
     Constructor,
     ReadonlyDeep,
@@ -62,6 +62,7 @@ const nextId = createIdGenerator(0, isServerContext() ? 1 : -1);
  */
 export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[] = []> {
     private readonly janitor = new Janitor();
+    protected readonly Janitor = new Janitor();
 
     public readonly MetadataChanged = new Signal<
         (NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
@@ -73,6 +74,8 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public readonly Destroyed = new Signal();
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
+
+    public readonly Player?: Player;
 
     /**
      * A number value. Determines the position in which `HandleDamage()` is applied.
@@ -127,22 +130,21 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             );
         }
 
+        this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
+
         this.isReplicated = isClientContext() && tonumber(this.id)! > 0;
         this.ConstructorArguments = Args;
 
-        this.janitor.Add(
-            this.StateChanged.Connect((New, Old) =>
-                this.stateDependentCallbacks(New as internal_statusEffectState, Old as internal_statusEffectState),
-            ),
+        this.StateChanged.Connect((New, Old) =>
+            this.stateDependentCallbacks(New as internal_statusEffectState, Old as internal_statusEffectState),
         );
-        this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd && isServerContext() && this.Destroy()));
 
-        this.janitor.Add(
-            this.timer.completed.Connect(() => {
-                this.End();
-            }),
-            "Disconnect",
-        );
+        this.Ended.Connect(() => this.Janitor.Cleanup());
+        this.Ended.Connect(() => this.DestroyOnEnd && isServerContext() && this.Destroy());
+
+        this.timer.completed.Connect(() => {
+            this.End();
+        });
 
         this.janitor.Add(() => {
             this.StateChanged.Destroy();
@@ -151,6 +153,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             this.Destroyed.Destroy();
             this.Started.Destroy();
             this.Ended.Destroy();
+            this.timer.destroy();
         });
 
         Character._addStatus(this);
