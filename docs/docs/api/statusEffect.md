@@ -16,17 +16,17 @@ import TOCInline from "@theme/TOCInline";
 
 ## Fields
 
-### `Character` @readonly
+### `Character` **@readonly**
 A [Character] object this status effect is tied with.
 
-### `Janitor` @readonly
+### `Janitor` **@readonly**
 A [Janitor] object. Cleans up everything after skill ends.
 
-### `Player` @readonly
+### `Player` **@readonly**
 A [Player](https://create.roblox.com/docs/reference/engine/classes/Player) object the skill is associated with.
 Retrieved internally by `Players:GetPlayerFromCharacter(self.Character.Instance)`.
 
-### `ConstructorArguments` @readonly
+### `ConstructorArguments` **@readonly**
 A table of arguments provided after the [Character] in `.new()`.
 
 ### `DestroyOnEnd`

@@ -19,23 +19,23 @@ import TOCInline from "@theme/TOCInline";
 
 ## Fields
 
-### `Janitor` @readonly
+### `Janitor` **@readonly**
 A [Janitor] object. Cleans up everything after skill ends.
 
-### `CooldownTimer` @readonly
+### `CooldownTimer` **@readonly**
 A [Timer] object. Starts, when `ApplyCooldown()` gets invoked on server. Does not sync to client.
 
-### `Character` @readonly
+### `Character` **@readonly**
 A [Character] object this skill is tied with.
 
-### `Player` @readonly
+### `Player` **@readonly**
 A [Player](https://create.roblox.com/docs/reference/engine/classes/Player) object the skill is associated with.
 Retrieved internally by `Players:GetPlayerFromCharacter(self.Character.Instance)`.
 
-### `Name` @readonly
+### `Name` **@readonly**
 A string value.
 
-### `ConstructorArguments` @readonly
+### `ConstructorArguments` **@readonly**
 A table of arguments provided after the [Character] in `.new()`.
 
 ### `CheckOthersActive`

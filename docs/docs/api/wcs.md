@@ -63,7 +63,7 @@ Registers a [message](../tutorial/messages/intro.md).
 * Function: `function`
 * Config: `MessageConfig`
 
-## `Character` @readonly
+## `Character` **@readonly**
 An exported [character](./character.md) class.
 
 ## `CreateMoveset(name, skills, constructorArgs)`
