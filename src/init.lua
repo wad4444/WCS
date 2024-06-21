@@ -68,6 +68,7 @@ export type StatusEffectImpl = {
 	OnEndClient: (StatusEffect) -> (),
 	OnEndServer: (StatusEffect) -> (),
 	CreateDamageContainer: (StatusEffect, number) -> DamageContainer,
+	GetDebounceEndTimestamp: (StatusEffect) -> number,
 	GetModificationPriority: (StatusEffect) -> number,
 }
 
