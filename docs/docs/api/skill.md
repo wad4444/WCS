@@ -12,7 +12,6 @@ import TOCInline from "@theme/TOCInline";
 [Character]: ./character.md
 [Status Effect]: ./statusEffect.md
 [Metadata]: ../tutorial/extras/metadata.md
-[Message]: ../tutorial/skills/messages.md
 [Janitor]: https://howmanysmall.github.io/Janitor/
 
 <TOCInline toc={toc} />
@@ -166,18 +165,6 @@ Applies a cooldown to the skill. Works only on server.
 **`Returns:`**
 * boolean
 
-### `SendMessageToClient(message)`
-Sends a [Message] from server to client.
-
-**`Parameters:`**
-* Message: `ServerToClientMessage` - a generic type.
-
-### `SendMessageToServer(message)`
-Sends a [Message] from client to server.
-
-**`Parameters:`**
-* Message: `ClientToServerMessage` - a generic type.
-
 ### `OnConstruct(...args)` @override
 Called after class gets instantiated (both client and server).
 
@@ -221,19 +208,3 @@ Called whenever skill ends on server.
 
 ### `OnEndClient()` @override
 Called whenever skill ends on client.
-
-### `HandleClientMessage(message)` @override
-Called whenever server when a message from client was received.
-
-**`Parameters:`**
-* Message: `ClientToServerMessage` - a generic type.
-
-:::danger
-**Always** validate client messages with *sensitive data*.
-:::
-
-### `HandleServerMessage(message)` @override
-Called whenever client when a message from server was received.
-
-**`Parameters:`**
-* Message: `ServerToClientMessage` - a generic type.
