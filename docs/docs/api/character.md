@@ -43,8 +43,10 @@ Retrieves the character associated with the given instance.
 ## Fields
 
 ### `Instance` **@readonly**
-
 An instance *Character* object is attached to.
+
+### `DisableSkills`
+A boolean value. Character's skills cannot be started if true.
 
 ### `Humanoid` **@readonly**
 A [Humanoid](https://create.roblox.com/docs/reference/engine/classes/Humanoid) associated with character's *instance*.
@@ -66,6 +68,18 @@ Retrieved internally by `Players:GetPlayerFromCharacter(self.Instance)`.
 **`Parameters:`**
 * Skill: `Skill` - [A skill](./skill.md) that got removed.
 
+### `SkillStarted`
+**An event**. Gets fired when [a skill](./skill.md) that is assigned to the character starts.
+
+**`Parameters:`**
+* Skill: `Skill` - [A skill](./skill.md) that got started.
+
+### `SkillEnded`
+**An event**. Gets fired when [a skill](./skill.md) that is assigned to the character ends.
+
+**`Parameters:`**
+* Skill: `Skill` - [A skill](./skill.md) that got ended.
+
 ### `StatusEffectAdded`
 **An event**. Gets fired when [a status effect](./statusEffect.md) gets added to the character.
 
@@ -77,6 +91,18 @@ Gets fired when [a status effect](./statusEffect.md) gets removed from the chara
 
 **`Parameters:`**
 * Status: `StatusEffect` - [A status effect](./skill.md) that got removed.
+
+### `StatusEffectStarted`
+**An event**. Gets fired when [a status effect](./statusEffect.md) that is assigned to the character starts.
+
+**`Parameters:`**
+* Status: `StatusEffect` - [A status effect](./skill.md) that got started.
+
+### `StatusEffectEnded`
+Gets fired when [a status effect](./statusEffect.md) that is assigned to the character ends.
+
+**`Parameters:`**
+* Status: `StatusEffect` - [A status effect](./skill.md) that got ended.
 
 ### `HumanoidPropertiesUpdated`
 Gets fired when character's [humanoid data](../tutorial/statuses/humanoid-data.md) gets updated.
@@ -150,7 +176,7 @@ Returns the calculated damage.
 Sets default humanoid properties of the character.
 
 **`Parameters:`**
-* Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and it's `Value`.
+* Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and its `Value`.
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
@@ -177,7 +203,13 @@ Char:SetDefaultProps({
 Retrieves the default humanoid properties of the character.
 
 **`Returns`**
- * Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and it's `Value`.
+ * Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and its `Value`.
+
+### `GetAppliedProps()`
+Retrieves the currently applied humanoid properties, depending on current `HumanoidData`.
+
+**`Returns`**
+ * Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and its `Value`.
 
 ### `GetAllStatusEffect()`
 Retrieves all status effects.
@@ -243,6 +275,12 @@ Applies a [Moveset] to the character.
 * Moveset: `Moveset | string` - A [Moveset] object or it's name.
 
 ### `GetMoveset()`
+Returns the current [Moveset].
+
+**`Returns`**
+ * Moveset: `Moveset?`
+
+### `GetMovesetName()`
 Returns the current [Moveset]'s name.
 
 **`Returns`**

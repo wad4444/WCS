@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/wcs",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "WCS is an extensible framework that allows you create fully customizable combat systems easily by providing useful abstraction",
   "main": "out/init.lua",
   "scripts": {
@@ -21,28 +21,32 @@
     "out",
     "!**/*.tsbuildinfo"
   ],
-  "author": "g1mmethemoney",
+  "author": "wad4444",
   "license": "MIT",
   "devDependencies": {
     "@rbxts/compiler-types": "^2.3.0-types.0",
-    "@rbxts/types": "^1.0.754",
+    "@rbxts/types": "^1.0.783",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-roblox-ts": "^0.0.36",
-    "prettier": "^3.1.0",
+    "prettier": "^3.3.2",
+    "rbxts-transformer-flamework": "^1.2.2",
     "rbxts-transformer-private": "^1.0.1",
     "roblox-ts": "^2.3.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.2.2"
   },
   "types": "out/index.d.ts",
-  "repository": "https://github.com/g1mmethemoney/WCSTypescript",
+  "repository": "https://github.com/wad4444/WCS",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
+    "@flamework/core": "^1.2.2",
+    "@flamework/networking": "^1.2.2",
+    "@rbxts/flamework-binary-serializer": "^0.6.0",
     "@rbxts/immut": "^0.4.4-ts.0",
     "@rbxts/janitor": "^1.15.4-ts.0",
     "@rbxts/reflex": "^4.3.1",

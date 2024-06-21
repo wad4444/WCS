@@ -19,103 +19,64 @@ If called more than once returns the same [server](./server.md) object.
 **`Returns:`**
 * [Server](./server.md)
 
-<Tabs groupId="languages">
-<TabItem value="TypeScript" default>
-
-```ts
-const Server = CreateServer();
-```
-
-</TabItem>
-<TabItem value="Luau">
-
-```lua
-local Server = WCS.CreateServer()
-```
-
-</TabItem>
-</Tabs>
-
 ## `CreateClient()`
 Creates a [Client](./client.md) object and returns it.
 If called more than once returns the same [client](./client.md) object.
 
-<Tabs groupId="languages">
-<TabItem value="TypeScript" default>
-
-```ts
-const Client = CreateClient();
-```
-
-</TabItem>
-<TabItem value="Luau">
-
-```lua
-local Client = WCS.CreateClient()
-```
-
-</TabItem>
-</Tabs>
-
 **`Returns:`**
 * [Client](./client.md)
 
-## `RegisterStatusEffect(name)`
+## `RegisterStatusEffect(name, extendsFrom)`
 Registers a new [status effect](./statusEffect.md) with name specified in an argument.
 
 **`Parameters:`**
 * Name: `string`
+* ExtendsFrom: `StatusEffectImpl` 
 
 **`Returns:`**
 * [StatusEffect](./statusEffect.md)
 
-```lua
-local SpeedBoost = WCS.RegisteredStatusEffect("SpeedBoost")
-```
-
-## `RegisterSkill(name)`
+## `RegisterSkill(name, extendsFrom)`
 Registers a new [skill](./skill.md) with name specified in an argument.
 
 **`Parameters:`**
 * Name: `string`
+* ExtendsFrom: `Skill` 
 
 **`Returns:`**
 * [Skill](./skill.md)
 
-```lua
-local Attack = WCS.RegisterSkill("Attack")
-```
+## `RegisterHoldableSkill(name, extendsFrom)`
+Registers a new [holdable skill](../tutorial/skills/holdable.md) with name specified in an argument.
 
-## `Character`
-An exported [character](./character.md) class. Cannot be changed.
+**`Parameters:`**
+* Name: `string`
+* ExtendsFrom: `Skill` 
 
-## `CreateMoveset(name, skills)`
+**`Returns:`**
+* [Holdable Skill](../tutorial/skills/holdable.md)
+
+## `DefineMessage(fn, config)`
+Registers a [message](../tutorial/messages/intro.md).
+
+**`Parameters:`**
+* Function: `function`
+* Config: `MessageConfig`
+
+## `Character` **@readonly**
+An exported [character](./character.md) class.
+
+## `CreateMoveset(name, skills, constructorArgs)`
 Creates a [Moveset] object and returns it.
 Accepts the name and array of skills.
 
 **`Parameters:`**
 * Name: `string`
 * Skills: ```{AnySkillConstructor}```
+* ConstructorArguments: ```{[string | SkillImpl]: any[]}``` - an object that contains array of `ConstructorArguments` that skill should get instantiated with.
 
 **`Returns:`**
 * [Moveset]
-
-<Tabs groupId="languages">
-<TabItem value="TypeScript" default>
-
-```ts
-const Moveset = CreateMoveset("Mage", [Attack]);
-```
-
-</TabItem>
-<TabItem value="Luau">
-
-```lua
-local Client = WCS.CreateMoveset("Mage", {Attack})
-```
-
-</TabItem>
-</Tabs>
 
 ## `GetMovesetObjectByName(name)`
 Retrieves [Moveset] object by its name if registered.
@@ -126,26 +87,8 @@ Retrieves [Moveset] object by its name if registered.
 **`Returns:`**
 * Moveset: [`Moveset?`](../tutorial/extras/movesets.md)
 
-<Tabs groupId="languages">
-<TabItem value="TypeScript" default>
-
-```ts
-const Moveset = GetMovesetObjectByName("Mage");
-```
-
-</TabItem>
-<TabItem value="Luau">
-
-```lua
-local Moveset = WCS.GetMovesetObjectByName("Mage")
-```
-
-</TabItem>
-</Tabs>
-
 ## `SkillType`
 An exported skill type enum.
-
 
 `Members:`
 ```

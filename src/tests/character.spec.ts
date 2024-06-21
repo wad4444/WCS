@@ -79,6 +79,28 @@ export = function () {
             char.SetDefaultProps(props);
             expect(shallowEqual(char.GetDefaultProps(), props)).to.be.equal(true);
         });
+
+        it("should calculate props", () => {
+            @StatusEffectDecorator
+            class propsChangingStatus extends StatusEffect {
+                protected OnConstructServer(): void {
+                    this.SetHumanoidData({
+                        WalkSpeed: [0, "Set"],
+                    });
+                }
+            }
+
+            const char = makeChar();
+            const status = new propsChangingStatus(char);
+            status.Start();
+            RunService.Heartbeat.Wait();
+
+            expect(char.GetAppliedProps().WalkSpeed).to.be.equal(0);
+            status.Destroy();
+
+            RunService.Heartbeat.Wait();
+            expect(char.GetAppliedProps().WalkSpeed).to.be.equal(16);
+        });
     });
 
     describe("skills", () => {
@@ -96,15 +118,18 @@ export = function () {
             const char = makeChar();
             let changed = 0;
 
-            janitor.Add(char.SkillAdded.Connect(() => changed++));
-            janitor.Add(char.SkillRemoved.Connect(() => changed++));
+            char.SkillAdded.Connect(() => changed++);
+            char.SkillRemoved.Connect(() => changed++);
+            char.SkillStarted.Connect(() => changed++);
+            char.SkillEnded.Connect(() => changed++);
 
             const x = new someSkill(char);
+            x.Start();
             RunService.Heartbeat.Wait();
             x.Destroy();
             RunService.Heartbeat.Wait();
 
-            expect(changed).to.be.equal(2);
+            expect(changed).to.be.equal(4);
         });
 
         it("should remove skills", () => {
@@ -142,15 +167,21 @@ export = function () {
             const char = makeChar();
             let changed = 0;
 
-            janitor.Add(char.StatusEffectAdded.Connect(() => changed++));
-            janitor.Add(char.StatusEffectRemoved.Connect(() => changed++));
+            char.StatusEffectAdded.Connect(() => changed++);
+            char.StatusEffectRemoved.Connect(() => changed++);
+
+            char.StatusEffectStarted.Connect(() => changed++);
+            char.StatusEffectEnded.Connect(() => changed++);
 
             const x = new someStatus(char);
+            x.Start();
+
+            RunService.Heartbeat.Wait();
+            x.End();
             RunService.Heartbeat.Wait();
             x.Destroy();
-            RunService.Heartbeat.Wait();
 
-            expect(changed).to.be.equal(2);
+            expect(changed).to.be.equal(4);
         });
 
         it("should remove a status", () => {

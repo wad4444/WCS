@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { t } from "@rbxts/t";
 import { AnySkill, Skill, SkillBase, UnknownSkill } from "./skill";
 import { Constructor, freezeCheck, instanceofConstructor, logError } from "./utility";
@@ -5,14 +6,18 @@ import { Constructor, freezeCheck, instanceofConstructor, logError } from "./uti
 export interface Moveset {
     readonly Name: string;
     readonly Skills: Constructor<UnknownSkill>[];
+    readonly ConstructorParams?: Record<string, any[] | undefined> | Map<Constructor<AnySkill>, any[]>;
 }
 
 const registeredMovesets = new Map<string, Moveset>();
-
 /**
  * Creates a moveset with the given name and skills.
  */
-export function CreateMoveset(Name: string, Skills: Constructor<AnySkill>[]): Moveset {
+export function CreateMoveset(
+    Name: string,
+    Skills: Constructor<AnySkill>[],
+    ConstructorParams?: Record<string, any[] | undefined> | Map<Constructor<AnySkill>, any[]>,
+): Moveset {
     if (registeredMovesets.has(Name)) {
         logError(`StatusEffect with name ${Name} was already registered before`);
     }
@@ -27,6 +32,7 @@ export function CreateMoveset(Name: string, Skills: Constructor<AnySkill>[]): Mo
     const moveset = {
         Name: Name,
         Skills: Skills,
+        ConstructorParams: ConstructorParams,
     } as const;
 
     registeredMovesets.set(Name, moveset);

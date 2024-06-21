@@ -6,6 +6,7 @@ import { Flags } from "./flags";
 import {
     Constructor,
     ReadonlyDeep,
+    createIdGenerator,
     freezeCheck,
     getActiveHandler,
     isClientContext,
@@ -15,18 +16,19 @@ import {
 } from "./utility";
 import { Janitor } from "@rbxts/janitor";
 import { SelectSkillData } from "state/selectors";
-import { remotes } from "./remotes";
+import { ClientEvents } from "./networking";
 import { rootProducer } from "state/rootProducer";
 import { AnyStatus } from "./statusEffect";
 import Signal from "@rbxts/signal";
 import { Timer, TimerState } from "@rbxts/timer";
 import { t } from "@rbxts/t";
+import { skillRequestSerializer } from "./serdes";
 
 export interface SkillState {
     IsActive: boolean;
     Debounce: boolean;
     MaxHoldTime?: number;
-    StarterParams?: unknown;
+    StarterParams: unknown[];
 }
 
 export enum SkillType {
@@ -40,7 +42,7 @@ export interface SkillProps {
     Flag: (typeof Flags)["CanInstantiateSkillClient"];
 }
 
-/** @internal @hidden */
+/** @hidden */
 export interface _internal_SkillState extends SkillState {
     _timerEndTimestamp?: number;
     _isActive_counter: number;
@@ -53,21 +55,27 @@ export interface SkillData {
     constructorArguments: unknown[];
     metadata: unknown;
 }
-export type AnySkill = SkillBase<any, any[], any, any, any>;
-export type UnknownSkill = SkillBase<unknown[], unknown[], unknown, unknown, unknown>;
+export type AnySkill = SkillBase<any, any[], any>;
+export type UnknownSkill = SkillBase<unknown[], unknown[], unknown>;
 
+const nextId = createIdGenerator();
 const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
-/** @hidden @internal */
+type ValidatorArray<T extends unknown[]> = T extends [infer First, ...infer Rest]
+    ? readonly [t.check<First>, ...ValidatorArray<Rest>]
+    : readonly [];
+
+/** @hidden */
 export abstract class SkillBase<
     StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
-    ServerToClientMessage = void,
-    ClientToServerMessage = void,
 > {
     /** @internal @hidden */
     protected readonly _janitor = new Janitor();
+
+    /**@internal @hidden */
+    public readonly _id = nextId();
     /**
      * A Janitor object. Cleans up everything after skill ends.
      */
@@ -118,6 +126,8 @@ export abstract class SkillBase<
     /** Checks whenever the start function should check if the skill is active/on cooldown on client side before firing a remote. */
     protected CheckClientState = true;
 
+    protected readonly ParamValidators?: ValidatorArray<StarterParams>;
+
     /**
      * A Player object the skill is associated with. Retrieved internally by Players:GetPlayerFromCharacter(self.Character.Instance).
      */
@@ -129,6 +139,7 @@ export abstract class SkillBase<
         _isActive_counter: 0,
         IsActive: false,
         Debounce: false,
+        StarterParams: [],
     };
     private destroyed = false;
     private metadata?: Metadata;
@@ -161,33 +172,16 @@ export abstract class SkillBase<
             logError(`Attempted to instantiate a skill before server has started.`);
         }
 
+        if (!registeredSkills.has(tostring(getmetatable(this)))) {
+            logError(`${tostring(getmetatable(this))} is not a valid skill. Did you forget to apply a decorator?`);
+        }
+
         if (isClientContext() && Flag !== Flags.CanInstantiateSkillClient) {
             logError(`Attempted to instantiate a skill on client`);
         }
 
         this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
         this.ConstructorArguments = Args;
-
-        if (isServerContext()) {
-            this._janitor.Add(
-                remotes._messageToServer.connect((Player, CharacterId, SkillName, Message) => {
-                    if (Player !== this.Player) return;
-                    if (SkillName !== this.Name) return;
-                    if (CharacterId !== this.Character.GetId()) return;
-
-                    this.HandleClientMessage(Message as ClientToServerMessage);
-                }),
-            );
-        } else {
-            this._janitor.Add(
-                remotes._messageToClient.connect((CharacterId, SkillName, Message) => {
-                    if (SkillName !== this.Name) return;
-                    if (CharacterId !== this.Character.GetId()) return;
-
-                    this.HandleServerMessage(Message as ServerToClientMessage);
-                }),
-            );
-        }
 
         this.CooldownTimer.completed.Connect(() => {
             if (!this.GetState().Debounce) return;
@@ -233,13 +227,18 @@ export abstract class SkillBase<
      * Client: Sends a request to server that will call :Start() on server
      */
     public Start(...params: StarterParams) {
+        if (this.Character.DisableSkills) return;
+
         const state = this.GetState();
         if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
         if (isClientContext()) {
-            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "Start", params);
+            const serialized = skillRequestSerializer.serialize([this.Character.GetId(), this.Name, "Start", params]);
+            ClientEvents.requestSkill.fire(serialized);
             return;
         }
+
+        if (this.ParamValidators && !t.strictArray(...this.ParamValidators)(params)) return;
 
         for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
             if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).isEmpty()) return;
@@ -275,14 +274,21 @@ export abstract class SkillBase<
      */
     public End() {
         if (isClientContext()) {
-            remotes._requestSkill.fire(this.Character.GetId(), this.Name, "End", []);
+            const serialized = skillRequestSerializer.serialize([this.Character.GetId(), this.Name, "End", []]);
+            ClientEvents.requestSkill.fire(serialized);
+
             return;
         }
 
         this._setState({
             IsActive: false,
-            StarterParams: undefined,
+            StarterParams: [],
         });
+    }
+
+    /** Alias for End() */
+    public Stop() {
+        this.End();
     }
 
     /** Retrieves the skill type */
@@ -297,7 +303,7 @@ export abstract class SkillBase<
         this._setState({
             IsActive: false,
             Debounce: false,
-            StarterParams: undefined,
+            StarterParams: [],
         });
 
         if (isServerContext()) {
@@ -328,6 +334,7 @@ export abstract class SkillBase<
         }
         if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
             this.Started.Fire();
+
             const thread = task.spawn(() => this.OnStartClient(...(State.StarterParams as StarterParams)));
             task.cancel(thread);
 
@@ -361,9 +368,7 @@ export abstract class SkillBase<
      */
     protected ClearMetadata() {
         if (this.isReplicated) {
-            logError(
-                `Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
-            );
+            logError(`Cannot :ClearMetadata() of skill on client! \n This can lead to a possible desync`);
         }
 
         this.MetadataChanged.Fire(undefined, this.metadata);
@@ -382,9 +387,7 @@ export abstract class SkillBase<
      */
     protected SetMetadata(NewMeta: Metadata) {
         if (this.isReplicated) {
-            logError(
-                `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
-            );
+            logError(`Cannot :SetMetadata() of skill on client! \n This can lead to a possible desync`);
         }
         if (t.table(NewMeta)) freezeCheck(NewMeta);
 
@@ -452,7 +455,7 @@ export abstract class SkillBase<
             ...this.state,
             ...Patch,
         };
-        if (Patch.IsActive !== undefined) newState._isActive_counter++;
+        if (Patch.IsActive !== undefined && this.state.IsActive !== Patch.IsActive) newState._isActive_counter++;
 
         const oldState = this.state;
 
@@ -504,34 +507,6 @@ export abstract class SkillBase<
         rootProducer.subscribe(dataSelector, (...args: [SkillData?, SkillData?]) => this._processDataUpdate(...args));
     }
 
-    /**
-     * Sends a Message from server to client.
-     */
-    protected SendMessageToClient(Message: ServerToClientMessage) {
-        if (!this.Player) return;
-
-        if (!isServerContext()) {
-            logWarning(`Tried to send a message from client to client`);
-            return;
-        }
-
-        remotes._messageToClient.fire(this.Player, this.Character.GetId(), this.Name, Message);
-    }
-
-    /**
-     * Sends a Message from client to server.
-     */
-    protected SendMessageToServer(Message: ClientToServerMessage) {
-        if (!this.Player) return;
-
-        if (!isClientContext()) {
-            logWarning(`Tried to send a message from server to server`);
-            return;
-        }
-
-        remotes._messageToServer.fire(this.Character.GetId(), this.Name, Message);
-    }
-
     private packData(): SkillData {
         return {
             state: this.state,
@@ -551,10 +526,6 @@ export abstract class SkillBase<
     /** Called whenever skill starts on the client. Accepts an argument passed to Start(). */
     protected OnStartClient(...Params: StarterParams) {}
     /** Called whenever server when a message from client was received. */
-    protected HandleClientMessage(Message: ClientToServerMessage) {}
-    /** Called whenever client when a message from server was received. */
-    protected HandleServerMessage(Message: ServerToClientMessage) {}
-    /** Called whenever skill ends on server. */
     protected OnEndClient() {}
     /** Called whenever skill ends on client. */
     protected OnEndServer() {}
@@ -565,9 +536,7 @@ export abstract class Skill<
     StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
-    ServerToClientMessage = void,
-    ClientToServerMessage = void,
-> extends SkillBase<StarterParams, ConstructorArguments, Metadata, ServerToClientMessage, ClientToServerMessage> {
+> extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
     constructor(Character: Character, ...Args: ConstructorArguments) {
         super(Character, ...Args);
         this._init();
@@ -591,4 +560,12 @@ export function SkillDecorator<T extends Constructor<AnySkill>>(Constructor: T) 
  */
 export function GetRegisteredSkillConstructor(Name: string) {
     return registeredSkills.get(Name);
+}
+
+/**
+ * @internal
+ * @hidden
+ */
+export function GetRegisteredSkills() {
+    return table.freeze(table.clone(registeredSkills)) as ReadonlyMap<string, Constructor<UnknownSkill>>;
 }

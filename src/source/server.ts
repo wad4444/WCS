@@ -1,14 +1,21 @@
+/* eslint-disable roblox-ts/no-array-pairs */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { isClientContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { remotes } from "./remotes";
+import { ServerEvents, ServerFunctions } from "./networking";
 import { slices } from "state/slices";
 import { rootProducer } from "state/rootProducer";
 import { Character } from "./character";
 import { SelectCharacterData } from "state/selectors";
 import Immut from "@rbxts/immut";
+import { SerializedData, dispatchSerializer, messageSerializer, skillRequestSerializer } from "./serdes";
+import { RestoreArgs } from "./arg-converter";
+import { UnknownSkill } from "./skill";
+import { Reflect } from "@flamework/core";
+import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -24,7 +31,8 @@ class Server {
         this.broadcaster = createBroadcaster({
             producers: slices,
             dispatch: (Player, Actions) => {
-                remotes._dispatch.fire(Player, Actions);
+                const serialized = dispatchSerializer.serialize(Actions);
+                ServerEvents.dispatch.fire(Player, serialized);
             },
             beforeHydrate: (Player, State) => {
                 return Immut.produce(State, (Draft) => {
@@ -47,8 +55,9 @@ class Server {
                 return Action;
             },
         });
+
         rootProducer.applyMiddleware(this.broadcaster.middleware);
-        remotes._start.connect((Player) => this.broadcaster.start(Player));
+        ServerEvents.start.connect((Player) => this.broadcaster.start(Player));
     }
 
     /** @internal @hidden */
@@ -89,7 +98,11 @@ class Server {
         this.registeredModules.forEach((v) => require(v));
         table.clear(this.registeredModules);
 
-        remotes._requestSkill.connect((Player, CharacterId, SkillName, Action, Params) => {
+        ServerEvents.requestSkill.connect((Player, serialized) => {
+            const [CharacterId, SkillName, Action, Params] = skillRequestSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
             const characterData = SelectCharacterData(CharacterId)(rootProducer.getState());
             if (!characterData) return;
 
@@ -99,7 +112,64 @@ class Server {
             const skill = character.GetSkillFromString(SkillName);
             if (!skill) return;
 
-            Action === "Start" ? skill.Start(Params as never) : skill.End();
+            Action === "Start" ? skill.Start(...Params) : skill.End();
+        });
+
+        const eventHandler = (Player: Player, serialized: SerializedData) => {
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character || character.Player !== Player) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const args = RestoreArgs(PackedArgs);
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args)) return;
+            }
+
+            const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
+            method(skill, ...args);
+        };
+        ServerEvents.messageToServer.connect(eventHandler);
+        ServerEvents.messageToServer_urel.connect(eventHandler);
+
+        ServerFunctions.messageToServer.setCallback((Player, serialized) => {
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character || character.Player !== Player) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const args = RestoreArgs(PackedArgs);
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args)) return INVALID_MESSAGE_STR;
+            }
+
+            const method = skill[MethodName as never] as (
+                self: UnknownSkill,
+                ...args: unknown[]
+            ) => Promise<unknown> | unknown;
+            const returnedValue = method(skill, ...args);
+            if (Promise.is(returnedValue)) {
+                const [_, value] = returnedValue.await();
+                return value;
+            }
+
+            return returnedValue;
         });
 
         setActiveHandler(this);

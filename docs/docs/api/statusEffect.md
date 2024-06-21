@@ -12,13 +12,21 @@ import TOCInline from "@theme/TOCInline";
 [Character]: ../api/character.md
 [Timer]: https://www.npmjs.com/package/@rbxts/timer
 [Metadata]: ../tutorial/extras/metadata.md
+[Janitor]: https://howmanysmall.github.io/Janitor/
 
 ## Fields
 
-### `Character` @readonly
+### `Character` **@readonly**
 A [Character] object this status effect is tied with.
 
-### `ConstructorArguments` @readonly
+### `Janitor` **@readonly**
+A [Janitor] object. Cleans up everything after skill ends.
+
+### `Player` **@readonly**
+A [Player](https://create.roblox.com/docs/reference/engine/classes/Player) object the skill is associated with.
+Retrieved internally by `Players:GetPlayerFromCharacter(self.Character.Instance)`.
+
+### `ConstructorArguments` **@readonly**
 A table of arguments provided after the [Character] in `.new()`.
 
 ### `DestroyOnEnd`
@@ -76,11 +84,11 @@ Starts the status effect.
 **`Parameters:`**
 * Time: `number?`
 
-### `Stop()`
-Stops the status effect.
+### `End()` 
+Ends the status effect. 
 
-### `End()` @alias
-Stops the status effect. Alias for `Stop()`.
+### `Stop()` @alias
+Ends the status effect. Alias for `End()`.
 
 ### `Pause()`
 Pauses the internal status effect [Timer].

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
-import { RunService } from "@rbxts/services";
+import { Players, RunService } from "@rbxts/services";
 import {
     Constructor,
     ReadonlyDeep,
@@ -11,6 +11,7 @@ import {
     logError,
     logWarning,
     isClientContext,
+    createIdGenerator,
 } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
@@ -54,17 +55,14 @@ export type AnyStatus = StatusEffect<any, any[]>;
 export type UnknownStatus = StatusEffect<unknown, unknown[]>;
 
 const registeredStatuses: Map<string, StatusEffectConstructor> = new Map();
-let nextId = 0;
-function generateId() {
-    nextId += isServerContext() ? 1 : -1;
-    return tostring(nextId);
-}
+const nextId = createIdGenerator(0, isServerContext() ? 1 : -1);
 
 /**
  * A status effect class.
  */
 export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[] = []> {
     private readonly janitor = new Janitor();
+    protected readonly Janitor = new Janitor();
 
     public readonly MetadataChanged = new Signal<
         (NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
@@ -76,6 +74,8 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public readonly Destroyed = new Signal();
     public readonly Started = new Signal();
     public readonly Ended = new Signal();
+
+    public readonly Player?: Player;
 
     /**
      * A number value. Determines the position in which `HandleDamage()` is applied.
@@ -92,6 +92,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     };
     private metadata?: Metadata;
     private humanoidData?: HumanoidData;
+    private executionThread?: thread;
 
     private isDestroyed = false;
     private readonly timer = new Timer(1);
@@ -112,7 +113,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
                 ? (Props as StatusEffectProps)
                 : { Character: Props as Character, Flag: undefined };
 
-        this.id = Flag && Flag.flag === Flags.CanAssignCustomId ? Flag.data : generateId();
+        this.id = Flag && Flag.flag === Flags.CanAssignCustomId ? Flag.data : tostring(nextId());
         this.Character = Character;
 
         if (!this.Character || tostring(getmetatable(this.Character)) !== "Character") {
@@ -123,22 +124,27 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             logError(`Attempted to instantiate a character before server has started.`);
         }
 
+        if (!registeredStatuses.has(tostring(getmetatable(this)))) {
+            logError(
+                `${tostring(getmetatable(this))} is not a valid status effect. Did you forget to apply a decorator?`,
+            );
+        }
+
+        this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
+
         this.isReplicated = isClientContext() && tonumber(this.id)! > 0;
         this.ConstructorArguments = Args;
 
-        this.janitor.Add(
-            this.StateChanged.Connect((New, Old) =>
-                this.stateDependentCallbacks(New as internal_statusEffectState, Old as internal_statusEffectState),
-            ),
+        this.StateChanged.Connect((New, Old) =>
+            this.stateDependentCallbacks(New as internal_statusEffectState, Old as internal_statusEffectState),
         );
-        this.janitor.Add(this.Ended.Connect(() => this.DestroyOnEnd && isServerContext() && this.Destroy()));
 
-        this.janitor.Add(
-            this.timer.completed.Connect(() => {
-                this.End();
-            }),
-            "Disconnect",
-        );
+        this.Ended.Connect(() => this.Janitor.Cleanup());
+        this.Ended.Connect(() => this.DestroyOnEnd && isServerContext() && this.Destroy());
+
+        this.timer.completed.Connect(() => {
+            this.End();
+        });
 
         this.janitor.Add(() => {
             this.StateChanged.Destroy();
@@ -147,6 +153,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             this.Destroyed.Destroy();
             this.Started.Destroy();
             this.Ended.Destroy();
+            this.timer.destroy();
         });
 
         Character._addStatus(this);
@@ -184,10 +191,10 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /**
-     * Stops the status effect.
+     * Ends the status effect.
      */
-    public End() {
-        this.Stop();
+    public Stop() {
+        this.End();
     }
 
     /**
@@ -219,9 +226,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     /**
-     * Stops the status effect.
+     * Ends the status effect.
      */
-    public Stop() {
+    public End() {
         if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (!this.GetState().IsActive) {
@@ -441,17 +448,23 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     private stateDependentCallbacks(State: internal_statusEffectState, PreviousState: internal_statusEffectState) {
         if (PreviousState.IsActive === State.IsActive) return;
         if (!PreviousState.IsActive && State.IsActive) {
-            isClientContext() ? this.OnStartClient() : this.OnStartServer();
             this.Started.Fire();
-            isServerContext() ?? this.OnEndServer();
+            this.executionThread = task.spawn(() => {
+                isClientContext() ? this.OnStartClient() : this.OnStartServer();
+                this.executionThread = undefined;
+            });
         } else if (PreviousState.IsActive && !State.IsActive) {
+            if (this.executionThread) task.cancel(this.executionThread);
             isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
 
         if (PreviousState.IsActive === this.state.IsActive && this.isReplicated) {
-            this.OnStartClient();
             this.Started.Fire();
+
+            const thread = task.spawn(() => this.OnStartClient());
+            task.cancel(thread);
+
             this.OnEndClient();
             this.Ended.Fire();
         }

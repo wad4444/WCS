@@ -1,6 +1,8 @@
-import { Players, RunService } from "@rbxts/services";
+/* eslint-disable roblox-ts/no-array-pairs */
+import { Players } from "@rbxts/services";
 import {
     Constructor,
+    GetParamsFromMoveset,
     getActiveHandler,
     isClientContext,
     isServerContext,
@@ -21,7 +23,7 @@ import { FlagWithData, Flags } from "./flags";
 import { AnySkill, GetRegisteredSkillConstructor, SkillData, UnknownSkill } from "./skill";
 import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
-import { remotes } from "./remotes";
+import { ServerEvents } from "./networking";
 import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
 
@@ -62,6 +64,12 @@ export class Character {
 
     public readonly StatusEffectAdded = new Signal<(Status: UnknownStatus) => void>();
     public readonly StatusEffectRemoved = new Signal<(Status: UnknownStatus) => void>();
+
+    public readonly SkillStarted = new Signal<(Status: UnknownSkill) => void>();
+    public readonly SkillEnded = new Signal<(Status: UnknownSkill) => void>();
+
+    public readonly StatusEffectStarted = new Signal<(Status: UnknownStatus) => void>();
+    public readonly StatusEffectEnded = new Signal<(Status: UnknownStatus) => void>();
     /**
      * Fires only on client if the character belongs to a player
      */
@@ -74,6 +82,8 @@ export class Character {
      * Enemy will always be nil on client
      */
     public readonly DamageDealt = new Signal<(Enemy: Character | undefined, Container: DamageContainer) => void>();
+
+    public DisableSkills = false;
 
     public readonly Destroyed = new Signal();
     public readonly MovesetChanged = new Signal<
@@ -88,6 +98,7 @@ export class Character {
         AutoRotate: true,
         JumpHeight: 7.2,
     };
+    private currentlyAppliedProps = this.GetDefaultProps();
     private id;
     private moveset?: string;
     private destroyed = false;
@@ -116,7 +127,6 @@ export class Character {
         const humanoid = Instance.FindFirstChildOfClass("Humanoid");
         if (!humanoid) {
             logError(`Attempted to instantiate a character over an instance without humanoid.`);
-            error(``);
         }
 
         this.Instance = Instance;
@@ -136,35 +146,37 @@ export class Character {
             this.StatusEffectRemoved.Destroy();
             this.SkillAdded.Destroy();
             this.SkillRemoved.Destroy();
+            this.SkillStarted.Destroy();
+            this.SkillEnded.Destroy();
+            this.StatusEffectStarted.Destroy();
+            this.StatusEffectEnded.Destroy();
             this.HumanoidPropertiesUpdated.Destroy();
+            this.DamageDealt.Destroy();
+            this.DamageTaken.Destroy();
         });
 
         if (isServerContext()) {
             rootProducer.setCharacterData(this.id, this._packData());
 
             const server = getActiveHandler<WCS_Server>()!;
-            this.janitor.Add(
-                this.DamageTaken.Connect((Container) => {
-                    Players.GetPlayers().forEach((Player) => {
-                        if (!server._filterReplicatedCharacters(Player, this)) return;
-                        remotes._damageTaken.fire(Player, this.id, Container.Damage);
-                    });
-                }),
-            );
-            this.janitor.Add(
-                this.DamageDealt.Connect((_, Container) => {
-                    Players.GetPlayers().forEach((Player) => {
-                        if (!server._filterReplicatedCharacters(Player, this)) return;
-                        remotes._damageDealt.fire(
-                            Player,
-                            this.id,
-                            Container.Source!.GetId(),
-                            Container.Source! instanceof StatusEffect ? "Status" : "Skill",
-                            Container.Damage,
-                        );
-                    });
-                }),
-            );
+            this.DamageTaken.Connect((Container) => {
+                Players.GetPlayers().forEach((Player) => {
+                    if (!server._filterReplicatedCharacters(Player, this)) return;
+                    ServerEvents.damageTaken.fire(Player, this.id, Container.Damage);
+                });
+            });
+            this.DamageDealt.Connect((_, Container) => {
+                Players.GetPlayers().forEach((Player) => {
+                    if (!server._filterReplicatedCharacters(Player, this)) return;
+                    ServerEvents.damageDealt.fire(
+                        Player,
+                        this.id,
+                        Container.Source!.GetId(),
+                        Container.Source! instanceof StatusEffect ? "Status" : "Skill",
+                        Container.Damage,
+                    );
+                });
+            });
         }
     }
 
@@ -244,18 +256,21 @@ export class Character {
      */
     public _addStatus(Status: AnyStatus) {
         this.statusEffects.set(Status.GetId(), Status);
-        this.StatusEffectAdded.Fire(Status);
-
         Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
         Status.StateChanged.Connect(() => {
             this.updateHumanoidProps();
         });
+
+        Status.Started.Connect(() => this.StatusEffectStarted.Fire(Status));
+        Status.Ended.Connect(() => this.StatusEffectEnded.Fire(Status));
 
         Status.Destroyed.Connect(() => {
             this.statusEffects.delete(Status.GetId());
             this.StatusEffectRemoved.Fire(Status);
             this.updateHumanoidProps();
         });
+
+        this.StatusEffectAdded.Fire(Status);
     }
 
     /**
@@ -268,10 +283,15 @@ export class Character {
             logError(`Skill with name ${name} is already registered for character ${this.Instance}`);
         }
 
+        Skill.Started.Connect(() => this.SkillStarted.Fire(Skill));
+        Skill.Ended.Connect(() => this.SkillEnded.Fire(Skill));
+
         this.skills.set(name, Skill);
         Skill.Destroyed.Connect(() => {
-            this.skills.delete(name);
             this.SkillRemoved.Fire(Skill);
+
+            if (this.skills.get(name)?._id !== Skill._id) return;
+            this.skills.delete(name);
         });
 
         this.SkillAdded.Fire(Skill);
@@ -403,7 +423,7 @@ export class Character {
     /**
      * Retrieves a skill instance from the skills map based on the provided constructor.
      */
-    public GetSkillFromConstructor<T extends UnknownSkill>(Constructor: Constructor<T>) {
+    public GetSkillFromConstructor<T extends AnySkill>(Constructor: Constructor<T>) {
         return this.skills.get(tostring(Constructor)) as T | undefined;
     }
 
@@ -426,7 +446,8 @@ export class Character {
         this.cleanupMovesetSkills();
 
         movesetObject.Skills.forEach((SkillConstructor) => {
-            new SkillConstructor(this as never);
+            const params = (GetParamsFromMoveset(movesetObject, SkillConstructor) ?? []) as never[];
+            new SkillConstructor(this as never, ...params);
         });
 
         const oldMoveset = this.moveset;
@@ -438,28 +459,29 @@ export class Character {
     /**
      * Returns the current moveset name.
      */
-    public GetMoveset() {
+    public GetMovesetName() {
         return this.moveset;
+    }
+
+    /**
+     * Returns the current moveset.
+     */
+    public GetMoveset() {
+        return this.moveset ? GetMovesetObjectByName(this.moveset) : undefined;
     }
 
     /**
      * Gets the skills that belong to a provided moveset.
      * Default - Currently applied moveset
      */
-    public GetMovesetSkills(Moveset: string | undefined = this.moveset) {
+    public GetMovesetSkills(Moveset: Moveset | undefined = this.GetMoveset()) {
         if (!Moveset) return;
 
-        const movesetObject = GetMovesetObjectByName(Moveset);
-        if (!movesetObject) return;
-
-        const skills: AnySkill[] = [];
-        this.skills.forEach((Skill) => {
-            if (movesetObject.Skills.find((T) => tostring(T) === tostring(getmetatable(Skill)))) {
-                skills.push(Skill);
+        return mapToArray(this.skills).filter((skill) => {
+            for (const [_, ctor] of pairs(Moveset.Skills)) {
+                return skill instanceof ctor;
             }
         });
-
-        return skills;
     }
 
     /**
@@ -510,7 +532,8 @@ export class Character {
             this.skills.get(name)?.Destroy();
             this.skills.delete(name);
 
-            new SkillConstructor(this as never);
+            const params = (GetParamsFromMoveset(Moveset, SkillConstructor) ?? []) as never[];
+            new SkillConstructor(this as never, ...params);
         });
     }
 
@@ -602,6 +625,15 @@ export class Character {
     private updateHumanoidProps() {
         if (isServerContext() && this.Player) return;
 
+        const propsToApply = this.calculateAppliedProps();
+
+        this.HumanoidPropertiesUpdated.Fire(propsToApply);
+        for (const [PropertyName, Value] of pairs(propsToApply)) {
+            this.Humanoid[PropertyName as never] = Value as never;
+        }
+    }
+
+    private calculateAppliedProps() {
         const statuses: UnknownStatus[] = [];
         this.statusEffects.forEach((Status) => {
             if (Status.GetHumanoidData() && Status.GetState().IsActive) {
@@ -609,7 +641,7 @@ export class Character {
             }
         });
 
-        const propsToApply = this.GetDefaultProps();
+        const propsToApply = table.clone(this.GetDefaultProps());
         const incPriorityList: Record<keyof AffectableHumanoidProps, number> = {
             WalkSpeed: 0,
             JumpPower: 0,
@@ -631,10 +663,13 @@ export class Character {
                 }
             }
         });
+        table.freeze(propsToApply);
 
-        this.HumanoidPropertiesUpdated.Fire(propsToApply);
-        for (const [PropertyName, Value] of pairs(propsToApply)) {
-            this.Humanoid[PropertyName as never] = Value as never;
-        }
+        this.currentlyAppliedProps = propsToApply;
+        return propsToApply;
+    }
+
+    public GetAppliedProps() {
+        return this.currentlyAppliedProps;
     }
 }

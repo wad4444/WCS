@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-constant-condition */
 import { Symbol } from "symbol";
 import { WCS_Client } from "./client";
 import { WCS_Server } from "./server";
 import { DeepReadonly } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
+import { Moveset } from "./moveset";
+import { AnySkill } from "./skill";
+import { t } from "@rbxts/t";
 
 export const consolePrefix = `WCS`;
 const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`;
@@ -22,6 +26,13 @@ export function mapToArray<T extends defined, K extends defined>(Map: Map<T, K>)
     return arr;
 }
 
+export function createIdGenerator(initialValue = 0, increment = 1) {
+    return () => {
+        initialValue += increment;
+        return initialValue;
+    };
+}
+
 export function logMessage(Message: string) {
     print(`[${consolePrefix}]: ${Message}`);
 }
@@ -38,8 +49,18 @@ interface ConstructorWithIndex extends Constructor {
     __index: object;
 }
 
+export function GetParamsFromMoveset(moveset: Moveset, skill: Constructor<AnySkill>): any[] | undefined {
+    if (!moveset.ConstructorParams) return;
+    const params = (rawget(moveset.ConstructorParams, skill) || rawget(moveset.ConstructorParams, `${skill}`)) as
+        | any[]
+        | undefined;
+
+    if (params && !typeIs(params, "table")) return;
+    return params;
+}
+
 export function instanceofConstructor<T extends object>(constructor: Constructor, constructor2: Constructor<T>) {
-    let currentClass = constructor as ConstructorWithIndex;
+    let currentClass = constructor;
     let metatable = getmetatable(currentClass) as ConstructorWithIndex;
 
     while (true) {

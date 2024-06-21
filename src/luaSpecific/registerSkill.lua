@@ -4,12 +4,16 @@ local source = luaSpecific.Parent.source
 local skillLib = require(source.skill)
 local utility = require(source.utility)
 
-function RegisterSkill(Name)
+function RegisterSkill(Name, ExtendsFrom)
     if typeof(Name) ~= "string" then
         utility.logError("Not provided a valid name for RegisterSkill")
     end
 
-    local super = skillLib.Skill
+    if ExtendsFrom and not utility.instanceofConstructor(ExtendsFrom, skillLib.SkillBase) then
+        utility.logError(`{ExtendsFrom} is not a valid skill class!`)
+    end
+
+    local super = ExtendsFrom or skillLib.Skill
     local class = setmetatable({}, {
         __tostring = function()
             return Name

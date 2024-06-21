@@ -1,3 +1,4 @@
+export * from "./source/message";
 export * from "./source/character";
 export * from "./source/server";
 export * from "./source/statusEffect";
@@ -8,5 +9,6 @@ export * from "./source/holdableSkill";
 export * from "./luaSpecific/registerStatusEffect";
 export * from "./luaSpecific/registerSkill";
 export * from "./luaSpecific/registerHoldableSkill";
+export * from "./luaSpecific/defineMessage";
 export { SkillType } from "./source/skill";
 export { FlagWithData } from "./source/flags";

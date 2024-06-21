@@ -1,15 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { BroadcastReceiver, createBroadcastReceiver } from "@rbxts/reflex";
 import { t } from "@rbxts/t";
 import { isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
-import { remotes } from "./remotes";
+import { ClientEvents, ClientFunctions } from "./networking";
 import { slices } from "state/slices";
 import { devToolsMiddleware } from "state/middleware/devtools";
 import { Character } from "./character";
 import { Flags } from "./flags";
 import { rootProducer } from "state/rootProducer";
-import { UnknownSkill } from "./skill";
+import { Skill, UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
+import { SerializedData, dispatchSerializer, messageSerializer } from "./serdes";
+import { RestoreArgs } from "./arg-converter";
+import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
+import { Reflect } from "@flamework/core";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -23,13 +28,15 @@ class Client {
 
         this.receiver = createBroadcastReceiver({
             start: () => {
-                remotes._start.fire();
+                ClientEvents.start.fire();
             },
         });
 
-        remotes._dispatch.connect((Actions) => {
-            this.receiver.dispatch(Actions);
+        ClientEvents.dispatch.connect((serialized) => {
+            const actions = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
+            this.receiver.dispatch(actions);
         });
+
         rootProducer.applyMiddleware(this.receiver.middleware);
         ApplyLoggerMiddleware && rootProducer.applyMiddleware(devToolsMiddleware);
     }
@@ -72,7 +79,7 @@ class Client {
         setActiveHandler(this);
         this.setupCharacterReplication();
 
-        remotes._damageTaken.connect((CharacterId, Damage) => {
+        ClientEvents.damageTaken.connect((CharacterId, Damage) => {
             const character = Character.GetCharacterFromId(CharacterId);
             if (character) {
                 character.DamageTaken.Fire({
@@ -82,7 +89,7 @@ class Client {
             }
         });
 
-        remotes._damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
+        ClientEvents.damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
             const character = Character.GetCharacterFromId(CharacterId);
             let source: UnknownSkill | UnknownStatus | undefined = undefined;
 
@@ -110,6 +117,65 @@ class Client {
                     Source: source,
                 });
             }
+        });
+
+        const eventHandler = (serialized: SerializedData) => {
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const args = RestoreArgs(PackedArgs);
+
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args)) return;
+            }
+
+            const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
+            method(skill, ...args);
+        };
+        ClientEvents.messageToClient.connect(eventHandler);
+        ClientEvents.messageToClient_urel.connect(eventHandler);
+
+        ClientFunctions.messageToClient.setCallback((serialized) => {
+            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
+                serialized.buffer,
+                serialized.blobs,
+            );
+            const character = Character.GetCharacterFromId(CharacterId);
+            if (!character) return;
+
+            const skill = character.GetSkillFromString(Name);
+            if (!skill) return;
+
+            const args = RestoreArgs(PackedArgs);
+
+            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
+                | t.check<any>[]
+                | undefined;
+            if (validators) {
+                if (!ValidateArgs(validators, args)) return INVALID_MESSAGE_STR;
+            }
+
+            const method = skill[MethodName as never] as (
+                self: UnknownSkill,
+                ...args: unknown[]
+            ) => Promise<unknown> | unknown;
+            const returnedValue = method(skill, ...args);
+            if (Promise.is(returnedValue)) {
+                const [_, value] = returnedValue.await();
+                return value;
+            }
+
+            return returnedValue;
         });
 
         logMessage(`Started Client successfully`);

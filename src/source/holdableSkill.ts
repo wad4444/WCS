@@ -6,22 +6,14 @@ import { Character } from "./character";
 import { isClientContext, isServerContext, logError } from "./utility";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyHoldableSkill = HoldableSkill<any, any[], any, any, any>;
-export type UnknownHoldableSkill = HoldableSkill<unknown[], unknown[], unknown, unknown, unknown>;
+export type AnyHoldableSkill = HoldableSkill<any, any[], any>;
+export type UnknownHoldableSkill = HoldableSkill<unknown[], unknown[], unknown>;
 
 export abstract class HoldableSkill<
     StarterParams extends unknown[] = [],
     ConstructorArguments extends unknown[] = [],
     Metadata = void,
-    ServerToClientMessage = void,
-    ClientToServerMessage = void,
-> extends SkillBase<
-    StarterParams,
-    ConstructorArguments,
-    Metadata,
-    ServerToClientMessage | { __setHoldTime: number | undefined },
-    ClientToServerMessage
-> {
+> extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
     /** Manually starting or stopping the timer will break things */
     protected readonly HoldTimer = new Timer(10);
     protected _skillType: SkillType = SkillType.Holdable;
@@ -40,6 +32,7 @@ export abstract class HoldableSkill<
                 "Disconnect",
             );
         }
+        this._janitor.Add(this.HoldTimer, "destroy");
         this._init();
     }
 

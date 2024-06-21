@@ -32,7 +32,7 @@ const config = {
     // may want to replace "en" with "zh-Hans".
     i18n: {
         defaultLocale: "en",
-        locales: ["en", "ru"],
+        locales: ["en"],
     },
 
     presets: [
@@ -74,10 +74,6 @@ const config = {
                         sidebarId: "apiSidebar",
                         position: "left",
                         label: "API",
-                    },
-                    {
-                        type: "localeDropdown",
-                        position: "right",
                     },
                     {
                         href: "https://github.com/g1mmethemoney/WCSTypescript",

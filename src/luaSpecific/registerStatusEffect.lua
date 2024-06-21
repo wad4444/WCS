@@ -4,12 +4,16 @@ local source = luaSpecific.Parent.source
 local statusEffectLib = require(source.statusEffect)
 local utility = require(source.utility)
 
-function RegisterStatusEffect(Name)
+function RegisterStatusEffect(Name, ExtendsFrom)
     if typeof(Name) ~= "string" then
         utility.logError("Not provided a valid name for RegisterStatusEffect")
     end
 
-    local super = statusEffectLib.StatusEffect
+	if ExtendsFrom and not utility.instanceofConstructor(ExtendsFrom, statusEffectLib.StatusEffect) then
+		utility.logError(`{ExtendsFrom} is not a valid status effect class!`)
+	end
+
+	local super = ExtendsFrom or statusEffectLib.StatusEffect
     local class = setmetatable({}, {
         __tostring = function()
             return Name
