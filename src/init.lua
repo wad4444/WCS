@@ -181,7 +181,7 @@ type SkillFields = {
 	Character: Character,
 	CheckOthersActive: boolean,
 	CheckedByOthers: boolean,
-	ParamValidators: { ((any) -> boolean) }, -- don't know why, but `Validator` type throws a recursive generic error?? (old solver shenanigans) ❔❓
+	ParamValidators: { (any) -> boolean }, -- don't know why, but `Validator` type throws a recursive generic error?? (old solver shenanigans) ❔❓
 }
 
 export type Skill = typeof(setmetatable({} :: SkillFields, {} :: SkillImpl))
@@ -205,10 +205,7 @@ type AnyHoldableSkillImpl = SkillImpl & {
 	SetMaxHoldTime: (AnyHoldableSkill, number) -> (),
 	GetMaxHoldTime: (AnyHoldableSkill) -> number,
 }
-export type AnyHoldableSkill = typeof(setmetatable(
-	{} :: SkillFields,
-	{} :: AnyHoldableSkillImpl
-))
+export type AnyHoldableSkill = typeof(setmetatable({} :: SkillFields, {} :: AnyHoldableSkillImpl))
 
 type CharacterImpl = {
 	__index: CharacterImpl,
@@ -226,9 +223,11 @@ type CharacterImpl = {
 	HasStatusEffects: (Character, { StatusEffectImpl }) -> boolean,
 	GetSkillFromString: (Character, string) -> Skill?,
 	GetSkills: (Character) -> { Skill },
+	GetAllActiveSkills: (Character) -> { Skill },
 	GetSkillFromConstructor: (Character, SkillImpl) -> Skill?,
 	ApplyMoveset: (Character, Moveset | string) -> (),
-	GetMoveset: (Character) -> string?,
+	GetMoveset: (Character) -> Moveset?,
+	GetMovesetName: (Character) -> string?,
 	ClearMoveset: (Character) -> (),
 	ApplySkillsFromMoveset: (Character, Moveset) -> (),
 	GetMovesetSkills: (Character, Moveset?) -> { Skill },
