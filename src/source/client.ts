@@ -1,44 +1,32 @@
+/* eslint-disable roblox-ts/no-array-pairs */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
-import { BroadcastReceiver, createBroadcastReceiver } from "@rbxts/reflex";
 import { t } from "@rbxts/t";
 import { isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
 import { ClientEvents, ClientFunctions } from "./networking";
-import { slices } from "state/slices";
-import { devToolsMiddleware } from "state/middleware/devtools";
-import { Character } from "./character";
+import { Character, CharacterData } from "./character";
 import { Flags } from "./flags";
-import { rootProducer } from "state/rootProducer";
-import { Skill, UnknownSkill } from "./skill";
+import { UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
 import { SerializedData, dispatchSerializer, messageSerializer } from "./serdes";
 import { RestoreArgs } from "./arg-converter";
 import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
 import { Reflect } from "@flamework/core";
+import { atom, subscribe } from "@rbxts/charm";
+import immediateSyncer from "./immediate-syncer";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
+
 class Client {
     private isActive = false;
     private registeredModules: ModuleScript[] = [];
-    private receiver: BroadcastReceiver<typeof slices>;
+
+    private atom = atom<CharacterData | undefined>(undefined);
+    private clientSyncer = new immediateSyncer.client({ atom: this.atom });
 
     constructor(ApplyLoggerMiddleware: boolean) {
         currentInstance = this;
-
-        this.receiver = createBroadcastReceiver({
-            start: () => {
-                ClientEvents.start.fire();
-            },
-        });
-
-        ClientEvents.dispatch.connect((serialized) => {
-            const actions = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
-            this.receiver.dispatch(actions);
-        });
-
-        rootProducer.applyMiddleware(this.receiver.middleware);
-        ApplyLoggerMiddleware && rootProducer.applyMiddleware(devToolsMiddleware);
     }
 
     /**
@@ -79,8 +67,14 @@ class Client {
         setActiveHandler(this);
         this.setupCharacterReplication();
 
-        ClientEvents.damageTaken.connect((CharacterId, Damage) => {
-            const character = Character.GetCharacterFromId(CharacterId);
+        ClientEvents.sync.connect((serialized) => {
+            const payload = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
+            this.clientSyncer.sync(payload as never);
+        });
+        ClientEvents.start();
+
+        ClientEvents.damageTaken.connect((Damage) => {
+            const character = Character.GetLocalCharacter();
             if (character) {
                 character.DamageTaken.Fire({
                     Damage: Damage,
@@ -89,34 +83,32 @@ class Client {
             }
         });
 
-        ClientEvents.damageDealt.connect((CharacterId, SourceId, Type, Damage) => {
-            const character = Character.GetCharacterFromId(CharacterId);
+        ClientEvents.damageDealt.connect((SourceId, Type, Damage) => {
+            const character = Character.GetLocalCharacter();
             let source: UnknownSkill | UnknownStatus | undefined = undefined;
 
+            if (!character) return;
+
             if (Type === "Skill") {
-                character?.GetSkills().every((skill) => {
+                for (const [_, skill] of pairs(character.GetSkills())) {
                     if (skill.GetId() === SourceId) {
                         source = skill;
-                        return false;
+                        break;
                     }
-                    return true;
-                });
+                }
             } else if (Type === "Status") {
-                character?.GetAllStatusEffects().every((status) => {
+                for (const [_, status] of pairs(character.GetSkills())) {
                     if (status.GetId() === SourceId) {
                         source = status;
-                        return false;
+                        break;
                     }
-                    return true;
-                });
+                }
             }
 
-            if (character) {
-                character.DamageDealt.Fire(undefined, {
-                    Damage: Damage,
-                    Source: source,
-                });
-            }
+            character.DamageDealt.Fire(undefined, {
+                Damage: Damage,
+                Source: source,
+            });
         });
 
         const eventHandler = (serialized: SerializedData) => {
@@ -182,20 +174,19 @@ class Client {
     }
 
     private setupCharacterReplication() {
-        rootProducer.observe(
-            (state) => state.replication,
-            (_, index) => index,
-            (data, id) => {
-                const character = new Character(data.instance, {
-                    flag: Flags.CanCreateCharacterClient,
-                    data: id,
-                });
+        let character: Character;
 
-                return () => {
-                    character.Destroy();
-                };
-            },
-        );
+        subscribe(this.atom, (data) => {
+            if (data && !character) {
+                character = new Character(data.instance, {
+                    flag: Flags.CanCreateCharacterClient,
+                    data: this.atom,
+                });
+                return;
+            } else if (!data && character) {
+                character.Destroy();
+            }
+        });
     }
 }
 

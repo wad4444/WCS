@@ -36,30 +36,12 @@ export abstract class HoldableSkill<
         this._init();
     }
 
-    /** @internal @hidden */
+    /** @internal */
     protected _stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
-        if (PreviousState._isActive_counter === State._isActive_counter) return;
-
-        if (!PreviousState.IsActive && State.IsActive) {
-            if (this.GetState().MaxHoldTime !== undefined) this.HoldTimer.start();
-            isClientContext()
-                ? this.OnStartClient(...(State.StarterParams as StarterParams))
-                : this.OnStartServer(...(State.StarterParams as StarterParams));
-            this.Started.Fire();
-        } else if (PreviousState.IsActive && !State.IsActive) {
-            if (this.HoldTimer.getState() === TimerState.Running) this.HoldTimer.stop();
-            isClientContext() ? this.OnEndClient() : this.OnEndServer();
-            this.Ended.Fire();
-        }
         if (State.MaxHoldTime !== PreviousState.MaxHoldTime) {
             if (State.MaxHoldTime) this.HoldTimer.setLength(State.MaxHoldTime);
         }
-        if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
-            this.OnStartClient(...(State.StarterParams as StarterParams));
-            this.Started.Fire();
-            this.OnEndClient();
-            this.Ended.Fire();
-        }
+        super._stateDependentCallbacks(State, PreviousState);
     }
 
     /**

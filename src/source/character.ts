@@ -11,7 +11,6 @@ import {
     mapToArray,
 } from "./utility";
 import { Janitor } from "@rbxts/janitor";
-import { SelectCharacterData, SelectSkills, SelectStatuses } from "state/selectors";
 import {
     AnyStatus,
     GetRegisteredStatusEffectConstructor,
@@ -21,11 +20,12 @@ import {
 } from "./statusEffect";
 import { FlagWithData, Flags } from "./flags";
 import { AnySkill, GetRegisteredSkillConstructor, SkillData, UnknownSkill } from "./skill";
-import { rootProducer } from "state/rootProducer";
 import { WCS_Server } from "./server";
 import { ServerEvents } from "./networking";
 import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
+import { Atom, observe, subscribe } from "@rbxts/charm";
+import { deleteCharacterData, patchCharacterData, setCharacterData } from "source/actions";
 
 export interface CharacterData {
     instance: Instance;
@@ -103,13 +103,16 @@ export class Character {
     private moveset?: string;
     private destroyed = false;
 
+    /** @internal */
+    public readonly _clientAtom?: Atom<CharacterData | undefined>;
+
     constructor(Instance: Instance);
     /**
      * @internal Reserved for internal usage
      * @hidden
      */
-    constructor(Instance: Instance, canCreateClient: FlagWithData<string>);
-    constructor(Instance: Instance, canCreateClient?: FlagWithData<string>) {
+    constructor(Instance: Instance, canCreateClient: FlagWithData<Atom<CharacterData | undefined>>);
+    constructor(Instance: Instance, canCreateClient?: FlagWithData<Atom<CharacterData | undefined>>) {
         if (isClientContext() && canCreateClient?.flag !== Flags.CanCreateCharacterClient) {
             logError(
                 `Attempted to manually create a character on client. \n On client side character are created by the handler automatically, \n doing this manually can lead to a possible desync`,
@@ -132,7 +135,8 @@ export class Character {
         this.Instance = Instance;
         this.Humanoid = humanoid;
         this.Player = Players.GetPlayerFromCharacter(this.Instance);
-        this.id = canCreateClient?.data || generateId();
+        this.id = isServerContext() ? generateId() : "0";
+        this._clientAtom = canCreateClient?.data;
 
         Character.currentCharMap.set(Instance, this);
         Character.CharacterCreated.Fire(this);
@@ -156,13 +160,13 @@ export class Character {
         });
 
         if (isServerContext()) {
-            rootProducer.setCharacterData(this.id, this._packData());
-
             const server = getActiveHandler<WCS_Server>()!;
+            setCharacterData(this.id, this._packData());
+
             this.DamageTaken.Connect((Container) => {
                 Players.GetPlayers().forEach((Player) => {
                     if (!server._filterReplicatedCharacters(Player, this)) return;
-                    ServerEvents.damageTaken.fire(Player, this.id, Container.Damage);
+                    ServerEvents.damageTaken.fire(Player, Container.Damage);
                 });
             });
             this.DamageDealt.Connect((_, Container) => {
@@ -170,7 +174,6 @@ export class Character {
                     if (!server._filterReplicatedCharacters(Player, this)) return;
                     ServerEvents.damageDealt.fire(
                         Player,
-                        this.id,
                         Container.Source!.GetId(),
                         Container.Source! instanceof StatusEffect ? "Status" : "Skill",
                         Container.Damage,
@@ -180,7 +183,7 @@ export class Character {
         }
     }
 
-    /** @hidden @internal */
+    /** @internal */
     public GetId() {
         return this.id;
     }
@@ -192,7 +195,7 @@ export class Character {
     public Destroy() {
         Character.currentCharMap.delete(this.Instance);
         if (isServerContext()) {
-            rootProducer.deleteCharacterData(this.id);
+            deleteCharacterData(this.id);
         }
 
         Character.CharacterDestroyed.Fire(this);
@@ -318,10 +321,9 @@ export class Character {
         this.defaultProps = Props;
         table.freeze(this.defaultProps);
         if (isServerContext()) {
-            rootProducer.patchCharacterData(this.id, {
+            patchCharacterData(this.id, {
                 defaultProps: Props,
             });
-            rootProducer.flush();
         }
     }
 
@@ -337,6 +339,13 @@ export class Character {
      */
     public static GetCharacterMap(this: void) {
         return table.freeze(table.clone(Character.currentCharMap)) as ReadonlyMap<Instance, Character>;
+    }
+
+    public static GetLocalCharacter(this: void) {
+        const localCharacter = Players.LocalPlayer.Character;
+        if (!localCharacter) return;
+
+        return Character.currentCharMap.get(localCharacter);
     }
 
     /**
@@ -503,10 +512,9 @@ export class Character {
 
     private setMovesetServer(to?: string) {
         this.moveset = to;
-        rootProducer.patchCharacterData(this.id, {
+        patchCharacterData(this.id, {
             moveset: this.moveset,
         });
-        rootProducer.flush();
     }
 
     private cleanupMovesetSkills() {
@@ -585,6 +593,7 @@ export class Character {
     private setupReplication_Client() {
         if (!isClientContext()) return;
         if (!getActiveHandler()) return;
+        if (!this._clientAtom) return;
 
         const processMovesetChange = (New: string | undefined, Old: string | undefined) => {
             this.moveset = New;
@@ -599,26 +608,20 @@ export class Character {
         };
 
         this.janitor.Add(
-            rootProducer.observe(
-                SelectStatuses(this.GetId()),
-                (_, index) => index,
-                (item, id) => this.statusObserver(item, id),
+            observe(
+                () => this._clientAtom!()?.statusEffects ?? new Map<string, StatusData>(),
+                (value, key) => this.statusObserver(value, key),
             ),
         );
 
         this.janitor.Add(
-            rootProducer.observe(
-                SelectSkills(this.GetId()),
-                (_, index) => index,
-                (Data, Name) => this.skillObserver(Data, Name),
+            observe(
+                () => this._clientAtom!()?.skills ?? new Map<string, SkillData>(),
+                (value, key) => this.skillObserver(value, key),
             ),
         );
 
-        const dataSelector = SelectCharacterData(this.GetId());
-        const disconnect = rootProducer.subscribe(dataSelector, processDataUpdate);
-        processDataUpdate(dataSelector(rootProducer.getState()));
-
-        this.janitor.Add(disconnect);
+        this.janitor.Add(subscribe(this._clientAtom, processDataUpdate));
         this.updateHumanoidProps();
     }
 

@@ -68,7 +68,9 @@
 		"@rbxts/wcs:out/tests/skill.spec@wrongSkill": "@rbxts/wcs:tests/skill.spec@wrongSkill",
 		"@rbxts/wcs:out/tests/skill.spec@sum_skill_b": "@rbxts/wcs:tests/skill.spec@sum_skill_b",
 		"@rbxts/wcs:out/tests/skill.spec@yieldingSkill3": "@rbxts/wcs:tests/skill.spec@yieldingSkill3",
-		"@rbxts/wcs:out/tests/statusEffect.spec@wrongStatus": "@rbxts/wcs:tests/statusEffect.spec@wrongStatus"
+		"@rbxts/wcs:out/tests/statusEffect.spec@wrongStatus": "@rbxts/wcs:tests/statusEffect.spec@wrongStatus",
+		"@rbxts/wcs:out/source/immediate-syncer/server@server": "@rbxts/wcs:source/immediate-syncer/server@server",
+		"@rbxts/wcs:out/source/immediate-syncer/client@client": "@rbxts/wcs:source/immediate-syncer/client@client"
 	},
 	"metadata": {},
 	"identifierPrefix": "@rbxts/wcs"

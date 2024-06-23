@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AffectableHumanoidProps, Character, DamageContainer } from "./character";
 import { Janitor } from "@rbxts/janitor";
-import { Players, RunService } from "@rbxts/services";
+import { Players } from "@rbxts/services";
 import {
-    Constructor,
-    ReadonlyDeep,
     freezeCheck,
     getActiveHandler,
     isServerContext,
@@ -12,17 +10,18 @@ import {
     logWarning,
     isClientContext,
     createIdGenerator,
+    DeepReadonly,
 } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
-import { SelectStatusData } from "state/selectors";
-import { rootProducer } from "state/rootProducer";
 import { t } from "@rbxts/t";
 import Signal from "@rbxts/signal";
+import { subscribe } from "@rbxts/charm";
+import { setStatusData, patchStatusData, deleteStatusData } from "source/actions";
 
 export interface StatusData {
     className: string;
-    state: internal_statusEffectState;
+    state: StatusEffectState;
     metadata?: unknown;
     humanoidData?: HumanoidData;
     constructorArgs: unknown[];
@@ -31,10 +30,6 @@ export interface StatusData {
 interface StatusEffectProps {
     Character: Character;
     Flag: FlagWithData<string>;
-}
-
-interface internal_statusEffectState extends StatusEffectState {
-    _isActive_counter: number;
 }
 
 export interface StatusEffectState {
@@ -50,7 +45,7 @@ export interface HumanoidData {
 
 type StatusEffectConstructor = new (...args: [Character, ...constructorArgs: any[]]) => UnknownStatus;
 
-type ReadonlyState = ReadonlyDeep<StatusEffectState>;
+type ReadonlyState = DeepReadonly<StatusEffectState>;
 export type AnyStatus = StatusEffect<any, any[]>;
 export type UnknownStatus = StatusEffect<unknown, unknown[]>;
 
@@ -86,9 +81,8 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public readonly Character: Character;
     public DestroyOnEnd = true;
 
-    private state: internal_statusEffectState = {
+    private state: StatusEffectState = {
         IsActive: false,
-        _isActive_counter: 0,
     };
     private metadata?: Metadata;
     private humanoidData?: HumanoidData;
@@ -136,15 +130,15 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.ConstructorArguments = Args;
 
         this.StateChanged.Connect((New, Old) =>
-            this.stateDependentCallbacks(New as internal_statusEffectState, Old as internal_statusEffectState),
+            this.stateDependentCallbacks(New as StatusEffectState, Old as StatusEffectState),
         );
 
         this.Ended.Connect(() => this.Janitor.Cleanup());
-        this.Ended.Connect(() => this.DestroyOnEnd && isServerContext() && this.Destroy());
-
-        this.timer.completed.Connect(() => {
-            this.End();
+        this.Ended.Connect(() => {
+            if (this.DestroyOnEnd && (isServerContext() || !this.isReplicated)) this.Destroy();
         });
+
+        this.timer.completed.Connect(() => this.End());
 
         this.janitor.Add(() => {
             this.StateChanged.Destroy();
@@ -160,7 +154,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.startReplicationClient();
 
         if (isServerContext()) {
-            rootProducer.setStatusData(this.Character.GetId(), this.id, this._packData());
+            setStatusData(this.Character.GetId(), this.id, this._packData());
         }
         this.OnConstruct(...Args);
         isServerContext() ? this.OnConstructServer(...Args) : this.OnConstructClient(...Args);
@@ -265,10 +259,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.humanoidData = newData;
 
         if (isServerContext()) {
-            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
+            patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: this.humanoidData,
             });
-            rootProducer.flush();
         }
     }
 
@@ -280,10 +273,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.humanoidData = undefined;
 
         if (isServerContext()) {
-            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
+            patchStatusData(this.Character.GetId(), this.id, {
                 humanoidData: undefined,
             });
-            rootProducer.flush();
         }
     }
 
@@ -301,10 +293,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.metadata = undefined;
 
         if (isServerContext()) {
-            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
+            patchStatusData(this.Character.GetId(), this.id, {
                 metadata: undefined,
             });
-            rootProducer.flush();
         }
     }
 
@@ -316,7 +307,6 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             ...this.state,
             ...Patch,
         };
-        if (Patch.IsActive !== undefined) newState._isActive_counter++;
 
         const oldState = this.state;
 
@@ -324,10 +314,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.state = newState;
 
         if (isServerContext()) {
-            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
+            patchStatusData(this.Character.GetId(), this.id, {
                 state: newState,
             });
-            rootProducer.flush();
         }
 
         this.StateChanged.Fire(newState, oldState);
@@ -348,10 +337,9 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.metadata = NewMeta;
 
         if (isServerContext()) {
-            rootProducer.patchStatusData(this.Character.GetId(), this.id, {
+            patchStatusData(this.Character.GetId(), this.id, {
                 metadata: NewMeta,
             });
-            rootProducer.flush();
         }
     }
 
@@ -411,7 +399,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public Destroy() {
         if (isServerContext()) {
             this.End();
-            rootProducer.deleteStatusData(this.Character.GetId(), this.id);
+            deleteStatusData(this.Character.GetId(), this.id);
         } else {
             this._setState({
                 IsActive: false,
@@ -445,7 +433,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         };
     }
 
-    private stateDependentCallbacks(State: internal_statusEffectState, PreviousState: internal_statusEffectState) {
+    private stateDependentCallbacks(State: StatusEffectState, PreviousState: StatusEffectState) {
         if (PreviousState.IsActive === State.IsActive) return;
         if (!PreviousState.IsActive && State.IsActive) {
             this.Started.Fire();
@@ -498,13 +486,15 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
     private startReplicationClient() {
         if (!this.isReplicated) return;
+        if (!this.Character._clientAtom) return;
 
-        const dataSelector = SelectStatusData(this.Character.GetId(), this.id);
-
-        const subscription = rootProducer.subscribe(dataSelector, (...args: [StatusData?, StatusData?]) =>
-            this._processDataUpdate(...args),
+        const subscription = subscribe(
+            () => this.Character._clientAtom!()?.statusEffects.get(this.id),
+            (current, old) => this._processDataUpdate(current, old),
         );
-        this._processDataUpdate(dataSelector(rootProducer.getState()));
+
+        const state = this.Character._clientAtom()?.statusEffects.get(this.id);
+        this._processDataUpdate(state);
 
         this.janitor.Add(subscription);
     }

@@ -1,21 +1,17 @@
 /* eslint-disable roblox-ts/no-array-pairs */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
-import { Broadcaster, createBroadcaster } from "@rbxts/reflex";
-import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { isClientContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
 import { ServerEvents, ServerFunctions } from "./networking";
-import { slices } from "state/slices";
-import { rootProducer } from "state/rootProducer";
-import { Character } from "./character";
-import { SelectCharacterData } from "state/selectors";
-import Immut from "@rbxts/immut";
+import { Character, CharacterData } from "./character";
 import { SerializedData, dispatchSerializer, messageSerializer, skillRequestSerializer } from "./serdes";
 import { RestoreArgs } from "./arg-converter";
 import { UnknownSkill } from "./skill";
 import { Reflect } from "@flamework/core";
 import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
+import { atom } from "@rbxts/charm";
+import immediateSyncer from "./immediate-syncer";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -23,41 +19,13 @@ export type WCS_Server = Server;
 class Server {
     private isActive = false;
     private registeredModules: ModuleScript[] = [];
-    private broadcaster: Broadcaster;
+
+    /** @internal */
+    public __WCS_Atom = atom<Map<string, CharacterData>>(new Map());
+    private syncer = new immediateSyncer.server({ atom: this.__WCS_Atom });
 
     constructor() {
         currentInstance = this;
-
-        this.broadcaster = createBroadcaster({
-            producers: slices,
-            dispatch: (Player, Actions) => {
-                const serialized = dispatchSerializer.serialize(Actions);
-                ServerEvents.dispatch.fire(Player, serialized);
-            },
-            beforeHydrate: (Player, State) => {
-                return Immut.produce(State, (Draft) => {
-                    for (const [Id, _] of State.replication) {
-                        const character = Character.GetCharacterFromId(Id);
-                        if (!character) continue;
-
-                        if (!this._filterReplicatedCharacters(Player, character)) Draft.replication.delete(Id);
-                    }
-                });
-            },
-            beforeDispatch: (Player, Action) => {
-                if (!t.string(Action.arguments[0])) return Action;
-
-                const character = Character.GetCharacterFromId(Action.arguments[0]);
-                if (!character) return Action;
-
-                if (!this._filterReplicatedCharacters(Player, character)) return;
-
-                return Action;
-            },
-        });
-
-        rootProducer.applyMiddleware(this.broadcaster.middleware);
-        ServerEvents.start.connect((Player) => this.broadcaster.start(Player));
     }
 
     /** @internal @hidden */
@@ -95,18 +63,45 @@ class Server {
             return;
         }
 
+        this.syncer.connect((player, payload) => {
+            const state = payload.data.atom as unknown;
+            const correspondingId = player.Character
+                ? Character.GetCharacterFromInstance(player.Character)?.GetId()
+                : undefined;
+
+            if (!correspondingId) return;
+
+            let data: CharacterData | CharacterData[] | undefined = undefined;
+            if (payload.type === "init") {
+                data = (state as Map<string, CharacterData>).get(correspondingId);
+            } else if (payload.type === "patch") {
+                const filtered: CharacterData[] = [];
+                (state as Map<string, CharacterData>[]).forEach((value) => {
+                    if (value.get(correspondingId)) filtered.push(value.get(correspondingId)!);
+                });
+
+                data = filtered;
+            }
+            if (!data) return;
+
+            const cloned = table.clone(payload.data) as { atom: CharacterData | CharacterData[] };
+            cloned.atom = data;
+
+            payload.data = cloned as never;
+            const serialized = dispatchSerializer.serialize(payload as never);
+            ServerEvents.sync.fire(player, serialized);
+        });
+        ServerEvents.start.connect((player) => this.syncer.hydrate(player));
+
         this.registeredModules.forEach((v) => require(v));
         table.clear(this.registeredModules);
 
         ServerEvents.requestSkill.connect((Player, serialized) => {
-            const [CharacterId, SkillName, Action, Params] = skillRequestSerializer.deserialize(
-                serialized.buffer,
-                serialized.blobs,
-            );
-            const characterData = SelectCharacterData(CharacterId)(rootProducer.getState());
-            if (!characterData) return;
+            const [SkillName, Action, Params] = skillRequestSerializer.deserialize(serialized.buffer, serialized.blobs);
+            const playerCharacter = Player.Character;
+            if (!playerCharacter) return;
 
-            const character = Character.GetCharacterFromInstance(characterData.instance);
+            const character = Character.GetCharacterFromInstance(playerCharacter);
             if (!character || character.Player !== Player) return;
 
             const skill = character.GetSkillFromString(SkillName);
@@ -116,11 +111,14 @@ class Server {
         });
 
         const eventHandler = (Player: Player, serialized: SerializedData) => {
-            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
+            const [_, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
             );
-            const character = Character.GetCharacterFromId(CharacterId);
+            const playerCharacter = Player.Character;
+            if (!playerCharacter) return;
+
+            const character = Character.GetCharacterFromInstance(playerCharacter);
             if (!character || character.Player !== Player) return;
 
             const skill = character.GetSkillFromString(Name);
@@ -141,11 +139,14 @@ class Server {
         ServerEvents.messageToServer_urel.connect(eventHandler);
 
         ServerFunctions.messageToServer.setCallback((Player, serialized) => {
-            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
+            const [_, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
                 serialized.buffer,
                 serialized.blobs,
             );
-            const character = Character.GetCharacterFromId(CharacterId);
+            const playerCharacter = Player.Character;
+            if (!playerCharacter) return;
+
+            const character = Character.GetCharacterFromInstance(playerCharacter);
             if (!character || character.Player !== Player) return;
 
             const skill = character.GetSkillFromString(Name);

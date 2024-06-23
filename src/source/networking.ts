@@ -10,11 +10,11 @@ interface ClientToServerEvents {
 }
 
 interface ServerToClientEvents {
-    dispatch(serialized: SerializedData): void;
+    sync(serialized: SerializedData): void;
     messageToClient(serialized: SerializedData): void;
     messageToClient_urel: Networking.Unreliable<(serialized: SerializedData) => void>;
-    damageTaken(CharacterId: string, Damage: number): void;
-    damageDealt(CharacterId: string, SourceId: string, Type: "Skill" | "Status", Damage: number): void;
+    damageTaken(Damage: number): void;
+    damageDealt(SourceId: string, Type: "Skill" | "Status", Damage: number): void;
 }
 
 interface ClientToServerFunctions {

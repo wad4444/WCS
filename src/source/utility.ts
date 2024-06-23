@@ -3,11 +3,9 @@
 import { Symbol } from "symbol";
 import { WCS_Client } from "./client";
 import { WCS_Server } from "./server";
-import { DeepReadonly } from "@rbxts/reflex";
 import { RunService } from "@rbxts/services";
 import { Moveset } from "./moveset";
 import { AnySkill } from "./skill";
-import { t } from "@rbxts/t";
 
 export const consolePrefix = `WCS`;
 const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`;
@@ -75,7 +73,19 @@ export function instanceofConstructor<T extends object>(constructor: Constructor
 }
 
 export type Constructor<T extends object = object> = new (...args: never[]) => T;
-export type ReadonlyDeep<T extends object> = { readonly [P in keyof T]: DeepReadonly<T[P]> };
+export type DeepWritable<T> =
+    T extends Map<infer K, infer V>
+        ? Map<K, V>
+        : T extends object
+          ? { -readonly [K in keyof T]: DeepWritable<T[K]> }
+          : T;
+
+export type DeepReadonly<T> =
+    T extends Map<infer K, infer V>
+        ? ReadonlyMap<K, V>
+        : T extends object
+          ? { readonly [K in keyof T]: DeepWritable<T[K]> }
+          : T;
 
 export type Handler = WCS_Server | WCS_Client | undefined;
 let activeHandler: Handler = undefined;
@@ -93,4 +103,16 @@ export function getActiveHandler<T extends WCS_Server | WCS_Client>() {
 
 export function freezeCheck<T extends object>(obj: T) {
     table.isfrozen(obj) && table.freeze(obj);
+}
+
+export function shallowEqual(a: object, b: object) {
+    for (const [key, value] of pairs(a)) {
+        if (b[key as never] !== value) return false;
+    }
+
+    for (const [key, value] of pairs(b)) {
+        if (a[key as never] !== value) return false;
+    }
+
+    return true;
 }

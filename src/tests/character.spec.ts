@@ -1,9 +1,9 @@
 /// <reference types="@rbxts/testez/globals" />
 
 import { Janitor } from "@rbxts/janitor";
-import { shallowEqual } from "@rbxts/reflex";
 import { RunService, Workspace } from "@rbxts/services";
 import { Character, DamageContainer, Skill, SkillDecorator, StatusEffect, StatusEffectDecorator } from "exports";
+import { shallowEqual } from "source/utility";
 
 function haveKeys(object: object, keys: string[]) {
     // eslint-disable-next-line roblox-ts/no-array-pairs

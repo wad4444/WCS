@@ -5,7 +5,7 @@ import { Character, DamageContainer } from "./character";
 import { Flags } from "./flags";
 import {
     Constructor,
-    ReadonlyDeep,
+    DeepReadonly,
     createIdGenerator,
     freezeCheck,
     getActiveHandler,
@@ -15,14 +15,14 @@ import {
     logWarning,
 } from "./utility";
 import { Janitor } from "@rbxts/janitor";
-import { SelectSkillData } from "state/selectors";
 import { ClientEvents } from "./networking";
-import { rootProducer } from "state/rootProducer";
 import { AnyStatus } from "./statusEffect";
 import Signal from "@rbxts/signal";
 import { Timer, TimerState } from "@rbxts/timer";
 import { t } from "@rbxts/t";
 import { skillRequestSerializer } from "./serdes";
+import { deleteSkillData, patchSkillData, setSkillData } from "source/actions";
+import { subscribe } from "@rbxts/charm";
 
 export interface SkillState {
     IsActive: boolean;
@@ -45,10 +45,9 @@ export interface SkillProps {
 /** @hidden */
 export interface _internal_SkillState extends SkillState {
     _timerEndTimestamp?: number;
-    _isActive_counter: number;
 }
 
-type ReadonlyState = ReadonlyDeep<SkillState>;
+type ReadonlyState = DeepReadonly<SkillState>;
 
 export interface SkillData {
     state: _internal_SkillState;
@@ -136,7 +135,6 @@ export abstract class SkillBase<
     /** @internal @hidden */
     protected readonly isReplicated: boolean;
     private state: _internal_SkillState = {
-        _isActive_counter: 0,
         IsActive: false,
         Debounce: false,
         StarterParams: [],
@@ -213,7 +211,7 @@ export abstract class SkillBase<
         this.Character._addSkill(this);
         this.startReplication();
         if (!this.isReplicated) {
-            rootProducer.setSkillData(this.Character.GetId(), this.Name, this.packData());
+            setSkillData(this.Character.GetId(), this.Name, this.packData());
         }
 
         const Args = this.ConstructorArguments;
@@ -233,7 +231,7 @@ export abstract class SkillBase<
         if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
         if (isClientContext()) {
-            const serialized = skillRequestSerializer.serialize([this.Character.GetId(), this.Name, "Start", params]);
+            const serialized = skillRequestSerializer.serialize([this.Name, "Start", params]);
             ClientEvents.requestSkill.fire(serialized);
             return;
         }
@@ -274,7 +272,7 @@ export abstract class SkillBase<
      */
     public End() {
         if (isClientContext()) {
-            const serialized = skillRequestSerializer.serialize([this.Character.GetId(), this.Name, "End", []]);
+            const serialized = skillRequestSerializer.serialize([this.Name, "End", []]);
             ClientEvents.requestSkill.fire(serialized);
 
             return;
@@ -307,17 +305,15 @@ export abstract class SkillBase<
         });
 
         if (isServerContext()) {
-            rootProducer.deleteSkillData(this.Character.GetId(), this.Name);
+            deleteSkillData(this.Character.GetId(), this.Name);
         }
         this.destroyed = true;
         this.Destroyed.Fire();
         this._janitor.Cleanup();
     }
 
-    /** @internal @hidden */
+    /** @internal */
     protected _stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
-        if (PreviousState._isActive_counter === State._isActive_counter) return;
-
         if (!PreviousState.IsActive && State.IsActive) {
             this.Started.Fire();
             this.executionThread = task.spawn(() => {
@@ -330,15 +326,6 @@ export abstract class SkillBase<
         } else if (PreviousState.IsActive && !State.IsActive) {
             if (this.executionThread) task.cancel(this.executionThread);
             isClientContext() ? this.OnEndClient() : this.OnEndServer();
-            this.Ended.Fire();
-        }
-        if (PreviousState.IsActive === State.IsActive && this.isReplicated) {
-            this.Started.Fire();
-
-            const thread = task.spawn(() => this.OnStartClient(...(State.StarterParams as StarterParams)));
-            task.cancel(thread);
-
-            this.OnEndClient();
             this.Ended.Fire();
         }
     }
@@ -375,10 +362,9 @@ export abstract class SkillBase<
         this.metadata = undefined;
 
         if (isServerContext()) {
-            rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
+            patchSkillData(this.Character.GetId(), this.Name, {
                 metadata: undefined,
             });
-            rootProducer.flush();
         }
     }
 
@@ -395,10 +381,9 @@ export abstract class SkillBase<
         this.metadata = NewMeta;
 
         if (isServerContext()) {
-            rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
+            patchSkillData(this.Character.GetId(), this.Name, {
                 metadata: NewMeta,
             });
-            rootProducer.flush();
         }
     }
 
@@ -455,7 +440,6 @@ export abstract class SkillBase<
             ...this.state,
             ...Patch,
         };
-        if (Patch.IsActive !== undefined && this.state.IsActive !== Patch.IsActive) newState._isActive_counter++;
 
         const oldState = this.state;
 
@@ -463,10 +447,9 @@ export abstract class SkillBase<
         this.state = newState;
 
         if (isServerContext()) {
-            rootProducer.patchSkillData(this.Character.GetId(), this.Name, {
+            patchSkillData(this.Character.GetId(), this.Name, {
                 state: newState,
             });
-            rootProducer.flush();
         }
 
         this.StateChanged.Fire(newState, oldState);
@@ -501,10 +484,17 @@ export abstract class SkillBase<
 
     private startReplication() {
         if (!this.isReplicated) return;
+        if (!this.Character._clientAtom) return;
 
-        const dataSelector = SelectSkillData(this.Character.GetId(), this.Name);
-        this._processDataUpdate(dataSelector(rootProducer.getState()));
-        rootProducer.subscribe(dataSelector, (...args: [SkillData?, SkillData?]) => this._processDataUpdate(...args));
+        const disconnect = subscribe(
+            () => this.Character._clientAtom?.()?.skills.get(this.Name),
+            (current, old) => this._processDataUpdate(current, old),
+        );
+
+        const state = this.Character._clientAtom();
+        this._processDataUpdate(state?.skills.get(this.Name));
+
+        this.Destroyed.Connect(disconnect);
     }
 
     private packData(): SkillData {
