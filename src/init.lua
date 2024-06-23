@@ -235,7 +235,6 @@ type CharacterImpl = {
 	TakeDamage: (Character, DamageContainer) -> DamageContainer,
 	PredictDamage: (Character, DamageContainer) -> DamageContainer,
 	Destroy: (Character) -> (),
-	GetId: (Character) -> string,
 }
 
 type CharacterFields = {
