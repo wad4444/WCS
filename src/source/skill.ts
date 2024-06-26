@@ -101,7 +101,8 @@ export abstract class SkillBase<
         (NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
     >();
 
-    private executionThread?: thread;
+    /** @internal */
+    protected _executionThread?: thread;
 
     /**
      * Checks whenever other skills should be non active for :Start() to proceed.
@@ -316,15 +317,15 @@ export abstract class SkillBase<
     protected _stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
         if (!PreviousState.IsActive && State.IsActive) {
             this.Started.Fire();
-            this.executionThread = task.spawn(() => {
+            this._executionThread = task.spawn(() => {
                 isClientContext()
                     ? this.OnStartClient(...(State.StarterParams as StarterParams))
                     : this.OnStartServer(...(State.StarterParams as StarterParams));
-                this.executionThread = undefined;
+                this._executionThread = undefined;
                 if (isServerContext()) this.End();
             });
         } else if (PreviousState.IsActive && !State.IsActive) {
-            if (this.executionThread) task.cancel(this.executionThread);
+            if (this._executionThread) task.cancel(this._executionThread);
             isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }

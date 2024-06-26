@@ -38,10 +38,25 @@ export abstract class HoldableSkill<
 
     /** @internal */
     protected _stateDependentCallbacks(State: _internal_SkillState, PreviousState: _internal_SkillState) {
+        if (!PreviousState.IsActive && State.IsActive) {
+            if (this.GetState().MaxHoldTime !== undefined) this.HoldTimer.start();
+            this.Started.Fire();
+
+            this._executionThread = task.spawn(() => {
+                isClientContext()
+                    ? this.OnStartClient(...(State.StarterParams as StarterParams))
+                    : this.OnStartServer(...(State.StarterParams as StarterParams));
+            });
+        } else if (PreviousState.IsActive && !State.IsActive) {
+            if (this.HoldTimer.getState() === TimerState.Running) this.HoldTimer.stop();
+            if (this._executionThread) task.cancel(this._executionThread);
+
+            isClientContext() ? this.OnEndClient() : this.OnEndServer();
+            this.Ended.Fire();
+        }
         if (State.MaxHoldTime !== PreviousState.MaxHoldTime) {
             if (State.MaxHoldTime) this.HoldTimer.setLength(State.MaxHoldTime);
         }
-        super._stateDependentCallbacks(State, PreviousState);
     }
 
     /**
