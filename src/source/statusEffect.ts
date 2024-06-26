@@ -446,16 +446,6 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
             isClientContext() ? this.OnEndClient() : this.OnEndServer();
             this.Ended.Fire();
         }
-
-        if (PreviousState.IsActive === this.state.IsActive && this.isReplicated) {
-            this.Started.Fire();
-
-            const thread = task.spawn(() => this.OnStartClient());
-            task.cancel(thread);
-
-            this.OnEndClient();
-            this.Ended.Fire();
-        }
     }
 
     /** @hidden @internal */

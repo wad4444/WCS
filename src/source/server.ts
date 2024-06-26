@@ -10,8 +10,7 @@ import { RestoreArgs } from "./arg-converter";
 import { UnknownSkill } from "./skill";
 import { Reflect } from "@flamework/core";
 import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
-import { atom } from "@rbxts/charm";
-import immediateSyncer from "./immediate-syncer";
+import { atom, sync } from "@rbxts/charm";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -22,7 +21,9 @@ class Server {
 
     /** @internal */
     public __WCS_Atom = atom<Map<string, CharacterData>>(new Map());
-    private syncer = new immediateSyncer.server({ atom: this.__WCS_Atom });
+    private syncer = sync.server({
+        atoms: { atom: this.__WCS_Atom },
+    });
 
     constructor() {
         currentInstance = this;

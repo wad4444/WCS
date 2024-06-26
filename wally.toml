@@ -1,11 +1,11 @@
 [package]
 name = "cheetiedotpy/wcs"
-description = "Extensible framework that allows you create fully customizable combat systems easily by providing useful abstraction"
+description = "Extensible framework that allows you to create fully customizable combat systems easily by providing useful abstraction"
 version = "2.0.2"
 license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
-exclude = [".vscode", "src", "node_modules/*", "testing", "out/**/*.d.ts", "docs", ".github", ".vscode", "flamework.build", "scripts", "*.json", "*.md", "*.toml"]
-include = ["include", "node_modules/@rbxts", "node_modules/@flamework", "node_modules/@flamework/*", "node_modules/@rbxts/*", "out", "default.project.json", "LICENSE", "wally.toml"]
+exclude = ["**"]
+include = ["include", "out", "LICENSE.txt", "node_modules", "node_modules/@rbxts", "node_modules/@flamework", "node_modules/@flamework/**", "node_modules/@rbxts/**", "out", "default.project.json", "LICENSE", "wally.toml"]
 
 [dependencies]

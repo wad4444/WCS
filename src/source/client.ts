@@ -12,8 +12,7 @@ import { SerializedData, dispatchSerializer, messageSerializer } from "./serdes"
 import { RestoreArgs } from "./arg-converter";
 import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
 import { Reflect } from "@flamework/core";
-import { atom, subscribe } from "@rbxts/charm";
-import immediateSyncer from "./immediate-syncer";
+import { atom, subscribe, sync } from "@rbxts/charm";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -23,7 +22,9 @@ class Client {
     private registeredModules: ModuleScript[] = [];
 
     private atom = atom<CharacterData | undefined>(undefined);
-    private clientSyncer = new immediateSyncer.client({ atom: this.atom });
+    private clientSyncer = sync.client({
+        atoms: { atom: this.atom },
+    });
 
     constructor(ApplyLoggerMiddleware: boolean) {
         currentInstance = this;
