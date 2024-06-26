@@ -19,7 +19,7 @@ jobs:
       - name: Remove package-lock.json 🔨
         run: rm -rf package-lock.json
       - name: Install dependencies and build 🔧
-        run: npm ci && npm run build-npm
+        run: npm install && npm run build-npm
       - name: Set version to ENV 💻
         run: echo "VERSION=$(cat package.json | jq -r .version)-dev-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Set Package Version 🧭
