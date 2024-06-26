@@ -16,6 +16,8 @@ jobs:
         with:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
+      - name: Remove package-lock.json 🔨
+        run: rm -rf package-lock.json
       - name: Install dependencies and build 🔧
         run: npm ci && npm run build-npm
       - name: Set version to ENV 💻
