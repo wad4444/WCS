@@ -17,7 +17,7 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies and build 🔧
-        run: npm ci && npm run build
+        run: npm ci && npm run build-npm
       - name: Set version to ENV 💻
         run: echo "VERSION=$(cat package.json | jq -r .version)-dev-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Set Package Version 🧭
