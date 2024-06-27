@@ -165,7 +165,6 @@ type SkillImpl = {
 	CreateDamageContainer: (Skill, number) -> DamageContainer,
 	Destroy: (Skill) -> (),
 }
-type Array<T> = { T }
 
 type SkillFields = {
 	[any]: any,
@@ -199,13 +198,6 @@ type HoldableSkillImpl = SkillImpl & {
 	GetMaxHoldTime: (HoldableSkillImpl) -> number,
 }
 export type HoldableSkill = typeof(setmetatable({} :: SkillFields, {} :: HoldableSkillImpl))
-
-type AnyHoldableSkillImpl = SkillImpl & {
-	__index: AnyHoldableSkillImpl,
-	SetMaxHoldTime: (AnyHoldableSkill, number) -> (),
-	GetMaxHoldTime: (AnyHoldableSkill) -> number,
-}
-export type AnyHoldableSkill = typeof(setmetatable({} :: SkillFields, {} :: AnyHoldableSkillImpl))
 
 type CharacterImpl = {
 	__index: CharacterImpl,
