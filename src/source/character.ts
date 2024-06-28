@@ -3,6 +3,7 @@ import { Players } from "@rbxts/services";
 import {
     Constructor,
     GetParamsFromMoveset,
+    freezeCheck,
     getActiveHandler,
     isClientContext,
     isServerContext,
@@ -319,7 +320,7 @@ export class Character {
 
     public SetDefaultProps(Props: AffectableHumanoidProps) {
         this.defaultProps = Props;
-        table.freeze(this.defaultProps);
+        freezeCheck(this.defaultProps);
         if (isServerContext()) {
             patchCharacterData(this.id, {
                 defaultProps: Props,
@@ -666,7 +667,7 @@ export class Character {
                 }
             }
         });
-        table.freeze(propsToApply);
+        freezeCheck(propsToApply);
 
         this.currentlyAppliedProps = propsToApply;
         return propsToApply;
