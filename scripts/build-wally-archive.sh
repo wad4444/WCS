@@ -9,4 +9,4 @@ rm -rf out/**/*.spec.lua
 rm -rf out/*.d.ts
 rm -rf out/*.tsbuildinfo
 
-wally publish
+wally package --output wcs.zip
