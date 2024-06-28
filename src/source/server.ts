@@ -11,6 +11,7 @@ import { UnknownSkill } from "./skill";
 import { Reflect } from "@flamework/core";
 import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
 import { atom, sync } from "@rbxts/charm";
+import { Players } from "@rbxts/services";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -65,6 +66,7 @@ class Server {
         }
 
         const assignedIdentifiers = new Map<Player, string>();
+        Players.PlayerRemoving.Connect((player) => assignedIdentifiers.delete(player));
 
         this.syncer.connect((player, payload) => {
             const state = payload.data.atom as unknown;
