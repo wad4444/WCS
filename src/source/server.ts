@@ -70,13 +70,11 @@ class Server {
 
         this.syncer.connect((player, payload) => {
             const state = payload.data.atom as unknown;
-            const correspondingId = player.Character
-                ? Character.GetCharacterFromInstance(player.Character)?.GetId()
-                : assignedIdentifiers.get(player);
-            if (correspondingId) {
-                assignedIdentifiers.set(player, correspondingId);
-            }
+            const correspondingId =
+                (player.Character ? Character.GetCharacterFromInstance(player.Character)?.GetId() : undefined) ??
+                assignedIdentifiers.get(player);
             if (!correspondingId) return;
+            assignedIdentifiers.set(player, correspondingId);
 
             let data: CharacterData | CharacterData[] | undefined = undefined;
             if (payload.type === "init") {
