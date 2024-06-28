@@ -64,12 +64,16 @@ class Server {
             return;
         }
 
+        const assignedIdentifiers = new Map<Player, string>();
+
         this.syncer.connect((player, payload) => {
             const state = payload.data.atom as unknown;
             const correspondingId = player.Character
                 ? Character.GetCharacterFromInstance(player.Character)?.GetId()
-                : undefined;
-
+                : assignedIdentifiers.get(player);
+            if (correspondingId) {
+                assignedIdentifiers.set(player, correspondingId);
+            }
             if (!correspondingId) return;
 
             let data: CharacterData | CharacterData[] | undefined = undefined;
