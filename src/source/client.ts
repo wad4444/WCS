@@ -175,17 +175,18 @@ class Client {
     }
 
     private setupCharacterReplication() {
-        let character: Character;
+        let character: Character | undefined;
 
         subscribe(this.atom, (data) => {
+            if (!data || character?.Instance !== data.instance) {
+                character?.Destroy();
+                character = undefined;
+            }
             if (data && !character) {
                 character = new Character(data.instance, {
                     flag: Flags.CanCreateCharacterClient,
                     data: this.atom,
                 });
-                return;
-            } else if (!data && character) {
-                character.Destroy();
             }
         });
     }
