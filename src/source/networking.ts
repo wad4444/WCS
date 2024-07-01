@@ -18,11 +18,11 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerFunctions {
-    messageToServer(serialized: SerializedData): any | undefined;
+    messageToServer(serialized: SerializedData): unknown;
 }
 
 interface ServerToClientFunctions {
-    messageToClient(serialized: SerializedData): any | undefined;
+    messageToClient(serialized: SerializedData): unknown;
 }
 
 export const GlobalFunctions = Networking.createFunction<ClientToServerFunctions, ServerToClientFunctions>();
