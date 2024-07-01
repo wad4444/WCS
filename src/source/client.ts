@@ -158,8 +158,8 @@ class Client {
             ) => Promise<unknown> | unknown;
             const returnedValue = method(skill, ...args);
             if (Promise.is(returnedValue)) {
-                const [_, value] = returnedValue.await();
-                return value;
+                const [success, value] = returnedValue.await();
+                return success ? value : INVALID_MESSAGE_STR;
             }
 
             return returnedValue;
