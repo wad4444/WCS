@@ -82,12 +82,7 @@ export function Message<T extends MessageOptions>(Options: T) {
         ctor[methodName] = function (this: SkillBase, ...args: unknown[]) {
             if (!this.Player) return;
 
-            const serialized = messageSerializer.serialize([
-                this.Character.GetId(),
-                this.Name,
-                methodName,
-                ConvertArgs(args),
-            ]);
+            const serialized = messageSerializer.serialize([this.Name, methodName, ConvertArgs(args)]);
 
             if (Options.Type === "Event") {
                 if (RunService.IsServer()) {
@@ -109,7 +104,10 @@ export function Message<T extends MessageOptions>(Options: T) {
                 promise = ClientFunctions.messageToServer.invoke(serialized);
             }
 
-            return new Promise<any>((resolve, reject) => {
+            const outputPromise = new Promise<any>((resolve, reject) => {
+                const connection = this.Destroyed.Once(() => reject("Skill has been destroyed."));
+                outputPromise.finally(() => connection.Disconnect());
+
                 promise.andThen(
                     (value: unknown) =>
                         value === INVALID_MESSAGE_STR || (Options.ValueValidator && !Options.ValueValidator(value))
@@ -118,6 +116,8 @@ export function Message<T extends MessageOptions>(Options: T) {
                     reject,
                 );
             });
+
+            return outputPromise;
         };
     };
 }

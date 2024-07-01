@@ -116,10 +116,7 @@ class Server {
         });
 
         const eventHandler = (Player: Player, serialized: SerializedData) => {
-            const [_, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
-                serialized.buffer,
-                serialized.blobs,
-            );
+            const [Name, MethodName, PackedArgs] = messageSerializer.deserialize(serialized.buffer, serialized.blobs);
             const playerCharacter = Player.Character;
             if (!playerCharacter) return;
 
@@ -144,10 +141,7 @@ class Server {
         ServerEvents.messageToServer_urel.connect(eventHandler);
 
         ServerFunctions.messageToServer.setCallback((Player, serialized) => {
-            const [_, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
-                serialized.buffer,
-                serialized.blobs,
-            );
+            const [Name, MethodName, PackedArgs] = messageSerializer.deserialize(serialized.buffer, serialized.blobs);
             const playerCharacter = Player.Character;
             if (!playerCharacter) return;
 

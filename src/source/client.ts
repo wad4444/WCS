@@ -113,11 +113,8 @@ class Client {
         });
 
         const eventHandler = (serialized: SerializedData) => {
-            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
-                serialized.buffer,
-                serialized.blobs,
-            );
-            const character = Character.GetCharacterFromId(CharacterId);
+            const [Name, MethodName, PackedArgs] = messageSerializer.deserialize(serialized.buffer, serialized.blobs);
+            const character = Character.GetLocalCharacter();
             if (!character) return;
 
             const skill = character.GetSkillFromString(Name);
@@ -139,11 +136,8 @@ class Client {
         ClientEvents.messageToClient_urel.connect(eventHandler);
 
         ClientFunctions.messageToClient.setCallback((serialized) => {
-            const [CharacterId, Name, MethodName, PackedArgs] = messageSerializer.deserialize(
-                serialized.buffer,
-                serialized.blobs,
-            );
-            const character = Character.GetCharacterFromId(CharacterId);
+            const [Name, MethodName, PackedArgs] = messageSerializer.deserialize(serialized.buffer, serialized.blobs);
+            const character = Character.GetLocalCharacter();
             if (!character) return;
 
             const skill = character.GetSkillFromString(Name);

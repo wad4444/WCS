@@ -192,6 +192,7 @@ export abstract class SkillBase<
         this.Ended.Connect(() => this.Janitor.Cleanup());
 
         this._janitor.Add(() => {
+            this.Janitor.Destroy();
             this.StateChanged.Destroy();
             this.Destroyed.Destroy();
             this.Started.Destroy();
