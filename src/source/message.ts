@@ -105,9 +105,6 @@ export function Message<T extends MessageOptions>(Options: T) {
             }
 
             const outputPromise = new Promise<any>((resolve, reject) => {
-                const connection = this.Destroyed.Once(() => reject("Skill has been destroyed."));
-                outputPromise.finally(() => connection.Disconnect());
-
                 promise.andThen(
                     (value: unknown) =>
                         value === INVALID_MESSAGE_STR || (Options.ValueValidator && !Options.ValueValidator(value))
@@ -116,6 +113,8 @@ export function Message<T extends MessageOptions>(Options: T) {
                     reject,
                 );
             });
+            const connection = this.Destroyed.Once(() => outputPromise.cancel());
+            outputPromise.finally(() => connection.Disconnect());
 
             return outputPromise;
         };

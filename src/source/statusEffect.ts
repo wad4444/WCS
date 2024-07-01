@@ -141,7 +141,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
         this.timer.completed.Connect(() => this.End());
 
         this.janitor.Add(() => {
-            this.Janitor.Cleanup()
+            this.Janitor.Cleanup();
             this.StateChanged.Destroy();
             this.MetadataChanged.Destroy();
             this.HumanoidDataChanged.Destroy();
