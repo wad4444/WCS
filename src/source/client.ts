@@ -90,19 +90,11 @@ class Client {
 
             if (!character) return;
 
-            if (Type === "Skill") {
-                for (const [_, skill] of pairs(character.GetSkills())) {
-                    if (skill.GetId() === SourceId) {
-                        source = skill;
-                        break;
-                    }
-                }
-            } else if (Type === "Status") {
-                for (const [_, status] of pairs(character.GetSkills())) {
-                    if (status.GetId() === SourceId) {
-                        source = status;
-                        break;
-                    }
+            for (const [_, _skill] of pairs(character[Type === "Skill" ? "GetSkills" : "GetAllStatusEffects"]())) {
+                const skill = _skill as UnknownSkill | UnknownStatus;
+                if (skill.GetId() === SourceId) {
+                    source = skill;
+                    break;
                 }
             }
 
