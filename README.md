@@ -7,4 +7,5 @@
   <br><br><br>
 
   Made with love by [@wAD](https://github.com/wad4444)❤️
+  [Support the project](https://hipolink.me/wad4444)✨
 </div>
