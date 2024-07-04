@@ -40,6 +40,12 @@ Retrieves the character associated with the given instance.
 **`Returns:`**
 * Character: `Character?`. A character associated with the provided instance.
 
+### `GetLocalCharacter()`
+Retrieves the character associated with the local player.
+
+**`Returns:`**
+* Character: `Character?`.
+
 ## Fields
 
 ### `Instance` **@readonly**
