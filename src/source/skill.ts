@@ -235,7 +235,9 @@ export abstract class SkillBase<
         if (isClientContext()) {
             const serialized = skillRequestSerializer.serialize([this.Name, "Start", params]);
             ClientEvents.requestSkill.fire(serialized);
-            return;
+
+            if (this.AssumeStart === (SkillBase as never as { AssumeStart: (...args: any[]) => void }).AssumeStart)
+                return;
         }
 
         if (this.ParamValidators && !t.strictArray(...this.ParamValidators)(params)) return;
@@ -256,6 +258,11 @@ export abstract class SkillBase<
         )
             return;
         if (!this.ShouldStart(...params)) return;
+
+        if (isClientContext()) {
+            this.AssumeStart(...params);
+            return;
+        }
 
         this._setState({
             IsActive: true,
@@ -507,11 +514,11 @@ export abstract class SkillBase<
         };
     }
 
-    /** @internal @deprecated Due to the execution order of constructors */
+    /** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
     protected OnConstruct(...Args: ConstructorArguments) {}
-    /** @internal @deprecated Due to the execution order of constructors */
+    /** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
     protected OnConstructClient(...Args: ConstructorArguments) {}
-    /** @internal @deprecated Due to the execution order of constructors */
+    /** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
     protected OnConstructServer(...Args: ConstructorArguments) {}
     /** Called whenever skill starts on the server. Accepts an argument passed to Start(). */
     protected OnStartServer(...Params: StarterParams) {}
@@ -521,6 +528,7 @@ export abstract class SkillBase<
     protected OnEndClient() {}
     /** Called whenever skill ends on client. */
     protected OnEndServer() {}
+    protected AssumeStart(...Params: StarterParams) {}
 }
 
 /** A skill class. */
