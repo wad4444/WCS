@@ -243,11 +243,21 @@ export abstract class SkillBase<
         if (this.ParamValidators && !t.strictArray(...this.ParamValidators)(params)) return;
 
         for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
-            if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).isEmpty()) return;
+            if (
+                !this.Character.GetAllActiveStatusEffectsOfType(Exclusive)
+                    .filter((T) => T._isReplicated)
+                    .isEmpty()
+            )
+                return;
         }
 
         for (const [_, Requirement] of pairs(this.Requirements)) {
-            if (this.Character.GetAllActiveStatusEffectsOfType(Requirement).isEmpty()) return;
+            if (
+                this.Character.GetAllActiveStatusEffectsOfType(Requirement)
+                    .filter((T) => T._isReplicated)
+                    .isEmpty()
+            )
+                return;
         }
 
         if (
