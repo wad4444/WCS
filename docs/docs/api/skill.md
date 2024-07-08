@@ -205,8 +205,8 @@ Accepts an argument passed to `Start()`.
 
 ### `AssumeStart(params)` @override
 Called right after the start request is sent from the client, under the assumption that skill is going to start.
-:::note
-In order for this to work properly make sure you set `MutualExclusives` and `Requirements` in `OnConstruct`.
+:::warning
+Assumptions are not always correct. In order for this to work properly make sure you set `MutualExclusives` and `Requirements` in `OnConstruct`.
 :::
 
 **`Parameters:`**
