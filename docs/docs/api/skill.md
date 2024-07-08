@@ -55,7 +55,7 @@ it will not proceed further and skill will not be started.
 effects to be applied before starting the skill.
 
 ### `CheckClientState`
-A boolean value. Checks whenever the start function should check if the skill is active/on cooldown on client side before firing a remote.
+A boolean value. Toggles whenever the start function should check `MutualExclusives`, `Requirements`, `ShouldStart`, `State` on client side before firing a remote.
 
 ## Events
 
