@@ -117,6 +117,12 @@ Retrieves the skill type.
 **`Returns:`**
 * Type: `SkillType`
 
+### `GetDebounceEndTimestamp()`
+Returns the tiemstamp of debounce end. Retrieved internally using `workspace:GetServerTimeNow()`.
+
+**`Returns:`**
+* Timestamp: `number`
+
 ### `Destroy()`
 Destroys the skill and removes it from the character.
 
