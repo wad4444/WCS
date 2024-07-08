@@ -203,6 +203,15 @@ Accepts an argument passed to `Start()`.
 **`Parameters:`**
 * StarterParams: `StarterParams` - a generic type.
 
+### `AssumeStart(params)` @override
+Called right after the start request is sent from the client, under the assumption that skill is going to start.
+:::warning
+Assumptions are not always correct. In order for this to work properly make sure you set `MutualExclusives` and `Requirements` in `OnConstruct`.
+:::
+
+**`Parameters:`**
+* StarterParams: `StarterParams` - a generic type.
+
 ### `OnEndServer()` @override
 Called whenever skill ends on server.
 

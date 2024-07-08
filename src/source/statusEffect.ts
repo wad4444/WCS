@@ -91,7 +91,8 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     private isDestroyed = false;
     private readonly timer = new Timer(1);
     private readonly id;
-    private readonly isReplicated: boolean;
+    /** @internal */
+    public readonly _isReplicated: boolean;
 
     protected readonly ConstructorArguments: ConstructorArguments;
 
@@ -126,7 +127,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
         this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
 
-        this.isReplicated = isClientContext() && tonumber(this.id)! > 0;
+        this._isReplicated = isClientContext() && tonumber(this.id)! > 0;
         this.ConstructorArguments = Args;
 
         this.StateChanged.Connect((New, Old) =>
@@ -135,7 +136,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
         this.Ended.Connect(() => this.Janitor.Cleanup());
         this.Ended.Connect(() => {
-            if (this.DestroyOnEnd && (isServerContext() || !this.isReplicated)) this.Destroy();
+            if (this.DestroyOnEnd && (isServerContext() || !this._isReplicated)) this.Destroy();
         });
 
         this.timer.completed.Connect(() => this.End());
@@ -165,7 +166,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Starts the status effect.
      */
     public Start(Time?: number) {
-        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
+        if (this._isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() === TimerState.Running) {
             return;
@@ -196,7 +197,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Pauses the status effect.
      */
     public Pause() {
-        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
+        if (this._isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() !== TimerState.Running) {
             logWarning(`Cannot pause a non active status effect`);
@@ -210,7 +211,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Resumes the status effect.
      */
     public Resume() {
-        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
+        if (this._isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (this.timer.getState() !== TimerState.Paused) {
             logWarning(`Cannot resume a non paused status effect`);
@@ -224,7 +225,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Ends the status effect.
      */
     public End() {
-        if (this.isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
+        if (this._isReplicated) return logWarning(`Cannot perform this action on a replicated status`);
 
         if (!this.GetState().IsActive) {
             return;
@@ -284,7 +285,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Clears the metadata
      */
     protected ClearMetadata() {
-        if (this.isReplicated) {
+        if (this._isReplicated) {
             logError(
                 `Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
             );
@@ -327,7 +328,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Sets the metadata of the status effect.
      */
     protected SetMetadata(NewMeta: Metadata) {
-        if (this.isReplicated) {
+        if (this._isReplicated) {
             logError(
                 `Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync`,
             );
@@ -476,7 +477,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     }
 
     private startReplicationClient() {
-        if (!this.isReplicated) return;
+        if (!this._isReplicated) return;
         if (!this.Character._clientAtom) return;
 
         const subscription = subscribe(

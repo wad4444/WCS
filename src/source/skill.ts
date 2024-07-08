@@ -229,23 +229,31 @@ export abstract class SkillBase<
     public Start(...params: StarterParams) {
         if (this.Character.DisableSkills) return;
 
+        const isClient = isClientContext();
         const state = this.GetState();
-        if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
-        if (isClientContext()) {
+        const sendStartRequest = () => {
             const serialized = skillRequestSerializer.serialize([this.Name, "Start", params]);
             ClientEvents.requestSkill.fire(serialized);
-            return;
+        };
+
+        if (isClient && !this.CheckClientState) {
+            sendStartRequest();
+            if (this.AssumeStart === (SkillBase as never as { AssumeStart: (...args: any[]) => void }).AssumeStart)
+                return;
         }
 
+        if (state.IsActive || state.Debounce) return;
         if (this.ParamValidators && !t.strictArray(...this.ParamValidators)(params)) return;
 
+        const filterReplicated = (T: AnyStatus) => (RunService.IsClient() ? T._isReplicated : true);
+
         for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
-            if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).isEmpty()) return;
+            if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).filter(filterReplicated).isEmpty()) return;
         }
 
         for (const [_, Requirement] of pairs(this.Requirements)) {
-            if (this.Character.GetAllActiveStatusEffectsOfType(Requirement).isEmpty()) return;
+            if (this.Character.GetAllActiveStatusEffectsOfType(Requirement).filter(filterReplicated).isEmpty()) return;
         }
 
         if (
@@ -256,6 +264,12 @@ export abstract class SkillBase<
         )
             return;
         if (!this.ShouldStart(...params)) return;
+
+        if (isClient) {
+            this.AssumeStart(...params);
+            if (this.CheckClientState) sendStartRequest();
+            return;
+        }
 
         this._setState({
             IsActive: true,
@@ -507,11 +521,11 @@ export abstract class SkillBase<
         };
     }
 
-    /** @internal @deprecated Due to the execution order of constructors */
+    /** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
     protected OnConstruct(...Args: ConstructorArguments) {}
-    /** @internal @deprecated Due to the execution order of constructors */
+    /** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
     protected OnConstructClient(...Args: ConstructorArguments) {}
-    /** @internal @deprecated Due to the execution order of constructors */
+    /** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
     protected OnConstructServer(...Args: ConstructorArguments) {}
     /** Called whenever skill starts on the server. Accepts an argument passed to Start(). */
     protected OnStartServer(...Params: StarterParams) {}
@@ -521,6 +535,7 @@ export abstract class SkillBase<
     protected OnEndClient() {}
     /** Called whenever skill ends on client. */
     protected OnEndServer() {}
+    protected AssumeStart(...Params: StarterParams) {}
 }
 
 /** A skill class. */

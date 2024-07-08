@@ -51,7 +51,6 @@ export = function () {
 
             let changed = false;
             status.Started.Connect(() => (changed = true));
-
             status.Start();
             RunService.Heartbeat.Wait();
 
