@@ -246,12 +246,14 @@ export abstract class SkillBase<
         if (state.IsActive || state.Debounce) return;
         if (this.ParamValidators && !t.strictArray(...this.ParamValidators)(params)) return;
 
+        const filterReplicated = (T: AnyStatus) => (RunService.IsClient() ? T._isReplicated : true);
+
         for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
-            if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).isEmpty()) return;
+            if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).filter(filterReplicated).isEmpty()) return;
         }
 
         for (const [_, Requirement] of pairs(this.Requirements)) {
-            if (this.Character.GetAllActiveStatusEffectsOfType(Requirement).isEmpty()) return;
+            if (this.Character.GetAllActiveStatusEffectsOfType(Requirement).filter(filterReplicated).isEmpty()) return;
         }
 
         if (

@@ -127,7 +127,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
         this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
 
-        this._isReplicated = isClientContext() ? tonumber(this.id)! > 0 : true;
+        this._isReplicated = isClientContext() && tonumber(this.id)! > 0;
         this.ConstructorArguments = Args;
 
         this.StateChanged.Connect((New, Old) =>
