@@ -229,35 +229,29 @@ export abstract class SkillBase<
     public Start(...params: StarterParams) {
         if (this.Character.DisableSkills) return;
 
+        const isClient = isClientContext();
         const state = this.GetState();
-        if ((state.IsActive || state.Debounce) && !(isClientContext() && !this.CheckClientState)) return;
 
-        if (isClientContext()) {
+        const sendStartRequest = () => {
             const serialized = skillRequestSerializer.serialize([this.Name, "Start", params]);
             ClientEvents.requestSkill.fire(serialized);
+        };
 
+        if (isClient && !this.CheckClientState) {
+            sendStartRequest();
             if (this.AssumeStart === (SkillBase as never as { AssumeStart: (...args: any[]) => void }).AssumeStart)
                 return;
         }
 
+        if (state.IsActive || state.Debounce) return;
         if (this.ParamValidators && !t.strictArray(...this.ParamValidators)(params)) return;
 
         for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
-            if (
-                !this.Character.GetAllActiveStatusEffectsOfType(Exclusive)
-                    .filter((T) => T._isReplicated)
-                    .isEmpty()
-            )
-                return;
+            if (!this.Character.GetAllActiveStatusEffectsOfType(Exclusive).isEmpty()) return;
         }
 
         for (const [_, Requirement] of pairs(this.Requirements)) {
-            if (
-                this.Character.GetAllActiveStatusEffectsOfType(Requirement)
-                    .filter((T) => T._isReplicated)
-                    .isEmpty()
-            )
-                return;
+            if (this.Character.GetAllActiveStatusEffectsOfType(Requirement).isEmpty()) return;
         }
 
         if (
@@ -269,8 +263,9 @@ export abstract class SkillBase<
             return;
         if (!this.ShouldStart(...params)) return;
 
-        if (isClientContext()) {
+        if (isClient) {
             this.AssumeStart(...params);
+            if (this.CheckClientState) sendStartRequest();
             return;
         }
 
