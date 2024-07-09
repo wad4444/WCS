@@ -49,7 +49,7 @@
   "dependencies": {
     "@flamework/core": "^1.2.2",
     "@flamework/networking": "^1.2.2",
-    "@rbxts/charm": "npm:@rbxts/modded-charm@^1.0.2",
+    "@rbxts/charm": "^0.5.0",
     "@rbxts/flamework-binary-serializer": "^0.6.0",
     "@rbxts/immut": "^0.4.4-ts.0",
     "@rbxts/janitor": "^1.15.4-ts.0",
