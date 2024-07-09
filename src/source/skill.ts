@@ -54,7 +54,7 @@ export interface SkillData {
     constructorArguments: unknown[];
     metadata: unknown;
 }
-export type AnySkill = SkillBase<any, any[], any>;
+export type AnySkill = SkillBase<any[], any[], any>;
 export type UnknownSkill = SkillBase<unknown[], unknown[], unknown>;
 
 const nextId = createIdGenerator();
@@ -62,7 +62,7 @@ const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
 
 type ValidatorArray<T extends unknown[]> = T extends [infer First, ...infer Rest]
     ? readonly [t.check<First>, ...ValidatorArray<Rest>]
-    : readonly [];
+    : readonly t.check<unknown>[];
 
 /** @hidden */
 export abstract class SkillBase<
