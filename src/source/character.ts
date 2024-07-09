@@ -554,19 +554,25 @@ export class Character {
             );
         }
 
-        const status = new constructor!(
-            {
-                Character: this,
-                Flag: {
-                    flag: Flags.CanAssignCustomId,
-                    data: Id,
-                },
-            } as never,
-            ...(Data.constructorArgs as never[]),
-        );
+        let flaggedAsDestroyed = false;
+        let status: AnyStatus | undefined = undefined;
+        task.spawn(() => {
+            status = new constructor(
+                {
+                    Character: this,
+                    Flag: {
+                        flag: Flags.CanAssignCustomId,
+                        data: Id,
+                    },
+                } as never,
+                ...Data.constructorArgs,
+            );
+            if (flaggedAsDestroyed) status.Destroy();
+        });
 
         return () => {
-            status.Destroy();
+            flaggedAsDestroyed = true;
+            status?.Destroy();
         };
     }
 
@@ -578,16 +584,22 @@ export class Character {
             );
         }
 
-        const skill = new constructor!(
-            {
-                Character: this,
-                Flag: Flags.CanInstantiateSkillClient,
-            } as never,
-            ...(Data.constructorArguments as never[]),
-        );
+        let flaggedAsDestroyed = false;
+        let skill: AnySkill | undefined = undefined;
+        task.spawn(() => {
+            skill = new constructor(
+                {
+                    Character: this,
+                    Flag: Flags.CanAssignCustomId,
+                } as never,
+                ...Data.constructorArguments,
+            );
+            if (flaggedAsDestroyed) skill.Destroy();
+        });
 
         return () => {
-            skill.Destroy();
+            flaggedAsDestroyed = true;
+            skill?.Destroy();
         };
     }
 

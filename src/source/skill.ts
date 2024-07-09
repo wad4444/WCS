@@ -54,15 +54,17 @@ export interface SkillData {
     constructorArguments: unknown[];
     metadata: unknown;
 }
-export type AnySkill = SkillBase<any, any[], any>;
+export type AnySkill = SkillBase<any[], any[], any>;
 export type UnknownSkill = SkillBase<unknown[], unknown[], unknown>;
 
+export type SkillConstructor = new (...args: [Character, ...constructorArgs: any[]]) => UnknownSkill;
+
 const nextId = createIdGenerator();
-const registeredSkills = new Map<string, Constructor<UnknownSkill>>();
+const registeredSkills = new Map<string, SkillConstructor>();
 
 type ValidatorArray<T extends unknown[]> = T extends [infer First, ...infer Rest]
     ? readonly [t.check<First>, ...ValidatorArray<Rest>]
-    : readonly [];
+    : readonly t.check<unknown>[];
 
 /** @hidden */
 export abstract class SkillBase<
@@ -266,8 +268,8 @@ export abstract class SkillBase<
         if (!this.ShouldStart(...params)) return;
 
         if (isClient) {
-            this.AssumeStart(...params);
             if (this.CheckClientState) sendStartRequest();
+            task.spawn(() => this.AssumeStart(...params));
             return;
         }
 
@@ -553,7 +555,7 @@ export abstract class Skill<
 /**
  * A decorator function that registers a skill.
  */
-export function SkillDecorator<T extends Constructor<AnySkill>>(Constructor: T) {
+export function SkillDecorator<T extends SkillConstructor>(Constructor: T) {
     const name = tostring(Constructor);
     if (registeredSkills.has(name)) {
         logError(`StatusEffect with name ${name} was already registered before`);
@@ -574,5 +576,5 @@ export function GetRegisteredSkillConstructor(Name: string) {
  * @hidden
  */
 export function GetRegisteredSkills() {
-    return table.freeze(table.clone(registeredSkills)) as ReadonlyMap<string, Constructor<UnknownSkill>>;
+    return table.freeze(table.clone(registeredSkills)) as ReadonlyMap<string, SkillConstructor>;
 }
