@@ -266,8 +266,8 @@ export abstract class SkillBase<
         if (!this.ShouldStart(...params)) return;
 
         if (isClient) {
-            this.AssumeStart(...params);
             if (this.CheckClientState) sendStartRequest();
+            task.spawn(() => this.AssumeStart(...params));
             return;
         }
 
