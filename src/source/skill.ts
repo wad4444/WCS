@@ -126,7 +126,7 @@ export abstract class SkillBase<
     protected Requirements: Constructor<AnyStatus>[] = [];
 
     /** Checks whenever the start function should check if the skill is active/on cooldown on client side before firing a remote. */
-    protected CheckClientState = true;
+    protected CheckClientState = false;
 
     protected readonly ParamValidators?: ValidatorArray<StarterParams>;
 
