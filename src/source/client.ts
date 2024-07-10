@@ -26,7 +26,7 @@ class Client {
         atoms: { atom: this.atom },
     });
 
-    constructor(ApplyLoggerMiddleware: boolean) {
+    constructor() {
         currentInstance = this;
     }
 
@@ -178,7 +178,7 @@ class Client {
     }
 }
 
-export function CreateClient(ApplyLoggerMiddleware = false) {
+export function CreateClient() {
     if (isServerContext()) {
         logError(`Attempted to instantiate Client handler on server side!`);
     }
@@ -188,5 +188,5 @@ export function CreateClient(ApplyLoggerMiddleware = false) {
         return currentInstance;
     }
 
-    return new Client(ApplyLoggerMiddleware);
+    return new Client();
 }
