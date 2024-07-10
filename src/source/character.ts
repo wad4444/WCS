@@ -196,14 +196,14 @@ export class Character {
     public Destroy() {
         if (this.destroyed) return;
         Character.currentCharMap.delete(this.Instance);
-
         Character.CharacterDestroyed.Fire(this);
-        this.skills.forEach((Skill) => Skill.Destroy());
-        this.statusEffects.forEach((Status) => Status.Destroy());
 
         this.Destroyed.Fire();
         this.janitor.Cleanup();
         this.destroyed = true;
+
+        this.skills.forEach((Skill) => Skill.Destroy());
+        this.statusEffects.forEach((Status) => Status.Destroy());
 
         if (isServerContext()) {
             deleteCharacterData(this.id);
