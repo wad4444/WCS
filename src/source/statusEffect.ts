@@ -400,6 +400,8 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
      * Destroys the status effect and removes it from the character
      */
     public Destroy() {
+        if (this.isDestroyed) return;
+
         if (isServerContext()) {
             this.End();
             deleteStatusData(this.Character.GetId(), this.id);

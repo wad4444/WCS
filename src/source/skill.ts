@@ -316,6 +316,8 @@ export abstract class SkillBase<
      * Destroys the skill and removes it from the character
      */
     public Destroy() {
+        if (this.destroyed) return;
+
         this._setState({
             IsActive: false,
             Debounce: false,

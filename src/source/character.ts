@@ -194,10 +194,8 @@ export class Character {
      * You usually suppost to fire this manually when your humanoid dies.
      */
     public Destroy() {
+        if (this.destroyed) return;
         Character.currentCharMap.delete(this.Instance);
-        if (isServerContext()) {
-            deleteCharacterData(this.id);
-        }
 
         Character.CharacterDestroyed.Fire(this);
         this.skills.forEach((Skill) => Skill.Destroy());
@@ -206,6 +204,10 @@ export class Character {
         this.Destroyed.Fire();
         this.janitor.Cleanup();
         this.destroyed = true;
+
+        if (isServerContext()) {
+            deleteCharacterData(this.id);
+        }
     }
 
     public IsDestroyed() {
