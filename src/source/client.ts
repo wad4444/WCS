@@ -70,7 +70,7 @@ class Client {
 
         ClientEvents.sync.connect((serialized) => {
             const payload = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
-            this.clientSyncer.sync(payload as never);
+            this.clientSyncer.sync(...(payload as never[]));
         });
         ClientEvents.start();
 
