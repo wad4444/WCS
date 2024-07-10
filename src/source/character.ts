@@ -590,7 +590,7 @@ export class Character {
             skill = new constructor(
                 {
                     Character: this,
-                    Flag: Flags.CanAssignCustomId,
+                    Flag: Flags.CanInstantiateSkillClient,
                 } as never,
                 ...Data.constructorArguments,
             );
