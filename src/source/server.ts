@@ -10,7 +10,7 @@ import { RestoreArgs } from "./arg-converter";
 import { UnknownSkill } from "./skill";
 import { Reflect } from "@flamework/core";
 import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
-import { atom, sync } from "@rbxts/charm";
+import { atom, None, sync } from "@rbxts/charm";
 import { Players } from "@rbxts/services";
 
 let currentInstance: Server | undefined = undefined;
@@ -24,6 +24,7 @@ class Server {
     public __WCS_Atom = atom<Map<string, CharacterData>>(new Map());
     private syncer = sync.server({
         atoms: { atom: this.__WCS_Atom },
+        preserveHistory: true,
     });
 
     constructor() {
@@ -68,32 +69,43 @@ class Server {
         const assignedIdentifiers = new Map<Player, string>();
         Players.PlayerRemoving.Connect((player) => assignedIdentifiers.delete(player));
 
-        this.syncer.connect((player, payload) => {
-            const state = payload.data.atom as unknown;
+        this.syncer.connect((player, ...payloads) => {
             const correspondingId =
                 (player.Character ? Character.GetCharacterFromInstance(player.Character)?.GetId() : undefined) ??
                 assignedIdentifiers.get(player);
             if (!correspondingId) return;
             assignedIdentifiers.set(player, correspondingId);
 
-            let data: CharacterData | CharacterData[] | undefined = undefined;
-            if (payload.type === "init") {
-                data = (state as Map<string, CharacterData>).get(correspondingId);
-            } else if (payload.type === "patch") {
-                const filtered: CharacterData[] = [];
-                (state as Map<string, CharacterData>[]).forEach((value) => {
-                    if (value.get(correspondingId)) filtered.push(value.get(correspondingId)!);
-                });
+            type ModifiedPayload = Charm.SyncPayload<{
+                atom: Charm.Atom<CharacterData | undefined>;
+            }>;
+            const modified: ModifiedPayload[] = [];
 
-                data = filtered;
+            for (const payload of payloads) {
+                if (payload.type === "init") {
+                    const data = payload.data.atom;
+                    const characterData = data.get(correspondingId);
+                    if (characterData) {
+                        modified.push({
+                            type: "init",
+                            data: { atom: characterData },
+                        });
+                    }
+                } else {
+                    const data = payload.data.atom;
+                    if (data === undefined) continue;
+
+                    const characterData = data.get(correspondingId);
+                    if (characterData === undefined) continue;
+
+                    modified.push({
+                        type: "patch",
+                        data: { atom: characterData },
+                    });
+                }
             }
-            if (!data) return;
 
-            const cloned = table.clone(payload.data) as { atom: CharacterData | CharacterData[] };
-            cloned.atom = data;
-
-            payload.data = cloned as never;
-            const serialized = dispatchSerializer.serialize(payload as never);
+            const serialized = dispatchSerializer.serialize(modified);
             ServerEvents.sync.fire(player, serialized);
         });
         ServerEvents.start.connect((player) => this.syncer.hydrate(player));
