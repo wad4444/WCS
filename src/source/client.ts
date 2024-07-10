@@ -10,7 +10,7 @@ import { UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
 import { SerializedData, dispatchSerializer, messageSerializer } from "./serdes";
 import { RestoreArgs } from "./arg-converter";
-import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
+import { INVALID_MESSAGE_STR, MessageOptions, ValidateArgs } from "./message";
 import { Reflect } from "@flamework/core";
 import { atom, subscribe, sync } from "@rbxts/charm";
 
@@ -114,11 +114,11 @@ class Client {
 
             const args = RestoreArgs(PackedArgs);
 
-            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
-                | t.check<any>[]
-                | undefined;
-            if (validators) {
-                if (!ValidateArgs(validators, args)) return;
+            const config = Reflect.getMetadata(skill, `Config_${MethodName}`) as MessageOptions | undefined;
+            if (config?.OnlyWhenActive && !skill.GetState().IsActive) return;
+
+            if (config?.Validators) {
+                if (!ValidateArgs(config.Validators, args)) return;
             }
 
             const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
@@ -137,11 +137,11 @@ class Client {
 
             const args = RestoreArgs(PackedArgs);
 
-            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
-                | t.check<any>[]
-                | undefined;
-            if (validators) {
-                if (!ValidateArgs(validators, args)) return INVALID_MESSAGE_STR;
+            const config = Reflect.getMetadata(skill, `Config_${MethodName}`) as MessageOptions | undefined;
+            if (config?.OnlyWhenActive && !skill.GetState().IsActive) return INVALID_MESSAGE_STR;
+
+            if (config?.Validators) {
+                if (!ValidateArgs(config.Validators, args)) return INVALID_MESSAGE_STR;
             }
 
             const method = skill[MethodName as never] as (

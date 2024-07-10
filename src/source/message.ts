@@ -17,6 +17,7 @@ export interface MessageOptions<T extends "Event" | "Request" = "Event" | "Reque
     Destination: "Server" | "Client";
     Type: T;
     Validators?: t.check<any>[];
+    OnlyWhenActive?: boolean;
     ValueValidator?: T extends "Request" ? t.check<any> : undefined;
 }
 
@@ -74,14 +75,13 @@ export function Message<T extends MessageOptions>(Options: T) {
 
         const current = RunService.IsServer() ? "Server" : "Client";
         if (Options.Validators && current === Options.Destination) {
-            Reflect.defineMetadata(ctor, `MessageValidators_${methodName}`, Options.Validators);
+            Reflect.defineMetadata(ctor, `Config_${methodName}`, Options);
         }
 
         if (current === Options.Destination) return;
 
         ctor[methodName] = function (this: SkillBase, ...args: unknown[]) {
             if (!this.Player) return;
-
             const serialized = messageSerializer.serialize([this.Name, methodName, ConvertArgs(args)]);
 
             if (Options.Type === "Event") {

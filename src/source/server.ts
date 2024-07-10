@@ -9,7 +9,7 @@ import { SerializedData, dispatchSerializer, messageSerializer, skillRequestSeri
 import { RestoreArgs } from "./arg-converter";
 import { UnknownSkill } from "./skill";
 import { Reflect } from "@flamework/core";
-import { INVALID_MESSAGE_STR, ValidateArgs } from "./message";
+import { INVALID_MESSAGE_STR, MessageOptions, ValidateArgs } from "./message";
 import { atom, None, sync } from "@rbxts/charm";
 import { Players } from "@rbxts/services";
 
@@ -139,11 +139,11 @@ class Server {
             if (!skill) return;
 
             const args = RestoreArgs(PackedArgs);
-            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
-                | t.check<any>[]
-                | undefined;
-            if (validators) {
-                if (!ValidateArgs(validators, args)) return;
+            const config = Reflect.getMetadata(skill, `Config_${MethodName}`) as MessageOptions | undefined;
+            if (config?.OnlyWhenActive && !skill.GetState().IsActive) return;
+
+            if (config?.Validators) {
+                if (!ValidateArgs(config.Validators, args)) return;
             }
 
             const method = skill[MethodName as never] as (self: UnknownSkill, ...args: unknown[]) => unknown;
@@ -164,11 +164,11 @@ class Server {
             if (!skill) return;
 
             const args = RestoreArgs(PackedArgs);
-            const validators = Reflect.getMetadata(skill, `MessageValidators_${MethodName}`) as
-                | t.check<any>[]
-                | undefined;
-            if (validators) {
-                if (!ValidateArgs(validators, args)) return INVALID_MESSAGE_STR;
+            const config = Reflect.getMetadata(skill, `Config_${MethodName}`) as MessageOptions | undefined;
+            if (config?.OnlyWhenActive && !skill.GetState().IsActive) return INVALID_MESSAGE_STR;
+
+            if (config?.Validators) {
+                if (!ValidateArgs(config.Validators, args)) return INVALID_MESSAGE_STR;
             }
 
             const method = skill[MethodName as never] as (
