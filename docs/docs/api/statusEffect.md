@@ -26,6 +26,9 @@ A [Janitor] object. Cleans up everything after skill ends.
 A [Player](https://create.roblox.com/docs/reference/engine/classes/Player) object the skill is associated with.
 Retrieved internally by `Players:GetPlayerFromCharacter(self.Character.Instance)`.
 
+### `Name` **@readonly**
+A string value.
+
 ### `ConstructorArguments` **@readonly**
 A table of arguments provided after the [Character] in `.new()`.
 

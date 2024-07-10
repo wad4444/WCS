@@ -71,6 +71,7 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
     public readonly Ended = new Signal();
 
     public readonly Player?: Player;
+    public readonly Name = tostring(getmetatable(this));
 
     /**
      * A number value. Determines the position in which `HandleDamage()` is applied.
