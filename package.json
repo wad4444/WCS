@@ -52,7 +52,7 @@
     "@rbxts/charm": "^0.5.1",
     "@rbxts/flamework-binary-serializer": "^0.6.0",
     "@rbxts/immut": "^0.4.4-ts.0",
-    "@rbxts/janitor": "^1.15.4-ts.0",
+    "@rbxts/janitor": "^1.16.0-ts.0",
     "@rbxts/services": "^1.5.1",
     "@rbxts/signal": "^1.1.1",
     "@rbxts/t": "^3.1.0",
