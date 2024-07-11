@@ -23,7 +23,7 @@ import { t } from "@rbxts/t";
 import { skillRequestSerializer } from "./serdes";
 import { deleteSkillData, patchSkillData, setSkillData } from "source/actions";
 import { subscribe } from "@rbxts/charm";
-import { clientAtom } from "exports";
+import { clientAtom } from "./client";
 
 export interface SkillState {
     IsActive: boolean;

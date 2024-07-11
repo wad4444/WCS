@@ -27,7 +27,7 @@ import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
 import { Atom, observe, subscribe } from "@rbxts/charm";
 import { deleteCharacterData, patchCharacterData, setCharacterData } from "source/actions";
-import { clientAtom } from "exports";
+import { clientAtom } from "./client";
 
 export interface CharacterData {
     instance: Instance;

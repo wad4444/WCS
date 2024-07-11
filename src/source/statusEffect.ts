@@ -18,7 +18,7 @@ import { t } from "@rbxts/t";
 import Signal from "@rbxts/signal";
 import { subscribe } from "@rbxts/charm";
 import { setStatusData, patchStatusData, deleteStatusData } from "source/actions";
-import { clientAtom } from "exports";
+import { clientAtom } from "./client";
 
 export interface StatusData {
     className: string;
