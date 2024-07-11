@@ -15,15 +15,16 @@ import { Reflect } from "@flamework/core";
 import { atom, subscribe, sync } from "@rbxts/charm";
 
 let currentInstance: Client | undefined = undefined;
+/** @internal */
+export const clientAtom = atom<CharacterData | undefined>(undefined);
 export type WCS_Client = Client;
 
 class Client {
     private isActive = false;
     private registeredModules: ModuleScript[] = [];
 
-    private atom = atom<CharacterData | undefined>(undefined);
     private clientSyncer = sync.client({
-        atoms: { atom: this.atom },
+        atoms: { atom: clientAtom },
     });
 
     constructor() {
@@ -163,16 +164,13 @@ class Client {
     private setupCharacterReplication() {
         let character: Character | undefined;
 
-        subscribe(this.atom, (data) => {
+        subscribe(clientAtom, (data) => {
             if (!data || character?.Instance !== data.instance) {
                 character?.Destroy();
                 character = undefined;
             }
             if (data && !character) {
-                character = new Character(data.instance, {
-                    flag: Flags.CanCreateCharacterClient,
-                    data: this.atom,
-                });
+                character = new Character(data.instance, Flags.CanCreateCharacterClient);
             }
         });
     }

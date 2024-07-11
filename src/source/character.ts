@@ -27,6 +27,7 @@ import { GetMovesetObjectByName, Moveset } from "./moveset";
 import Signal from "@rbxts/signal";
 import { Atom, observe, subscribe } from "@rbxts/charm";
 import { deleteCharacterData, patchCharacterData, setCharacterData } from "source/actions";
+import { clientAtom } from "exports";
 
 export interface CharacterData {
     instance: Instance;
@@ -104,17 +105,14 @@ export class Character {
     private moveset?: string;
     private destroyed = false;
 
-    /** @internal */
-    public readonly _clientAtom?: Atom<CharacterData | undefined>;
-
     constructor(Instance: Instance);
     /**
      * @internal Reserved for internal usage
      * @hidden
      */
-    constructor(Instance: Instance, canCreateClient: FlagWithData<Atom<CharacterData | undefined>>);
-    constructor(Instance: Instance, canCreateClient?: FlagWithData<Atom<CharacterData | undefined>>) {
-        if (isClientContext() && canCreateClient?.flag !== Flags.CanCreateCharacterClient) {
+    constructor(Instance: Instance, canCreateClient: (typeof Flags)["CanCreateCharacterClient"]);
+    constructor(Instance: Instance, canCreateClient?: (typeof Flags)["CanCreateCharacterClient"]) {
+        if (isClientContext() && canCreateClient !== Flags.CanCreateCharacterClient) {
             logError(
                 `Attempted to manually create a character on client. \n On client side character are created by the handler automatically, \n doing this manually can lead to a possible desync`,
             );
@@ -137,7 +135,6 @@ export class Character {
         this.Humanoid = humanoid;
         this.Player = Players.GetPlayerFromCharacter(this.Instance);
         this.id = isServerContext() ? generateId() : "0";
-        this._clientAtom = canCreateClient?.data;
 
         Character.currentCharMap.set(Instance, this);
         Character.CharacterCreated.Fire(this);
@@ -608,7 +605,6 @@ export class Character {
     private setupReplication_Client() {
         if (!isClientContext()) return;
         if (!getActiveHandler()) return;
-        if (!this._clientAtom) return;
 
         const processMovesetChange = (New: string | undefined, Old: string | undefined) => {
             this.moveset = New;
@@ -624,19 +620,19 @@ export class Character {
 
         this.janitor.Add(
             observe(
-                () => this._clientAtom!()?.statusEffects ?? new Map<string, StatusData>(),
+                () => clientAtom()?.statusEffects ?? new Map<string, StatusData>(),
                 (value, key) => this.statusObserver(value, key),
             ),
         );
 
         this.janitor.Add(
             observe(
-                () => this._clientAtom!()?.skills ?? new Map<string, SkillData>(),
+                () => clientAtom()?.skills ?? new Map<string, SkillData>(),
                 (value, key) => this.skillObserver(value, key),
             ),
         );
 
-        this.janitor.Add(subscribe(this._clientAtom, processDataUpdate));
+        this.janitor.Add(subscribe(clientAtom, processDataUpdate));
         this.updateHumanoidProps();
     }
 
