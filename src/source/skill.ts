@@ -23,6 +23,7 @@ import { t } from "@rbxts/t";
 import { skillRequestSerializer } from "./serdes";
 import { deleteSkillData, patchSkillData, setSkillData } from "source/actions";
 import { subscribe } from "@rbxts/charm";
+import { clientAtom } from "exports";
 
 export interface SkillState {
     IsActive: boolean;
@@ -504,14 +505,13 @@ export abstract class SkillBase<
 
     private startReplication() {
         if (!this.isReplicated) return;
-        if (!this.Character._clientAtom) return;
 
         const disconnect = subscribe(
-            () => this.Character._clientAtom?.()?.skills.get(this.Name),
+            () => clientAtom()?.skills.get(this.Name),
             (current, old) => this._processDataUpdate(current, old),
         );
 
-        const state = this.Character._clientAtom();
+        const state = clientAtom();
         this._processDataUpdate(state?.skills.get(this.Name));
 
         this.Destroyed.Connect(disconnect);

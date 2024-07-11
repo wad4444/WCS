@@ -18,6 +18,7 @@ import { t } from "@rbxts/t";
 import Signal from "@rbxts/signal";
 import { subscribe } from "@rbxts/charm";
 import { setStatusData, patchStatusData, deleteStatusData } from "source/actions";
+import { clientAtom } from "exports";
 
 export interface StatusData {
     className: string;
@@ -481,14 +482,13 @@ export class StatusEffect<Metadata = void, ConstructorArguments extends unknown[
 
     private startReplicationClient() {
         if (!this._isReplicated) return;
-        if (!this.Character._clientAtom) return;
 
         const subscription = subscribe(
-            () => this.Character._clientAtom!()?.statusEffects.get(this.id),
+            () => clientAtom()?.statusEffects.get(this.id),
             (current, old) => this._processDataUpdate(current, old),
         );
 
-        const state = this.Character._clientAtom()?.statusEffects.get(this.id);
+        const state = clientAtom()?.statusEffects.get(this.id);
         this._processDataUpdate(state);
 
         this.janitor.Add(subscription);
