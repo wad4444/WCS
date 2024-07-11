@@ -11,6 +11,7 @@ import {
     isClientContext,
     createIdGenerator,
     DeepReadonly,
+    clientAtom,
 } from "./utility";
 import { FlagWithData, Flags } from "./flags";
 import { Timer, TimerState } from "@rbxts/timer";
@@ -18,7 +19,6 @@ import { t } from "@rbxts/t";
 import Signal from "@rbxts/signal";
 import { subscribe } from "@rbxts/charm";
 import { setStatusData, patchStatusData, deleteStatusData } from "source/actions";
-import { clientAtom } from "./client";
 
 export interface StatusData {
     className: string;

@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { t } from "@rbxts/t";
-import { isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
+import { clientAtom, isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
 import { ClientEvents, ClientFunctions } from "./networking";
-import { Character, CharacterData } from "./character";
+import { Character } from "./character";
 import { Flags } from "./flags";
 import { UnknownSkill } from "./skill";
 import { UnknownStatus } from "./statusEffect";
@@ -12,11 +12,9 @@ import { SerializedData, dispatchSerializer, messageSerializer } from "./serdes"
 import { RestoreArgs } from "./arg-converter";
 import { INVALID_MESSAGE_STR, MessageOptions, ValidateArgs } from "./message";
 import { Reflect } from "@flamework/core";
-import { atom, subscribe, sync } from "@rbxts/charm";
+import { subscribe, sync } from "@rbxts/charm";
 
 let currentInstance: Client | undefined = undefined;
-/** @internal */
-export const clientAtom = atom<CharacterData | undefined>(undefined);
 export type WCS_Client = Client;
 
 class Client {

@@ -6,6 +6,8 @@ import { WCS_Server } from "./server";
 import { RunService } from "@rbxts/services";
 import { Moveset } from "./moveset";
 import { AnySkill } from "./skill";
+import { atom } from "@rbxts/charm";
+import { CharacterData } from "exports";
 
 export const consolePrefix = `WCS`;
 const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`;
@@ -89,6 +91,9 @@ export type DeepReadonly<T> =
 
 export type Handler = WCS_Server | WCS_Client | undefined;
 let activeHandler: Handler = undefined;
+
+/** @internal */
+export const clientAtom = atom<CharacterData | undefined>(undefined);
 
 export function setActiveHandler(handler: Handler) {
     if (activeHandler) {

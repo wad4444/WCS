@@ -6,6 +6,7 @@ import { Flags } from "./flags";
 import {
     Constructor,
     DeepReadonly,
+    clientAtom,
     createIdGenerator,
     freezeCheck,
     getActiveHandler,
@@ -23,7 +24,6 @@ import { t } from "@rbxts/t";
 import { skillRequestSerializer } from "./serdes";
 import { deleteSkillData, patchSkillData, setSkillData } from "source/actions";
 import { subscribe } from "@rbxts/charm";
-import { clientAtom } from "./client";
 
 export interface SkillState {
     IsActive: boolean;
