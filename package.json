@@ -19,7 +19,8 @@
   ],
   "files": [
     "out",
-    "!**/*.tsbuildinfo"
+    "!**/*.tsbuildinfo",
+    "!out/tests/*"
   ],
   "author": "wad4444",
   "license": "MIT",
