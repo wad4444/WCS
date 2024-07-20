@@ -51,7 +51,7 @@
     "@flamework/core": "^1.2.2",
     "@flamework/networking": "^1.2.2",
     "@rbxts/charm": "^0.5.2",
-    "@rbxts/charm-payload-converter": "file:rbxts-charm-payload-converter-0.0.1.tgz",
+    "@rbxts/charm-payload-converter": "^1.0.0",
     "@rbxts/flamework-binary-serializer": "^0.6.0",
     "@rbxts/immut": "^0.4.4-ts.0",
     "@rbxts/janitor": "^1.16.0-ts.0",
