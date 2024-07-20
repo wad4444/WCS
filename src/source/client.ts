@@ -1,6 +1,3 @@
-/* eslint-disable roblox-ts/no-array-pairs */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-this-alias */
 import { t } from "@rbxts/t";
 import { clientAtom, isServerContext, logError, logMessage, logWarning, setActiveHandler } from "source/utility";
 import { ClientEvents, ClientFunctions } from "./networking";
@@ -13,6 +10,7 @@ import { RestoreArgs } from "./arg-converter";
 import { INVALID_MESSAGE_STR, MessageOptions, ValidateArgs } from "./message";
 import { Reflect } from "@flamework/core";
 import { subscribe, sync } from "@rbxts/charm";
+import { fromSerializeablePayload } from "@rbxts/charm-payload-converter";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -26,6 +24,7 @@ class Client {
     });
 
     constructor() {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         currentInstance = this;
     }
 
@@ -68,8 +67,8 @@ class Client {
         this.setupCharacterReplication();
 
         ClientEvents.sync.connect((serialized) => {
-            const payload = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
-            this.clientSyncer.sync(...(payload as never[]));
+            const payloads = dispatchSerializer.deserialize(serialized.buffer, serialized.blobs);
+            this.clientSyncer.sync(...payloads.map(fromSerializeablePayload));
         });
         ClientEvents.start();
 
@@ -89,10 +88,9 @@ class Client {
 
             if (!character) return;
 
-            for (const [_, _skill] of pairs(character[Type === "Skill" ? "GetSkills" : "GetAllStatusEffects"]())) {
-                const skill = _skill as UnknownSkill | UnknownStatus;
-                if (skill.GetId() === SourceId) {
-                    source = skill;
+            for (const object of character[Type === "Skill" ? "GetSkills" : "GetAllStatusEffects"]()) {
+                if (object.GetId() === SourceId) {
+                    source = object;
                     break;
                 }
             }
