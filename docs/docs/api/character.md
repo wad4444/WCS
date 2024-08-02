@@ -217,10 +217,10 @@ Retrieves the currently applied humanoid properties, depending on current `Human
 **`Returns`**
  * Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and its `Value`.
 
-### `GetAllStatusEffect()`
+### `GetAllStatusEffects()`
 Retrieves all status effects.
 
-### `GetAllActiveStatusEffect()`
+### `GetAllActiveStatusEffects()`
 Retrieves all active status effects.
 
 ### `GetAllStatusEffectsOfType(constructor)`

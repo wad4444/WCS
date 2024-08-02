@@ -10,8 +10,9 @@ import { RestoreArgs } from "./arg-converter";
 import { UnknownSkill } from "./skill";
 import { Reflect } from "@flamework/core";
 import { INVALID_MESSAGE_STR, MessageOptions, ValidateArgs } from "./message";
-import { atom, None, sync } from "@rbxts/charm";
+import { atom, sync } from "@rbxts/charm";
 import { Players } from "@rbxts/services";
+import { toSerializeablePayload } from "@rbxts/charm-payload-converter";
 
 let currentInstance: Server | undefined = undefined;
 export type WCS_Server = Server;
@@ -105,7 +106,8 @@ class Server {
                 }
             }
 
-            const serialized = dispatchSerializer.serialize(modified);
+            const serializeable = modified.map(toSerializeablePayload);
+            const serialized = dispatchSerializer.serialize(serializeable);
             ServerEvents.sync.fire(player, serialized);
         });
         ServerEvents.start.connect((player) => this.syncer.hydrate(player));
