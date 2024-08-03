@@ -19,24 +19,18 @@
 
 		// configurable
 		"paths": {
-			"@rbxts/wcs": ["../../src"],
+			"@rbxts/wcs": ["../../src"]
 		},
-		"rootDirs": [
-			"src",
-			"../src",
-		],
+		"rootDirs": ["src", "../src"],
 		"baseUrl": "../src",
 		"outDir": "./out",
 		"incremental": true,
 		"tsBuildInfoFile": "./out/tsconfig.tsbuildinfo",
 		"declaration": true,
 		"plugins": [
-			{"transform": "rbxts-transformer-private"},
-			{"transform": "rbxts-transformer-flamework"},
-		],
+			{ "transform": "rbxts-transformer-private" },
+			{ "transform": "rbxts-transformer-flamework" }
+		]
 	},
-	"include": [
-		"./src/**/*",
-		"../src/**/*"
-	]
+	"include": ["./src/**/*", "../src/**/*"]
 }

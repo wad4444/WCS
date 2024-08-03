@@ -1,22 +1,29 @@
 {
-	"typescript.tsdk": "node_modules/typescript/lib",
 	"files.eol": "\n",
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"luau-lsp.require.mode": "relativeToFile",
+	"luau-lsp.require.directoryAliases": {
+		"@lune/": "~/.lune/.typedefs/0.8.6/"
+	},
 	"[typescript]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+		"editor.defaultFormatter": "biomejs.biome",
 		"editor.formatOnSave": true
 	},
 	"[typescriptreact]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+		"editor.defaultFormatter": "biomejs.biome",
 		"editor.formatOnSave": true
 	},
-	"eslint.run": "onType",
-	"eslint.format.enable": true,
-	"robloxLsp.diagnostics.disable": [
-		"undefined-type"
-	],
-	"luau-lsp.require.mode": "relativeToFile",
-	"luau-lsp.require.directoryAliases": {
-		"@lune/": "~/.lune/.typedefs/0.8.3/"
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.formatOnSave": true
 	},
-	"luau-lsp.sourcemap.autogenerate": false
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.formatOnSave": true
+	},
+	"editor.codeActionsOnSave": [
+		"source.organizeImports",
+		"source.fixAll",
+		"source.addMissingImports"
+	]
 }

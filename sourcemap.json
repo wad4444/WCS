@@ -1,1 +1,984 @@
-{"name":"wcs","className":"ModuleScript","filePaths":["out\\init.lua","default.project.json"],"children":[{"name":"exports","className":"ModuleScript","filePaths":["out\\exports.lua"]},{"name":"luaSpecific","className":"Folder","children":[{"name":"registerHoldableSkill","className":"ModuleScript","filePaths":["out\\luaSpecific\\registerHoldableSkill.lua"]},{"name":"registerSkill","className":"ModuleScript","filePaths":["out\\luaSpecific\\registerSkill.lua"]},{"name":"registerStatusEffect","className":"ModuleScript","filePaths":["out\\luaSpecific\\registerStatusEffect.lua"]}]},{"name":"source","className":"Folder","children":[{"name":"character","className":"ModuleScript","filePaths":["out\\source\\character.lua"]},{"name":"client","className":"ModuleScript","filePaths":["out\\source\\client.lua"]},{"name":"flags","className":"ModuleScript","filePaths":["out\\source\\flags.lua"]},{"name":"holdableSkill","className":"ModuleScript","filePaths":["out\\source\\holdableSkill.lua"]},{"name":"moveset","className":"ModuleScript","filePaths":["out\\source\\moveset.lua"]},{"name":"remotes","className":"ModuleScript","filePaths":["out\\source\\remotes.lua"]},{"name":"server","className":"ModuleScript","filePaths":["out\\source\\server.lua"]},{"name":"skill","className":"ModuleScript","filePaths":["out\\source\\skill.lua"]},{"name":"statusEffect","className":"ModuleScript","filePaths":["out\\source\\statusEffect.lua"]},{"name":"utility","className":"ModuleScript","filePaths":["out\\source\\utility.lua"]}]},{"name":"state","className":"Folder","children":[{"name":"middleware","className":"Folder","children":[{"name":"devtools","className":"ModuleScript","filePaths":["out\\state\\middleware\\devtools.lua"]}]},{"name":"rootProducer","className":"ModuleScript","filePaths":["out\\state\\rootProducer.lua"]},{"name":"selectors","className":"ModuleScript","filePaths":["out\\state\\selectors.lua"]},{"name":"slices","className":"ModuleScript","filePaths":["out\\state\\slices.lua"]},{"name":"slicesContainer","className":"Folder","children":[{"name":"replication","className":"ModuleScript","filePaths":["out\\state\\slicesContainer\\replication.lua"]}]}]},{"name":"symbol","className":"ModuleScript","filePaths":["out\\symbol\\init.lua"]},{"name":"tests","className":"Folder","children":[{"name":"character.spec","className":"ModuleScript","filePaths":["out\\tests\\character.spec.lua"]},{"name":"client.spec","className":"ModuleScript","filePaths":["out\\tests\\client.spec.lua"]},{"name":"init.spec","className":"ModuleScript","filePaths":["out\\tests\\init.spec.lua"]},{"name":"movesets.spec","className":"ModuleScript","filePaths":["out\\tests\\movesets.spec.lua"]},{"name":"skill.spec","className":"ModuleScript","filePaths":["out\\tests\\skill.spec.lua"]},{"name":"statusEffect.spec","className":"ModuleScript","filePaths":["out\\tests\\statusEffect.spec.lua"]}]},{"name":"include","className":"Folder","children":[{"name":"Promise","className":"ModuleScript","filePaths":["include\\Promise.lua"]},{"name":"RuntimeLib","className":"ModuleScript","filePaths":["include\\RuntimeLib.lua"]},{"name":"node_modules","className":"Folder","children":[{"name":"@rbxts","className":"Folder","children":[{"name":"compiler-types","className":"Folder","children":[{"name":"types","className":"Folder"}]},{"name":"dumpster","className":"Folder","children":[{"name":"Dumpster","className":"ModuleScript","filePaths":["node_modules/@rbxts\\dumpster\\Dumpster.lua"]}]},{"name":"immut","className":"Folder","children":[{"name":"src","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\init.luau"],"children":[{"name":"Draft","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\Draft.luau"]},{"name":"Draft.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\Draft.spec.luau"]},{"name":"None","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\None.luau"]},{"name":"constants","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\constants.luau"]},{"name":"finishDraft","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\finishDraft.luau"]},{"name":"finishDraft.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\finishDraft.spec.luau"]},{"name":"getClone","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\getClone.luau"]},{"name":"getClone.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\getClone.spec.luau"]},{"name":"init.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\init.spec.luau"]},{"name":"isDraft","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\isDraft.luau"]},{"name":"isDraft.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\isDraft.spec.luau"]},{"name":"isDraftable","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\isDraftable.luau"]},{"name":"isDraftable.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\isDraftable.spec.luau"]},{"name":"makeDraftSafe","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\makeDraftSafe.luau"]},{"name":"makeDraftSafe.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\makeDraftSafe.spec.luau"]},{"name":"makeDraftSafeReadOnly","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\makeDraftSafeReadOnly.luau"]},{"name":"makeDraftSafeReadOnly.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\makeDraftSafeReadOnly.spec.luau"]},{"name":"original","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\original.luau"]},{"name":"original.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\original.spec.luau"]},{"name":"produce","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\produce.luau"]},{"name":"produce.spec","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\produce.spec.luau"]},{"name":"table","className":"ModuleScript","filePaths":["node_modules/@rbxts\\immut\\src\\table.luau"]}]}]},{"name":"janitor","className":"Folder","children":[{"name":"src","className":"ModuleScript","filePaths":["node_modules/@rbxts\\janitor\\src\\init.lua"],"children":[{"name":"GetPromiseLibrary","className":"ModuleScript","filePaths":["node_modules/@rbxts\\janitor\\src\\GetPromiseLibrary.lua"]},{"name":"RbxScriptConnection","className":"ModuleScript","filePaths":["node_modules/@rbxts\\janitor\\src\\RbxScriptConnection.lua"]},{"name":"Symbol","className":"ModuleScript","filePaths":["node_modules/@rbxts\\janitor\\src\\Symbol.lua"]}]}]},{"name":"reflex","className":"Folder","children":[{"name":"src","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\init.lua"],"children":[{"name":"Promise","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\Promise.lua"]},{"name":"applyMiddleware","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\applyMiddleware.lua"]},{"name":"broadcast","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\broadcast\\init.lua"],"children":[{"name":"createBroadcastReceiver","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\broadcast\\createBroadcastReceiver.lua"]},{"name":"createBroadcaster","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\broadcast\\createBroadcaster.lua"]},{"name":"hydrate","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\broadcast\\hydrate.lua"]}]},{"name":"combineProducers","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\combineProducers.lua"]},{"name":"createProducer","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\createProducer.lua"]},{"name":"createSelector","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\createSelector.lua"]},{"name":"middleware","className":"Folder","children":[{"name":"loggerMiddleware","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\middleware\\loggerMiddleware.lua"]}]},{"name":"types","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\types.lua"]},{"name":"utils","className":"Folder","children":[{"name":"createSelectArrayDiffs","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\utils\\createSelectArrayDiffs.lua"]},{"name":"setInterval","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\utils\\setInterval.lua"]},{"name":"shallowEqual","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\utils\\shallowEqual.lua"]},{"name":"testSelector","className":"ModuleScript","filePaths":["node_modules/@rbxts\\reflex\\src\\utils\\testSelector.lua"]}]}]}]},{"name":"remo","className":"Folder","children":[{"name":"src","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\init.lua"],"children":[{"name":"Promise","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\Promise.lua"]},{"name":"builder","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\builder.lua"]},{"name":"client","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\client\\init.lua"],"children":[{"name":"createAsyncRemote","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\client\\createAsyncRemote.lua"]},{"name":"createRemote","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\client\\createRemote.lua"]}]},{"name":"constants","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\constants.lua"]},{"name":"container","className":"Configuration","filePaths":["node_modules/@rbxts\\remo\\src\\container\\init.meta.json"]},{"name":"createRemotes","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\createRemotes.lua"]},{"name":"getSender","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\getSender.lua"]},{"name":"middleware","className":"Folder","children":[{"name":"loggerMiddleware","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\middleware\\loggerMiddleware.lua"]},{"name":"throttleMiddleware","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\middleware\\throttleMiddleware.lua"]}]},{"name":"server","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\server\\init.lua"],"children":[{"name":"createAsyncRemote","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\server\\createAsyncRemote.lua"]},{"name":"createRemote","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\server\\createRemote.lua"]}]},{"name":"types","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\types.lua"]},{"name":"utils","className":"Folder","children":[{"name":"compose","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\utils\\compose.lua"]},{"name":"instances","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\utils\\instances.lua"]},{"name":"mockRemotes","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\utils\\mockRemotes.lua"]},{"name":"testRemote","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\utils\\testRemote.lua"]},{"name":"unwrap","className":"ModuleScript","filePaths":["node_modules/@rbxts\\remo\\src\\utils\\unwrap.lua"]}]}]}]},{"name":"services","className":"ModuleScript","filePaths":["node_modules/@rbxts\\services\\init.lua"]},{"name":"signal","className":"ModuleScript","filePaths":["node_modules/@rbxts\\signal\\init.lua"]},{"name":"signals-tooling","className":"Folder","children":[{"name":"out","className":"ModuleScript","filePaths":["node_modules/@rbxts\\signals-tooling\\out\\init.lua"],"children":[{"name":"Functions","className":"Folder","children":[{"name":"ListenOnce","className":"ModuleScript","filePaths":["node_modules/@rbxts\\signals-tooling\\out\\Functions\\ListenOnce.lua"]},{"name":"WaitForFirstSignal","className":"ModuleScript","filePaths":["node_modules/@rbxts\\signals-tooling\\out\\Functions\\WaitForFirstSignal.lua"]}]},{"name":"Implementation","className":"Folder","children":[{"name":"ConnectionManager","className":"ModuleScript","filePaths":["node_modules/@rbxts\\signals-tooling\\out\\Implementation\\ConnectionManager.lua"]},{"name":"Signal","className":"ModuleScript","filePaths":["node_modules/@rbxts\\signals-tooling\\out\\Implementation\\Signal.lua"]}]},{"name":"Interfaces","className":"Folder"}]}]},{"name":"t","className":"Folder","children":[{"name":"lib","className":"Folder","children":[{"name":"ts","className":"ModuleScript","filePaths":["node_modules/@rbxts\\t\\lib\\ts.lua"]}]}]},{"name":"testez","className":"Folder","children":[{"name":"src","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\init.lua"],"children":[{"name":"Context","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\Context.lua"]},{"name":"Expectation","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\Expectation.lua"]},{"name":"ExpectationContext","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\ExpectationContext.lua"]},{"name":"LifecycleHooks","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\LifecycleHooks.lua"]},{"name":"Reporters","className":"Folder","children":[{"name":"TeamCityReporter","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\Reporters\\TeamCityReporter.lua"]},{"name":"TextReporter","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\Reporters\\TextReporter.lua"]},{"name":"TextReporterQuiet","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\Reporters\\TextReporterQuiet.lua"]}]},{"name":"TestBootstrap","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\TestBootstrap.lua"]},{"name":"TestEnum","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\TestEnum.lua"]},{"name":"TestPlan","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\TestPlan.lua"]},{"name":"TestPlanner","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\TestPlanner.lua"]},{"name":"TestResults","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\TestResults.lua"]},{"name":"TestRunner","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\TestRunner.lua"]},{"name":"TestSession","className":"ModuleScript","filePaths":["node_modules/@rbxts\\testez\\src\\TestSession.lua"]}]}]},{"name":"timer","className":"Folder","children":[{"name":"out","className":"ModuleScript","filePaths":["node_modules/@rbxts\\timer\\out\\init.lua"],"children":[{"name":"Data","className":"Folder","children":[{"name":"Enums","className":"ModuleScript","filePaths":["node_modules/@rbxts\\timer\\out\\Data\\Enums.lua"]}]},{"name":"Implementation","className":"Folder","children":[{"name":"Timer","className":"ModuleScript","filePaths":["node_modules/@rbxts\\timer\\out\\Implementation\\Timer.lua"]}]},{"name":"Interfaces","className":"Folder"}]}]},{"name":"types","className":"Folder","children":[{"name":"include","className":"Folder","children":[{"name":"generated","className":"Folder"}]}]}]}]}]}]}
+{
+	"name": "wcs",
+	"className": "ModuleScript",
+	"filePaths": ["out\\init.lua", "default.project.json"],
+	"children": [
+		{
+			"name": "exports",
+			"className": "ModuleScript",
+			"filePaths": ["out\\exports.lua"]
+		},
+		{
+			"name": "luaSpecific",
+			"className": "Folder",
+			"children": [
+				{
+					"name": "registerHoldableSkill",
+					"className": "ModuleScript",
+					"filePaths": ["out\\luaSpecific\\registerHoldableSkill.lua"]
+				},
+				{
+					"name": "registerSkill",
+					"className": "ModuleScript",
+					"filePaths": ["out\\luaSpecific\\registerSkill.lua"]
+				},
+				{
+					"name": "registerStatusEffect",
+					"className": "ModuleScript",
+					"filePaths": ["out\\luaSpecific\\registerStatusEffect.lua"]
+				}
+			]
+		},
+		{
+			"name": "source",
+			"className": "Folder",
+			"children": [
+				{
+					"name": "character",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\character.lua"]
+				},
+				{
+					"name": "client",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\client.lua"]
+				},
+				{
+					"name": "flags",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\flags.lua"]
+				},
+				{
+					"name": "holdableSkill",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\holdableSkill.lua"]
+				},
+				{
+					"name": "moveset",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\moveset.lua"]
+				},
+				{
+					"name": "remotes",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\remotes.lua"]
+				},
+				{
+					"name": "server",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\server.lua"]
+				},
+				{
+					"name": "skill",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\skill.lua"]
+				},
+				{
+					"name": "statusEffect",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\statusEffect.lua"]
+				},
+				{
+					"name": "utility",
+					"className": "ModuleScript",
+					"filePaths": ["out\\source\\utility.lua"]
+				}
+			]
+		},
+		{
+			"name": "state",
+			"className": "Folder",
+			"children": [
+				{
+					"name": "middleware",
+					"className": "Folder",
+					"children": [
+						{
+							"name": "devtools",
+							"className": "ModuleScript",
+							"filePaths": ["out\\state\\middleware\\devtools.lua"]
+						}
+					]
+				},
+				{
+					"name": "rootProducer",
+					"className": "ModuleScript",
+					"filePaths": ["out\\state\\rootProducer.lua"]
+				},
+				{
+					"name": "selectors",
+					"className": "ModuleScript",
+					"filePaths": ["out\\state\\selectors.lua"]
+				},
+				{
+					"name": "slices",
+					"className": "ModuleScript",
+					"filePaths": ["out\\state\\slices.lua"]
+				},
+				{
+					"name": "slicesContainer",
+					"className": "Folder",
+					"children": [
+						{
+							"name": "replication",
+							"className": "ModuleScript",
+							"filePaths": ["out\\state\\slicesContainer\\replication.lua"]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "symbol",
+			"className": "ModuleScript",
+			"filePaths": ["out\\symbol\\init.lua"]
+		},
+		{
+			"name": "tests",
+			"className": "Folder",
+			"children": [
+				{
+					"name": "character.spec",
+					"className": "ModuleScript",
+					"filePaths": ["out\\tests\\character.spec.lua"]
+				},
+				{
+					"name": "client.spec",
+					"className": "ModuleScript",
+					"filePaths": ["out\\tests\\client.spec.lua"]
+				},
+				{
+					"name": "init.spec",
+					"className": "ModuleScript",
+					"filePaths": ["out\\tests\\init.spec.lua"]
+				},
+				{
+					"name": "movesets.spec",
+					"className": "ModuleScript",
+					"filePaths": ["out\\tests\\movesets.spec.lua"]
+				},
+				{
+					"name": "skill.spec",
+					"className": "ModuleScript",
+					"filePaths": ["out\\tests\\skill.spec.lua"]
+				},
+				{
+					"name": "statusEffect.spec",
+					"className": "ModuleScript",
+					"filePaths": ["out\\tests\\statusEffect.spec.lua"]
+				}
+			]
+		},
+		{
+			"name": "include",
+			"className": "Folder",
+			"children": [
+				{
+					"name": "Promise",
+					"className": "ModuleScript",
+					"filePaths": ["include\\Promise.lua"]
+				},
+				{
+					"name": "RuntimeLib",
+					"className": "ModuleScript",
+					"filePaths": ["include\\RuntimeLib.lua"]
+				},
+				{
+					"name": "node_modules",
+					"className": "Folder",
+					"children": [
+						{
+							"name": "@rbxts",
+							"className": "Folder",
+							"children": [
+								{
+									"name": "compiler-types",
+									"className": "Folder",
+									"children": [{ "name": "types", "className": "Folder" }]
+								},
+								{
+									"name": "dumpster",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "Dumpster",
+											"className": "ModuleScript",
+											"filePaths": [
+												"node_modules/@rbxts\\dumpster\\Dumpster.lua"
+											]
+										}
+									]
+								},
+								{
+									"name": "immut",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "src",
+											"className": "ModuleScript",
+											"filePaths": [
+												"node_modules/@rbxts\\immut\\src\\init.luau"
+											],
+											"children": [
+												{
+													"name": "Draft",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\Draft.luau"
+													]
+												},
+												{
+													"name": "Draft.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\Draft.spec.luau"
+													]
+												},
+												{
+													"name": "None",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\None.luau"
+													]
+												},
+												{
+													"name": "constants",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\constants.luau"
+													]
+												},
+												{
+													"name": "finishDraft",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\finishDraft.luau"
+													]
+												},
+												{
+													"name": "finishDraft.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\finishDraft.spec.luau"
+													]
+												},
+												{
+													"name": "getClone",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\getClone.luau"
+													]
+												},
+												{
+													"name": "getClone.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\getClone.spec.luau"
+													]
+												},
+												{
+													"name": "init.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\init.spec.luau"
+													]
+												},
+												{
+													"name": "isDraft",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\isDraft.luau"
+													]
+												},
+												{
+													"name": "isDraft.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\isDraft.spec.luau"
+													]
+												},
+												{
+													"name": "isDraftable",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\isDraftable.luau"
+													]
+												},
+												{
+													"name": "isDraftable.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\isDraftable.spec.luau"
+													]
+												},
+												{
+													"name": "makeDraftSafe",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\makeDraftSafe.luau"
+													]
+												},
+												{
+													"name": "makeDraftSafe.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\makeDraftSafe.spec.luau"
+													]
+												},
+												{
+													"name": "makeDraftSafeReadOnly",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\makeDraftSafeReadOnly.luau"
+													]
+												},
+												{
+													"name": "makeDraftSafeReadOnly.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\makeDraftSafeReadOnly.spec.luau"
+													]
+												},
+												{
+													"name": "original",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\original.luau"
+													]
+												},
+												{
+													"name": "original.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\original.spec.luau"
+													]
+												},
+												{
+													"name": "produce",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\produce.luau"
+													]
+												},
+												{
+													"name": "produce.spec",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\produce.spec.luau"
+													]
+												},
+												{
+													"name": "table",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\immut\\src\\table.luau"
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "janitor",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "src",
+											"className": "ModuleScript",
+											"filePaths": [
+												"node_modules/@rbxts\\janitor\\src\\init.lua"
+											],
+											"children": [
+												{
+													"name": "GetPromiseLibrary",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\janitor\\src\\GetPromiseLibrary.lua"
+													]
+												},
+												{
+													"name": "RbxScriptConnection",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\janitor\\src\\RbxScriptConnection.lua"
+													]
+												},
+												{
+													"name": "Symbol",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\janitor\\src\\Symbol.lua"
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "reflex",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "src",
+											"className": "ModuleScript",
+											"filePaths": [
+												"node_modules/@rbxts\\reflex\\src\\init.lua"
+											],
+											"children": [
+												{
+													"name": "Promise",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\reflex\\src\\Promise.lua"
+													]
+												},
+												{
+													"name": "applyMiddleware",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\reflex\\src\\applyMiddleware.lua"
+													]
+												},
+												{
+													"name": "broadcast",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\reflex\\src\\broadcast\\init.lua"
+													],
+													"children": [
+														{
+															"name": "createBroadcastReceiver",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\broadcast\\createBroadcastReceiver.lua"
+															]
+														},
+														{
+															"name": "createBroadcaster",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\broadcast\\createBroadcaster.lua"
+															]
+														},
+														{
+															"name": "hydrate",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\broadcast\\hydrate.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "combineProducers",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\reflex\\src\\combineProducers.lua"
+													]
+												},
+												{
+													"name": "createProducer",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\reflex\\src\\createProducer.lua"
+													]
+												},
+												{
+													"name": "createSelector",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\reflex\\src\\createSelector.lua"
+													]
+												},
+												{
+													"name": "middleware",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "loggerMiddleware",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\middleware\\loggerMiddleware.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "types",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\reflex\\src\\types.lua"
+													]
+												},
+												{
+													"name": "utils",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "createSelectArrayDiffs",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\utils\\createSelectArrayDiffs.lua"
+															]
+														},
+														{
+															"name": "setInterval",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\utils\\setInterval.lua"
+															]
+														},
+														{
+															"name": "shallowEqual",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\utils\\shallowEqual.lua"
+															]
+														},
+														{
+															"name": "testSelector",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\reflex\\src\\utils\\testSelector.lua"
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "remo",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "src",
+											"className": "ModuleScript",
+											"filePaths": ["node_modules/@rbxts\\remo\\src\\init.lua"],
+											"children": [
+												{
+													"name": "Promise",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\Promise.lua"
+													]
+												},
+												{
+													"name": "builder",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\builder.lua"
+													]
+												},
+												{
+													"name": "client",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\client\\init.lua"
+													],
+													"children": [
+														{
+															"name": "createAsyncRemote",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\client\\createAsyncRemote.lua"
+															]
+														},
+														{
+															"name": "createRemote",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\client\\createRemote.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "constants",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\constants.lua"
+													]
+												},
+												{
+													"name": "container",
+													"className": "Configuration",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\container\\init.meta.json"
+													]
+												},
+												{
+													"name": "createRemotes",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\createRemotes.lua"
+													]
+												},
+												{
+													"name": "getSender",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\getSender.lua"
+													]
+												},
+												{
+													"name": "middleware",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "loggerMiddleware",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\middleware\\loggerMiddleware.lua"
+															]
+														},
+														{
+															"name": "throttleMiddleware",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\middleware\\throttleMiddleware.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "server",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\server\\init.lua"
+													],
+													"children": [
+														{
+															"name": "createAsyncRemote",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\server\\createAsyncRemote.lua"
+															]
+														},
+														{
+															"name": "createRemote",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\server\\createRemote.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "types",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\remo\\src\\types.lua"
+													]
+												},
+												{
+													"name": "utils",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "compose",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\utils\\compose.lua"
+															]
+														},
+														{
+															"name": "instances",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\utils\\instances.lua"
+															]
+														},
+														{
+															"name": "mockRemotes",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\utils\\mockRemotes.lua"
+															]
+														},
+														{
+															"name": "testRemote",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\utils\\testRemote.lua"
+															]
+														},
+														{
+															"name": "unwrap",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\remo\\src\\utils\\unwrap.lua"
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "services",
+									"className": "ModuleScript",
+									"filePaths": ["node_modules/@rbxts\\services\\init.lua"]
+								},
+								{
+									"name": "signal",
+									"className": "ModuleScript",
+									"filePaths": ["node_modules/@rbxts\\signal\\init.lua"]
+								},
+								{
+									"name": "signals-tooling",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "out",
+											"className": "ModuleScript",
+											"filePaths": [
+												"node_modules/@rbxts\\signals-tooling\\out\\init.lua"
+											],
+											"children": [
+												{
+													"name": "Functions",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "ListenOnce",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\signals-tooling\\out\\Functions\\ListenOnce.lua"
+															]
+														},
+														{
+															"name": "WaitForFirstSignal",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\signals-tooling\\out\\Functions\\WaitForFirstSignal.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "Implementation",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "ConnectionManager",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\signals-tooling\\out\\Implementation\\ConnectionManager.lua"
+															]
+														},
+														{
+															"name": "Signal",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\signals-tooling\\out\\Implementation\\Signal.lua"
+															]
+														}
+													]
+												},
+												{ "name": "Interfaces", "className": "Folder" }
+											]
+										}
+									]
+								},
+								{
+									"name": "t",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "lib",
+											"className": "Folder",
+											"children": [
+												{
+													"name": "ts",
+													"className": "ModuleScript",
+													"filePaths": ["node_modules/@rbxts\\t\\lib\\ts.lua"]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "testez",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "src",
+											"className": "ModuleScript",
+											"filePaths": [
+												"node_modules/@rbxts\\testez\\src\\init.lua"
+											],
+											"children": [
+												{
+													"name": "Context",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\Context.lua"
+													]
+												},
+												{
+													"name": "Expectation",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\Expectation.lua"
+													]
+												},
+												{
+													"name": "ExpectationContext",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\ExpectationContext.lua"
+													]
+												},
+												{
+													"name": "LifecycleHooks",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\LifecycleHooks.lua"
+													]
+												},
+												{
+													"name": "Reporters",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "TeamCityReporter",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\testez\\src\\Reporters\\TeamCityReporter.lua"
+															]
+														},
+														{
+															"name": "TextReporter",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\testez\\src\\Reporters\\TextReporter.lua"
+															]
+														},
+														{
+															"name": "TextReporterQuiet",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\testez\\src\\Reporters\\TextReporterQuiet.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "TestBootstrap",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\TestBootstrap.lua"
+													]
+												},
+												{
+													"name": "TestEnum",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\TestEnum.lua"
+													]
+												},
+												{
+													"name": "TestPlan",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\TestPlan.lua"
+													]
+												},
+												{
+													"name": "TestPlanner",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\TestPlanner.lua"
+													]
+												},
+												{
+													"name": "TestResults",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\TestResults.lua"
+													]
+												},
+												{
+													"name": "TestRunner",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\TestRunner.lua"
+													]
+												},
+												{
+													"name": "TestSession",
+													"className": "ModuleScript",
+													"filePaths": [
+														"node_modules/@rbxts\\testez\\src\\TestSession.lua"
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "timer",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "out",
+											"className": "ModuleScript",
+											"filePaths": [
+												"node_modules/@rbxts\\timer\\out\\init.lua"
+											],
+											"children": [
+												{
+													"name": "Data",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "Enums",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\timer\\out\\Data\\Enums.lua"
+															]
+														}
+													]
+												},
+												{
+													"name": "Implementation",
+													"className": "Folder",
+													"children": [
+														{
+															"name": "Timer",
+															"className": "ModuleScript",
+															"filePaths": [
+																"node_modules/@rbxts\\timer\\out\\Implementation\\Timer.lua"
+															]
+														}
+													]
+												},
+												{ "name": "Interfaces", "className": "Folder" }
+											]
+										}
+									]
+								},
+								{
+									"name": "types",
+									"className": "Folder",
+									"children": [
+										{
+											"name": "include",
+											"className": "Folder",
+											"children": [
+												{ "name": "generated", "className": "Folder" }
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

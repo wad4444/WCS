@@ -1,8 +1,8 @@
 {
-  "label": "Status Effects",
-  "position": 5,
-  "link": {
-    "type": "generated-index",
-    "description": "Learn everything about status effects and how to create them with WCS."
-  }
+	"label": "Status Effects",
+	"position": 5,
+	"link": {
+		"type": "generated-index",
+		"description": "Learn everything about status effects and how to create them with WCS."
+	}
 }

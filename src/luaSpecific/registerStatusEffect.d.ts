@@ -1,8 +1,10 @@
-import { AnyStatus } from "exports";
-import { Constructor } from "source/utility";
+import type { AnyStatus } from "exports";
+import type { Constructor } from "source/utility";
 
 /**
  * @internal Reserved for LuaU usage
  * @hidden
  */
-export declare function RegisterStatusEffect(Name: string): Constructor<AnyStatus>;
+export declare function RegisterStatusEffect(
+	Name: string,
+): Constructor<AnyStatus>;

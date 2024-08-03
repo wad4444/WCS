@@ -1,9 +1,8 @@
 {
-    "label": "Messages",
-    "position": 4,
-    "link": {
-      "type": "generated-index",
-      "description": "Learn how to use messages and setup Client/Server communication within abilities."
-    }
-  }
-  
+	"label": "Messages",
+	"position": 4,
+	"link": {
+		"type": "generated-index",
+		"description": "Learn how to use messages and setup Client/Server communication within abilities."
+	}
+}

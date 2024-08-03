@@ -3,308 +3,324 @@
 import { Janitor } from "@rbxts/janitor";
 import { RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
-import { SkillDecorator, Skill, Character, SkillType, HoldableSkill } from "exports";
-
-export = function () {
-    const janitor = new Janitor();
-
-    @SkillDecorator
-    class yieldingSkill extends Skill {
-        protected OnStartServer(StarterParams: void): void {
-            task.wait(1);
-        }
-
-        public setCheckedByOthers(check: boolean) {
-            this.CheckedByOthers = check;
-        }
-    }
-
-    @SkillDecorator
-    class yieldingSkill2 extends Skill {
-        protected OnStartServer(StarterParams: void): void {
-            task.wait(1);
-        }
-    }
-
-    @SkillDecorator
-    class emptySkill extends Skill<[], [], number> {
-        public changeMeta(meta: number) {
-            this.SetMetadata(meta);
-        }
-
-        public setCheckOthers(check: boolean): void {
-            this.CheckOthersActive = check;
-        }
-    }
-
-    @SkillDecorator
-    class holdableSkill extends HoldableSkill {
-        protected OnConstructServer(): void {
-            this.SetMaxHoldTime(5);
-        }
-
-        public setTime(newTime: number | undefined): void {
-            this.SetMaxHoldTime(newTime);
-        }
-    }
-
-    @SkillDecorator
-    class debounceSkill extends Skill {
-        protected OnStartServer() {
-            this.ApplyCooldown(2);
-        }
-    }
-
-    function makeChar() {
-        const part = new Instance("Part");
-        new Instance("Humanoid", part);
-        janitor.Add(part);
-
-        const character = new Character(part);
-        janitor.Add(character);
-        return character;
-    }
-
-    describe("instantiation", () => {
-        it("should instantiate a skill", () => {
-            expect(new emptySkill(makeChar())).to.be.ok();
-        });
-
-        it("should check for applied decorator", () => {
-            class wrongSkill extends Skill {}
-            expect(() => new wrongSkill(makeChar())).to.throw("decorator");
-        });
-
-        it("should not allow double registration", () => {
-            expect(() => {
-                @SkillDecorator
-                class emptySkill extends Skill {}
-            }).to.throw();
-        });
-    });
-
-    describe("startup / ending", () => {
-        it("should start a skill", () => {
-            const skill = new yieldingSkill(makeChar());
-
-            let changed = false;
-            skill.Started.Connect(() => (changed = true));
-
-            skill.Start();
-            RunService.Heartbeat.Wait();
-
-            expect(changed).to.be.equal(true);
-            expect(skill.GetState().IsActive).to.be.equal(true);
-        });
-
-        it("should pass starter params", () => {
-            let param: number;
-
-            @SkillDecorator
-            class sum_skill_a extends Skill<[number]> {
-                protected OnStartServer(a: number): void {
-                    param = a;
-                }
-            }
+import {
+	Character,
+	HoldableSkill,
+	Skill,
+	SkillDecorator,
+	SkillType,
+} from "exports";
+
+export = () => {
+	const janitor = new Janitor();
+
+	@SkillDecorator
+	class yieldingSkill extends Skill {
+		protected OnStartServer(StarterParams: undefined): void {
+			task.wait(1);
+		}
+
+		public setCheckedByOthers(check: boolean) {
+			this.CheckedByOthers = check;
+		}
+	}
+
+	@SkillDecorator
+	class yieldingSkill2 extends Skill {
+		protected OnStartServer(StarterParams: undefined): void {
+			task.wait(1);
+		}
+	}
+
+	@SkillDecorator
+	class emptySkill extends Skill<[], [], number> {
+		public changeMeta(meta: number) {
+			this.SetMetadata(meta);
+		}
+
+		public setCheckOthers(check: boolean): void {
+			this.CheckOthersActive = check;
+		}
+	}
+
+	@SkillDecorator
+	class holdableSkill extends HoldableSkill {
+		protected OnConstructServer(): void {
+			this.SetMaxHoldTime(5);
+		}
+
+		public setTime(newTime: number | undefined): void {
+			this.SetMaxHoldTime(newTime);
+		}
+	}
+
+	@SkillDecorator
+	class debounceSkill extends Skill {
+		protected OnStartServer() {
+			this.ApplyCooldown(2);
+		}
+	}
+
+	function makeChar() {
+		const part = new Instance("Part");
+		new Instance("Humanoid", part);
+		janitor.Add(part);
+
+		const character = new Character(part);
+		janitor.Add(character);
+		return character;
+	}
+
+	describe("instantiation", () => {
+		it("should instantiate a skill", () => {
+			expect(new emptySkill(makeChar())).to.be.ok();
+		});
+
+		it("should check for applied decorator", () => {
+			class wrongSkill extends Skill {}
+			expect(() => new wrongSkill(makeChar())).to.throw("decorator");
+		});
+
+		it("should not allow double registration", () => {
+			expect(() => {
+				@SkillDecorator
+				class emptySkill extends Skill {}
+			}).to.throw();
+		});
+	});
+
+	describe("startup / ending", () => {
+		it("should start a skill", () => {
+			const skill = new yieldingSkill(makeChar());
+
+			let changed = false;
+			skill.Started.Connect(() => {
+				changed = true;
+			});
+
+			skill.Start();
+			RunService.Heartbeat.Wait();
+
+			expect(changed).to.be.equal(true);
+			expect(skill.GetState().IsActive).to.be.equal(true);
+		});
 
-            const char = makeChar();
-            const skill = new sum_skill_a(char);
-            skill.Start(10);
+		it("should pass starter params", () => {
+			let param: number;
 
-            RunService.Heartbeat.Wait();
+			@SkillDecorator
+			class sum_skill_a extends Skill<[number]> {
+				protected OnStartServer(a: number): void {
+					param = a;
+				}
+			}
 
-            expect(param!).to.be.equal(10);
-        });
+			const char = makeChar();
+			const skill = new sum_skill_a(char);
+			skill.Start(10);
 
-        it("should validate starter params", () => {
-            @SkillDecorator
-            class sum_skill_b extends Skill<[number]> {
-                protected readonly ParamValidators = [t.number] as const;
-                protected OnStartServer(a: number) {
-                    task.wait(1);
-                }
-            }
+			RunService.Heartbeat.Wait();
 
-            const skill = new sum_skill_b(makeChar());
-            skill.Start("" as never);
+			expect(param!).to.be.equal(10);
+		});
 
-            RunService.Heartbeat.Wait();
+		it("should validate starter params", () => {
+			@SkillDecorator
+			class sum_skill_b extends Skill<[number]> {
+				protected readonly ParamValidators = [t.number] as const;
+				protected OnStartServer(a: number) {
+					task.wait(1);
+				}
+			}
 
-            expect(skill.GetState().IsActive).to.be.equal(false);
-        });
+			const skill = new sum_skill_b(makeChar());
+			skill.Start("" as never);
 
-        it("should check if other skills are active", () => {
-            const char = makeChar();
-            const skill_a = new yieldingSkill(char);
-            const skill_b = new yieldingSkill2(char);
+			RunService.Heartbeat.Wait();
 
-            skill_a.Start();
-            skill_b.Start();
+			expect(skill.GetState().IsActive).to.be.equal(false);
+		});
 
-            RunService.Heartbeat.Wait();
+		it("should check if other skills are active", () => {
+			const char = makeChar();
+			const skill_a = new yieldingSkill(char);
+			const skill_b = new yieldingSkill2(char);
 
-            expect(skill_b.GetState().IsActive).to.be.equal(false);
-        });
+			skill_a.Start();
+			skill_b.Start();
 
-        it("should cancel the execution thread on end", () => {
-            let thread!: thread;
+			RunService.Heartbeat.Wait();
 
-            @SkillDecorator
-            class yieldingSkill3 extends Skill {
-                protected OnStartServer(): void {
-                    thread = coroutine.running();
-                    task.wait(5);
-                }
-            }
+			expect(skill_b.GetState().IsActive).to.be.equal(false);
+		});
 
-            const skill = new yieldingSkill3(makeChar());
-            skill.Start();
+		it("should cancel the execution thread on end", () => {
+			let thread!: thread;
 
-            RunService.Heartbeat.Wait();
-            expect(thread).to.be.a("thread");
+			@SkillDecorator
+			class yieldingSkill3 extends Skill {
+				protected OnStartServer(): void {
+					thread = coroutine.running();
+					task.wait(5);
+				}
+			}
 
-            skill.End();
-            RunService.Heartbeat.Wait();
+			const skill = new yieldingSkill3(makeChar());
+			skill.Start();
 
-            expect(coroutine.status(thread)).to.be.equal("dead");
-        });
+			RunService.Heartbeat.Wait();
+			expect(thread).to.be.a("thread");
 
-        it("should respect checked by others", () => {
-            const char = makeChar();
-            const skill_a = new yieldingSkill(char);
-            const skill_b = new yieldingSkill2(char);
+			skill.End();
+			RunService.Heartbeat.Wait();
 
-            skill_a.setCheckedByOthers(false);
+			expect(coroutine.status(thread)).to.be.equal("dead");
+		});
 
-            skill_a.Start();
-            skill_b.Start();
+		it("should respect checked by others", () => {
+			const char = makeChar();
+			const skill_a = new yieldingSkill(char);
+			const skill_b = new yieldingSkill2(char);
 
-            RunService.Heartbeat.Wait();
+			skill_a.setCheckedByOthers(false);
 
-            expect(skill_b.GetState().IsActive).to.be.equal(true);
-        });
+			skill_a.Start();
+			skill_b.Start();
 
-        it("should end a skill", () => {
-            const skill = new yieldingSkill(makeChar());
-            skill.Start();
+			RunService.Heartbeat.Wait();
 
-            let changed = false;
-            skill.Ended.Connect(() => (changed = true));
+			expect(skill_b.GetState().IsActive).to.be.equal(true);
+		});
 
-            skill.End();
-            RunService.Heartbeat.Wait();
+		it("should end a skill", () => {
+			const skill = new yieldingSkill(makeChar());
+			skill.Start();
 
-            expect(skill.GetState().IsActive).to.be.equal(false);
-            expect(changed).to.be.equal(true);
-        });
+			let changed = false;
+			skill.Ended.Connect(() => {
+				changed = true;
+			});
 
-        it("should clean the janitor after skill ends", () => {
-            let changed = false;
+			skill.End();
+			RunService.Heartbeat.Wait();
 
-            @SkillDecorator
-            class sumsumSkill extends Skill {
-                protected OnConstructServer(): void {
-                    this.Janitor.Add(() => (changed = true));
-                }
-            }
+			expect(skill.GetState().IsActive).to.be.equal(false);
+			expect(changed).to.be.equal(true);
+		});
 
-            const skill = new sumsumSkill(makeChar());
-            skill.Start();
+		it("should clean the janitor after skill ends", () => {
+			let changed = false;
 
-            RunService.Heartbeat.Wait();
+			@SkillDecorator
+			class sumsumSkill extends Skill {
+				protected OnConstructServer(): void {
+					this.Janitor.Add(() => {
+						changed = true;
+					});
+				}
+			}
 
-            expect(changed).to.be.equal(true);
-        });
-    });
+			const skill = new sumsumSkill(makeChar());
+			skill.Start();
 
-    describe("destruction", () => {
-        it("should destroy a skill", () => {
-            const skill = new emptySkill(makeChar());
-            expect(skill.IsDestroyed()).to.be.equal(false);
+			RunService.Heartbeat.Wait();
 
-            let changed = false;
-            skill.Destroyed.Connect(() => (changed = true));
+			expect(changed).to.be.equal(true);
+		});
+	});
 
-            skill.Destroy();
-            RunService.Heartbeat.Wait();
+	describe("destruction", () => {
+		it("should destroy a skill", () => {
+			const skill = new emptySkill(makeChar());
+			expect(skill.IsDestroyed()).to.be.equal(false);
 
-            expect(skill.IsDestroyed()).to.be.equal(true);
-            expect(changed).to.be.equal(true);
-        });
-    });
+			let changed = false;
+			skill.Destroyed.Connect(() => {
+				changed = true;
+			});
 
-    describe("methods / callbacks", () => {
-        it("should set/get metadata", () => {
-            const skill = new emptySkill(makeChar());
-            expect(skill.GetMetadata()).to.never.be.ok();
+			skill.Destroy();
+			RunService.Heartbeat.Wait();
 
-            let changed = false;
-            skill.MetadataChanged.Connect(() => (changed = true));
+			expect(skill.IsDestroyed()).to.be.equal(true);
+			expect(changed).to.be.equal(true);
+		});
+	});
 
-            skill.changeMeta(5);
-            RunService.Heartbeat.Wait();
+	describe("methods / callbacks", () => {
+		it("should set/get metadata", () => {
+			const skill = new emptySkill(makeChar());
+			expect(skill.GetMetadata()).to.never.be.ok();
 
-            expect(skill.GetMetadata()).to.be.equal(5);
-            expect(changed).to.be.equal(true);
-        });
+			let changed = false;
+			skill.MetadataChanged.Connect(() => {
+				changed = true;
+			});
 
-        it("should give end timestamp if is on cooldown", () => {
-            const skill = new debounceSkill(makeChar());
-            expect(skill.GetDebounceEndTimestamp()).to.never.be.ok();
+			skill.changeMeta(5);
+			RunService.Heartbeat.Wait();
 
-            skill.Start();
-            RunService.Heartbeat.Wait();
+			expect(skill.GetMetadata()).to.be.equal(5);
+			expect(changed).to.be.equal(true);
+		});
 
-            expect(skill.GetDebounceEndTimestamp()).to.be.a("number");
-        });
+		it("should give end timestamp if is on cooldown", () => {
+			const skill = new debounceSkill(makeChar());
+			expect(skill.GetDebounceEndTimestamp()).to.never.be.ok();
 
-        it("should fire callbacks", () => {
-            const changed: boolean[] = [];
+			skill.Start();
+			RunService.Heartbeat.Wait();
 
-            @SkillDecorator
-            class skillWithCallback extends Skill {
-                protected OnStartServer(StarterParams: void): void {
-                    changed.push(true);
-                }
+			expect(skill.GetDebounceEndTimestamp()).to.be.a("number");
+		});
 
-                protected OnConstruct(): void {
-                    changed.push(true);
-                }
+		it("should fire callbacks", () => {
+			const changed: boolean[] = [];
 
-                protected OnConstructServer(): void {
-                    changed.push(true);
-                }
-            }
+			@SkillDecorator
+			class skillWithCallback extends Skill {
+				protected OnStartServer(): void {
+					changed.push(true);
+				}
 
-            const skill = new skillWithCallback(makeChar());
-            skill.Start();
+				protected OnConstruct(): void {
+					changed.push(true);
+				}
 
-            RunService.Heartbeat.Wait();
-            expect(changed.size()).to.be.equal(3);
-        });
+				protected OnConstructServer(): void {
+					changed.push(true);
+				}
+			}
 
-        it("should return a valid skill type", () => {
-            const skill = new emptySkill(makeChar());
-            expect(skill.GetSkillType()).to.be.equal(SkillType.Default);
-        });
+			const skill = new skillWithCallback(makeChar());
+			skill.Start();
 
-        it("should return a valid name", () => {
-            const skill = new emptySkill(makeChar());
-            expect(skill.GetName()).to.be.equal(tostring(emptySkill));
-        });
-    });
+			RunService.Heartbeat.Wait();
+			expect(changed.size()).to.be.equal(3);
+		});
 
-    describe("holdable", () => {
-        it("should instantiate a skill", () => {
-            expect(new holdableSkill(makeChar())).to.be.ok();
-        });
+		it("should return a valid skill type", () => {
+			const skill = new emptySkill(makeChar());
+			expect(skill.GetSkillType()).to.be.equal(SkillType.Default);
+		});
 
-        it("should set/get max hold time", () => {
-            const skill = new holdableSkill(makeChar());
-            skill.setTime(5);
-            expect(skill.GetMaxHoldTime()).to.be.equal(5);
-        });
-    });
+		it("should return a valid name", () => {
+			const skill = new emptySkill(makeChar());
+			expect(skill.GetName()).to.be.equal(tostring(emptySkill));
+		});
+	});
 
-    afterAll(() => janitor.Cleanup());
+	describe("holdable", () => {
+		it("should instantiate a skill", () => {
+			expect(new holdableSkill(makeChar())).to.be.ok();
+		});
+
+		it("should set/get max hold time", () => {
+			const skill = new holdableSkill(makeChar());
+			skill.setTime(5);
+			expect(skill.GetMaxHoldTime()).to.be.equal(5);
+		});
+	});
+
+	afterAll(() => janitor.Cleanup());
 };
