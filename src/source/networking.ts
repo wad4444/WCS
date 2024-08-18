@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Networking } from "@flamework/networking";
 import type { SerializedData } from "./serdes";
 

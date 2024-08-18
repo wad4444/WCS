@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { t } from "@rbxts/t";
 import { type AnySkill, Skill, SkillBase, type UnknownSkill } from "./skill";
 import {

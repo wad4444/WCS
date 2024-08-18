@@ -76,6 +76,7 @@ export type StatusEffectImpl = {
 
 type StatusFields = {
 	[any]: any,
+	Name: string,
 	ConstructorArguments: { any },
 	MetadataChanged: ReadonlySignal<(any?, any?) -> ()>,
 	StateChanged: ReadonlySignal<(StatusEffectState, StatusEffectState) -> ()>,
@@ -87,7 +88,6 @@ type StatusFields = {
 	Player: Player?,
 	Character: Character,
 	DamageModificationPriority: number,
-
 	DestroyOnEnd: boolean,
 }
 
@@ -172,6 +172,7 @@ type SkillImpl = {
 
 type SkillFields = {
 	[any]: any,
+	Name: string,
 	Janitor: Janitor,
 	Started: ReadonlySignal<Callback>,
 	Ended: ReadonlySignal<Callback>,

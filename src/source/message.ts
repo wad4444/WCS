@@ -1,7 +1,5 @@
 import { Flamework, Reflect } from "@flamework/core";
 import { RunService } from "@rbxts/services";
-/* eslint-disable roblox-ts/no-array-pairs */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { t } from "@rbxts/t";
 import { ConvertArgs } from "./arg-converter";
 import {

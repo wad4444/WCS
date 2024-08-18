@@ -1,7 +1,5 @@
 import { subscribe } from "@rbxts/charm";
 import { Janitor } from "@rbxts/janitor";
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable roblox-ts/no-array-pairs */
 import { Players, RunService, Workspace } from "@rbxts/services";
 import Signal from "@rbxts/signal";
 import { t } from "@rbxts/t";

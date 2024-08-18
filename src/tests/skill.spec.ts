@@ -16,7 +16,7 @@ export = () => {
 
 	@SkillDecorator
 	class yieldingSkill extends Skill {
-		protected OnStartServer(StarterParams: undefined): void {
+		protected OnStartServer(): void {
 			task.wait(1);
 		}
 
@@ -27,7 +27,7 @@ export = () => {
 
 	@SkillDecorator
 	class yieldingSkill2 extends Skill {
-		protected OnStartServer(StarterParams: undefined): void {
+		protected OnStartServer(): void {
 			task.wait(1);
 		}
 	}

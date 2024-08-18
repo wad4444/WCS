@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type Atom, notify } from "@rbxts/charm";
-import Immut, { type None, produce } from "@rbxts/immut";
+import { type None, produce } from "@rbxts/immut";
 import type { Draft } from "@rbxts/immut/src/types-external";
 import type { WCS_Server } from "exports";
 import type { CharacterData } from "source/character";
@@ -12,12 +11,11 @@ type InferAtomState<T> = T extends Atom<infer S> ? S : never;
 
 function MutateAtom<C extends Atom<any>>(
 	atom: C,
-	recipe: (
-		draft: Draft<InferAtomState<C>>,
-	) =>
+	recipe: (draft: Draft<InferAtomState<C>>) =>
 		| typeof draft
 		| undefined
-		| undefined
+		// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+		| void
 		| (InferAtomState<C> extends undefined ? typeof None : never),
 ) {
 	atom(produce(atom(), recipe));

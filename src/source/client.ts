@@ -39,7 +39,6 @@ class Client {
 	});
 
 	constructor() {
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		currentInstance = this;
 	}
 

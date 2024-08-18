@@ -13,7 +13,6 @@ import {
 import { shallowEqual } from "source/utility";
 
 function haveKeys(object: object, keys: string[]) {
-	// eslint-disable-next-line roblox-ts/no-array-pairs
 	for (const [i, v] of pairs(keys)) {
 		if (!(v in object)) return false;
 	}

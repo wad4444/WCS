@@ -1,5 +1,3 @@
-/* eslint-disable roblox-ts/no-array-pairs */
-import { RunService } from "@rbxts/services";
 import { Timer, TimerState } from "@rbxts/timer";
 import type { Character } from "./character";
 import {
@@ -10,7 +8,6 @@ import {
 } from "./skill";
 import { isClientContext, isServerContext, logError } from "./utility";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyHoldableSkill = HoldableSkill<any, any[], any>;
 export type UnknownHoldableSkill = HoldableSkill<unknown[], unknown[], unknown>;
 

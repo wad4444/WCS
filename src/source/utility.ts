@@ -1,9 +1,6 @@
 import { atom } from "@rbxts/charm";
 import { RunService } from "@rbxts/services";
 import type { CharacterData } from "exports";
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-constant-condition */
-import { Symbol } from "symbol";
 import type { WCS_Client } from "./client";
 import type { Moveset } from "./moveset";
 import type { WCS_Server } from "./server";

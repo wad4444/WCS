@@ -2,9 +2,6 @@ import { Reflect } from "@flamework/core";
 import { atom, sync } from "@rbxts/charm";
 import { toSerializeablePayload } from "@rbxts/charm-payload-converter";
 import { Players } from "@rbxts/services";
-/* eslint-disable roblox-ts/no-array-pairs */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-this-alias */
 import { t } from "@rbxts/t";
 import {
 	isClientContext,

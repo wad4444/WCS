@@ -9,7 +9,7 @@ import {
 	patchStatusData,
 	setStatusData,
 } from "source/actions";
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type {
 	AffectableHumanoidProps,
 	Character,

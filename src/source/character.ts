@@ -1,4 +1,3 @@
-/* eslint-disable roblox-ts/no-array-pairs */
 import { observe, subscribe } from "@rbxts/charm";
 import { Janitor } from "@rbxts/janitor";
 import { Players } from "@rbxts/services";
