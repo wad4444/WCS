@@ -1,7 +1,7 @@
 import { observe, subscribe } from "@rbxts/charm";
 import { Janitor } from "@rbxts/janitor";
 import { Players } from "@rbxts/services";
-import Signal from "@rbxts/signal";
+import Signal from "@rbxts/sleitnick-signal";
 import {
 	deleteCharacterData,
 	patchCharacterData,
@@ -63,8 +63,12 @@ function generateId() {
 
 export class Character {
 	private static readonly currentCharMap = new Map<Instance, Character>();
-	public static readonly CharacterCreated = new Signal<[Character: Character]>();
-	public static readonly CharacterDestroyed = new Signal<[Character: Character]>();
+	public static readonly CharacterCreated = new Signal<
+		[Character: Character]
+	>();
+	public static readonly CharacterDestroyed = new Signal<
+		[Character: Character]
+	>();
 
 	public readonly Instance: Instance;
 	public readonly Humanoid: Humanoid;
@@ -86,7 +90,9 @@ export class Character {
 	/**
 	 * Fires only on client if the character belongs to a player
 	 */
-	public readonly HumanoidPropertiesUpdated = new Signal<[NewProperties: AffectableHumanoidProps]>();
+	public readonly HumanoidPropertiesUpdated = new Signal<
+		[NewProperties: AffectableHumanoidProps]
+	>();
 	/**
 	 * Container's source will always be nil on client
 	 */
@@ -94,9 +100,13 @@ export class Character {
 	/**
 	 * Enemy will always be nil on client
 	 */
-	public readonly DamageDealt = new Signal<[Enemy: Character | undefined, Container: DamageContainer]>();
+	public readonly DamageDealt = new Signal<
+		[Enemy: Character | undefined, Container: DamageContainer]
+	>();
 	public readonly Destroyed = new Signal();
-	public readonly MovesetChanged = new Signal<[NewMoveset: string | undefined, OldMoveset: string | undefined]>();
+	public readonly MovesetChanged = new Signal<
+		[NewMoveset: string | undefined, OldMoveset: string | undefined]
+	>();
 
 	public DisableSkills = false;
 

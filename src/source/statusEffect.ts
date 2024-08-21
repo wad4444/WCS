@@ -1,7 +1,7 @@
 import { subscribe } from "@rbxts/charm";
 import { Janitor } from "@rbxts/janitor";
 import { Players } from "@rbxts/services";
-import Signal from "@rbxts/signal";
+import Signal from "@rbxts/sleitnick-signal";
 import { t } from "@rbxts/t";
 import { Timer, TimerState } from "@rbxts/timer";
 import {
