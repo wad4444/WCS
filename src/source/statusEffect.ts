@@ -77,16 +77,13 @@ export class StatusEffect<
 	protected readonly Janitor = new Janitor();
 
 	public readonly MetadataChanged = new Signal<
-		(NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
+		[NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined]
 	>();
 	public readonly StateChanged = new Signal<
-		(State: ReadonlyState, PreviousState: ReadonlyState) => void
+		[State: ReadonlyState, PreviousState: ReadonlyState]
 	>();
 	public readonly HumanoidDataChanged = new Signal<
-		(
-			Data: HumanoidData | undefined,
-			PreviousData: HumanoidData | undefined,
-		) => void
+		[Data: HumanoidData | undefined, PreviousData: HumanoidData | undefined]
 	>();
 	public readonly Destroyed = new Signal();
 	public readonly Started = new Signal();

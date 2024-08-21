@@ -63,12 +63,8 @@ function generateId() {
 
 export class Character {
 	private static readonly currentCharMap = new Map<Instance, Character>();
-	public static readonly CharacterCreated = new Signal<
-		(Character: Character) => void
-	>();
-	public static readonly CharacterDestroyed = new Signal<
-		(Character: Character) => void
-	>();
+	public static readonly CharacterCreated = new Signal<[Character: Character]>();
+	public static readonly CharacterDestroyed = new Signal<[Character: Character]>();
 
 	public readonly Instance: Instance;
 	public readonly Humanoid: Humanoid;
@@ -76,50 +72,33 @@ export class Character {
 
 	private readonly janitor = new Janitor();
 
-	public readonly SkillAdded = new Signal<(Status: UnknownSkill) => void>();
-	public readonly SkillRemoved = new Signal<(Status: UnknownSkill) => void>();
+	public readonly SkillAdded = new Signal<[Status: UnknownSkill]>();
+	public readonly SkillRemoved = new Signal<[Status: UnknownSkill]>();
 
-	public readonly StatusEffectAdded = new Signal<
-		(Status: UnknownStatus) => void
-	>();
-	public readonly StatusEffectRemoved = new Signal<
-		(Status: UnknownStatus) => void
-	>();
+	public readonly StatusEffectAdded = new Signal<[Status: UnknownStatus]>();
+	public readonly StatusEffectRemoved = new Signal<[Status: UnknownStatus]>();
 
-	public readonly SkillStarted = new Signal<(Status: UnknownSkill) => void>();
-	public readonly SkillEnded = new Signal<(Status: UnknownSkill) => void>();
+	public readonly SkillStarted = new Signal<[Status: UnknownSkill]>();
+	public readonly SkillEnded = new Signal<[Status: UnknownSkill]>();
 
-	public readonly StatusEffectStarted = new Signal<
-		(Status: UnknownStatus) => void
-	>();
-	public readonly StatusEffectEnded = new Signal<
-		(Status: UnknownStatus) => void
-	>();
+	public readonly StatusEffectStarted = new Signal<[Status: UnknownStatus]>();
+	public readonly StatusEffectEnded = new Signal<[Status: UnknownStatus]>();
 	/**
 	 * Fires only on client if the character belongs to a player
 	 */
-	public readonly HumanoidPropertiesUpdated = new Signal<
-		(NewProperties: AffectableHumanoidProps) => void
-	>();
+	public readonly HumanoidPropertiesUpdated = new Signal<[NewProperties: AffectableHumanoidProps]>();
 	/**
 	 * Container's source will always be nil on client
 	 */
-	public readonly DamageTaken = new Signal<
-		(Container: DamageContainer) => void
-	>();
+	public readonly DamageTaken = new Signal<[Container: DamageContainer]>();
 	/**
 	 * Enemy will always be nil on client
 	 */
-	public readonly DamageDealt = new Signal<
-		(Enemy: Character | undefined, Container: DamageContainer) => void
-	>();
+	public readonly DamageDealt = new Signal<[Enemy: Character | undefined, Container: DamageContainer]>();
+	public readonly Destroyed = new Signal();
+	public readonly MovesetChanged = new Signal<[NewMoveset: string | undefined, OldMoveset: string | undefined]>();
 
 	public DisableSkills = false;
-
-	public readonly Destroyed = new Signal();
-	public readonly MovesetChanged = new Signal<
-		(NewMoveset: string | undefined, OldMoveset: string | undefined) => void
-	>();
 
 	private readonly statusEffects: Map<string, UnknownStatus> = new Map();
 	private readonly skills: Map<string, UnknownSkill> = new Map();

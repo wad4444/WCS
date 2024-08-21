@@ -99,15 +99,11 @@ export abstract class SkillBase<
 	/** Fires whenever skill ends. Works on client and server. */
 	public readonly Ended = new Signal();
 	/** Fires whenever current skill state changes. */
-	public readonly StateChanged = new Signal<
-		(NewState: SkillState, OldState: SkillState) => void
-	>();
+	public readonly StateChanged = new Signal<[NewState: SkillState, OldState: SkillState]>();
 	/** Fires whenever skill gets destroyed (removed from the character). */
 	public readonly Destroyed = new Signal();
 	/** Fires whenever skill metadata changes. */
-	public readonly MetadataChanged = new Signal<
-		(NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined) => void
-	>();
+	public readonly MetadataChanged = new Signal<[NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined]>();
 
 	/** @internal */
 	protected _executionThread?: thread;
