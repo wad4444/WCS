@@ -387,7 +387,13 @@ export abstract class SkillBase<
 				if (isServerContext()) this.End();
 			});
 		} else if (PreviousState.IsActive && !State.IsActive) {
-			if (this.executionThread) task.cancel(this.executionThread);
+			if (
+				this.executionThread &&
+				coroutine.status(this.executionThread) !== "dead"
+			) {
+				task.cancel(this.executionThread);
+				this.executionThread = undefined;
+			}
 			isClientContext() ? this.OnEndClient() : this.OnEndServer();
 			this.Ended.Fire();
 		}
