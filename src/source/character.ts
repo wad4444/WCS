@@ -175,10 +175,14 @@ export class Character {
 		this.setupReplication_Client();
 
 		this.janitor.Add(
-			this.StatusEffectAdded.Connect(() => this.updateHumanoidProps()),
+			this.StatusEffectAdded.Connect(
+				(status) => status.GetHumanoidData() && this.updateHumanoidProps(),
+			),
 		);
 		this.janitor.Add(
-			this.StatusEffectRemoved.Connect(() => this.updateHumanoidProps()),
+			this.StatusEffectRemoved.Connect(
+				(status) => status.GetHumanoidData() && this.updateHumanoidProps(),
+			),
 		);
 		this.janitor.Add(() => {
 			this.StatusEffectAdded.Destroy();
@@ -298,6 +302,7 @@ export class Character {
 		this.statusEffects.set(Status.GetId(), Status);
 		Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
 		Status.StateChanged.Connect(() => {
+			if (!Status.GetHumanoidData()) return;
 			this.updateHumanoidProps();
 		});
 
@@ -307,6 +312,8 @@ export class Character {
 		Status.Destroyed.Connect(() => {
 			this.statusEffects.delete(Status.GetId());
 			this.StatusEffectRemoved.Fire(Status);
+
+			if (!Status.GetHumanoidData()) return;
 			this.updateHumanoidProps();
 		});
 
