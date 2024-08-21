@@ -77,10 +77,10 @@ export abstract class SkillBase<
 	Metadata = void,
 > {
 	/** @internal @hidden */
-	protected readonly _janitor = new Janitor();
+	protected readonly janitor = new Janitor();
 
 	/**@internal @hidden */
-	public readonly _id = nextId();
+	public readonly id = nextId();
 	/**
 	 * A Janitor object. Cleans up everything after skill ends.
 	 */
@@ -110,7 +110,7 @@ export abstract class SkillBase<
 	>();
 
 	/** @internal */
-	protected _executionThread?: thread;
+	protected executionThread?: thread;
 
 	/**
 	 * Checks whenever other skills should be non active for :Start() to proceed.
@@ -156,7 +156,7 @@ export abstract class SkillBase<
 	 */
 	protected readonly ConstructorArguments: ConstructorArguments;
 	/** @internal @hidden */
-	protected _skillType = SkillType.Default;
+	protected skillType = SkillType.Default;
 
 	constructor(Character: Character, ...Args: ConstructorArguments);
 	/**
@@ -197,14 +197,14 @@ export abstract class SkillBase<
 
 		this.CooldownTimer.completed.Connect(() => {
 			if (!this.GetState().Debounce) return;
-			this._setState({
+			this.setState({
 				Debounce: false,
 			});
 		});
 
 		this.Ended.Connect(() => this.Janitor.Cleanup());
 
-		this._janitor.Add(() => {
+		this.janitor.Add(() => {
 			this.Janitor.Destroy();
 			this.StateChanged.Destroy();
 			this.Destroyed.Destroy();
@@ -215,7 +215,7 @@ export abstract class SkillBase<
 		});
 
 		this.StateChanged.Connect((New, Old) =>
-			this._stateDependentCallbacks(
+			this.stateDependentCallbacks(
 				New as _internal_SkillState,
 				Old as _internal_SkillState,
 			),
@@ -225,8 +225,8 @@ export abstract class SkillBase<
 	}
 
 	/** @hidden @internal */
-	protected _init() {
-		this.Character._addSkill(this);
+	protected init() {
+		this.Character.addSkill(this);
 		this.startReplication();
 		if (!this.isReplicated) {
 			setSkillData(this.Character.GetId(), this.Name, this.packData());
@@ -274,7 +274,7 @@ export abstract class SkillBase<
 			return;
 
 		const filterReplicated = (T: AnyStatus) =>
-			RunService.IsClient() ? T._isReplicated : true;
+			RunService.IsClient() ? T.isReplicated : true;
 
 		for (const [_, Exclusive] of pairs(this.MutualExclusives)) {
 			if (
@@ -309,7 +309,7 @@ export abstract class SkillBase<
 			return;
 		}
 
-		this._setState({
+		this.setState({
 			IsActive: true,
 			StarterParams: params,
 			Debounce: false,
@@ -336,7 +336,7 @@ export abstract class SkillBase<
 			return;
 		}
 
-		this._setState({
+		this.setState({
 			IsActive: false,
 			StarterParams: [],
 		});
@@ -349,7 +349,7 @@ export abstract class SkillBase<
 
 	/** Retrieves the skill type */
 	public GetSkillType() {
-		return this._skillType;
+		return this.skillType;
 	}
 
 	/**
@@ -358,7 +358,7 @@ export abstract class SkillBase<
 	public Destroy() {
 		if (this.destroyed) return;
 
-		this._setState({
+		this.setState({
 			IsActive: false,
 			Debounce: false,
 			StarterParams: [],
@@ -369,25 +369,25 @@ export abstract class SkillBase<
 		}
 		this.destroyed = true;
 		this.Destroyed.Fire();
-		this._janitor.Cleanup();
+		this.janitor.Cleanup();
 	}
 
 	/** @internal */
-	protected _stateDependentCallbacks(
+	protected stateDependentCallbacks(
 		State: _internal_SkillState,
 		PreviousState: _internal_SkillState,
 	) {
 		if (!PreviousState.IsActive && State.IsActive) {
 			this.Started.Fire();
-			this._executionThread = task.spawn(() => {
+			this.executionThread = task.spawn(() => {
 				isClientContext()
 					? this.OnStartClient(...(State.StarterParams as StarterParams))
 					: this.OnStartServer(...(State.StarterParams as StarterParams));
-				this._executionThread = undefined;
+				this.executionThread = undefined;
 				if (isServerContext()) this.End();
 			});
 		} else if (PreviousState.IsActive && !State.IsActive) {
-			if (this._executionThread) task.cancel(this._executionThread);
+			if (this.executionThread) task.cancel(this.executionThread);
 			isClientContext() ? this.OnEndClient() : this.OnEndServer();
 			this.Ended.Fire();
 		}
@@ -492,7 +492,7 @@ export abstract class SkillBase<
 		this.CooldownTimer.setLength(Duration);
 		this.CooldownTimer.start();
 
-		this._setState({
+		this.setState({
 			Debounce: true,
 			_timerEndTimestamp:
 				Workspace.GetServerTimeNow() + this.CooldownTimer.getTimeLeft(),
@@ -515,7 +515,7 @@ export abstract class SkillBase<
 			this.CooldownTimer.stop();
 		}
 
-		this._setState({
+		this.setState({
 			Debounce: false,
 			_timerEndTimestamp: undefined,
 		});
@@ -534,7 +534,7 @@ export abstract class SkillBase<
 	 * @internal Reserved for internal usage
 	 * @hidden
 	 */
-	protected _setState(Patch: Partial<_internal_SkillState>) {
+	protected setState(Patch: Partial<_internal_SkillState>) {
 		const newState = {
 			...this.state,
 			...Patch,
@@ -562,7 +562,7 @@ export abstract class SkillBase<
 	}
 
 	/** @hidden @internal */
-	public _processDataUpdate(
+	public processDataUpdate(
 		NewData?: SkillData,
 		OldData: SkillData = this.packData(),
 	) {
@@ -589,11 +589,11 @@ export abstract class SkillBase<
 
 		const disconnect = subscribe(
 			() => clientAtom()?.skills.get(this.Name),
-			(current, old) => this._processDataUpdate(current, old),
+			(current, old) => this.processDataUpdate(current, old),
 		);
 
 		const state = clientAtom();
-		this._processDataUpdate(state?.skills.get(this.Name));
+		this.processDataUpdate(state?.skills.get(this.Name));
 
 		this.Destroyed.Connect(disconnect);
 	}
@@ -631,7 +631,7 @@ export abstract class Skill<
 > extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
 	constructor(Character: Character, ...Args: ConstructorArguments) {
 		super(Character, ...Args);
-		this._init();
+		this.init();
 	}
 }
 

@@ -26,7 +26,7 @@
 		"declaration": true,
 		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo",
 		"plugins": [
-			{ "transform": "rbxts-transformer-private", "includeInternal": true },
+			{ "transform": "rbxts-transformer-private", "customPrefix": "_internal_", "includeInternal": true },
 			{ "transform": "rbxts-transformer-flamework" }
 		]
 	},

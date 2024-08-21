@@ -34,9 +34,9 @@ class Server {
 	private registeredModules: ModuleScript[] = [];
 
 	/** @internal */
-	public __WCS_Atom = atom<Map<string, CharacterData>>(new Map());
+	public atom = atom<Map<string, CharacterData>>(new Map());
 	private syncer = sync.server({
-		atoms: { atom: this.__WCS_Atom },
+		atoms: { atom: this.atom },
 		preserveHistory: true,
 	});
 
@@ -45,7 +45,7 @@ class Server {
 	}
 
 	/** @internal @hidden */
-	public _filterReplicatedCharacters(Player: Player, Character: Character) {
+	public filterReplicatedCharacters(Player: Player, Character: Character) {
 		return Character.Instance === Player.Character;
 	}
 

@@ -18,7 +18,7 @@ export abstract class HoldableSkill<
 > extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
 	/** Manually starting or stopping the timer will break things */
 	protected readonly HoldTimer = new Timer(10);
-	protected _skillType: SkillType = SkillType.Holdable;
+	protected skillType: SkillType = SkillType.Holdable;
 
 	constructor(Character: Character);
 	/**
@@ -29,19 +29,19 @@ export abstract class HoldableSkill<
 	constructor(Props: Character | SkillProps) {
 		super(Props as never);
 		if (isServerContext()) {
-			this._janitor.Add(
+			this.janitor.Add(
 				this.HoldTimer.completed.Connect(
 					() => this.GetState().IsActive && this.End(),
 				),
 				"Disconnect",
 			);
 		}
-		this._janitor.Add(this.HoldTimer, "destroy");
-		this._init();
+		this.janitor.Add(this.HoldTimer, "destroy");
+		this.init();
 	}
 
 	/** @internal */
-	protected _stateDependentCallbacks(
+	protected stateDependentCallbacks(
 		State: _internal_SkillState,
 		PreviousState: _internal_SkillState,
 	) {
@@ -49,7 +49,7 @@ export abstract class HoldableSkill<
 			if (this.GetState().MaxHoldTime !== undefined) this.HoldTimer.start();
 			this.Started.Fire();
 
-			this._executionThread = task.spawn(() => {
+			this.executionThread = task.spawn(() => {
 				isClientContext()
 					? this.OnStartClient(...(State.StarterParams as StarterParams))
 					: this.OnStartServer(...(State.StarterParams as StarterParams));
@@ -57,7 +57,7 @@ export abstract class HoldableSkill<
 		} else if (PreviousState.IsActive && !State.IsActive) {
 			if (this.HoldTimer.getState() === TimerState.Running)
 				this.HoldTimer.stop();
-			if (this._executionThread) task.cancel(this._executionThread);
+			if (this.executionThread) task.cancel(this.executionThread);
 
 			isClientContext() ? this.OnEndClient() : this.OnEndServer();
 			this.Ended.Fire();
@@ -75,7 +75,7 @@ export abstract class HoldableSkill<
 			logError("Max Hold Time can't be lower or equal to zero");
 		}
 
-		this._setState({ MaxHoldTime: MaxHoldTime });
+		this.setState({ MaxHoldTime: MaxHoldTime });
 		if (MaxHoldTime) this.HoldTimer.setLength(MaxHoldTime);
 	}
 

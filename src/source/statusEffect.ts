@@ -112,7 +112,7 @@ export class StatusEffect<
 	private readonly timer = new Timer(1);
 	private readonly id;
 	/** @internal */
-	public readonly _isReplicated: boolean;
+	public readonly isReplicated: boolean;
 
 	protected readonly ConstructorArguments: ConstructorArguments;
 
@@ -158,7 +158,7 @@ export class StatusEffect<
 
 		this.Player = Players.GetPlayerFromCharacter(this.Character.Instance);
 
-		this._isReplicated = isClientContext() && tonumber(this.id)! > 0;
+		this.isReplicated = isClientContext() && tonumber(this.id)! > 0;
 		this.ConstructorArguments = Args;
 
 		this.StateChanged.Connect((New, Old) =>
@@ -170,7 +170,7 @@ export class StatusEffect<
 
 		this.Ended.Connect(() => this.Janitor.Cleanup());
 		this.Ended.Connect(() => {
-			if (this.DestroyOnEnd && (isServerContext() || !this._isReplicated))
+			if (this.DestroyOnEnd && (isServerContext() || !this.isReplicated))
 				this.Destroy();
 		});
 
@@ -187,11 +187,11 @@ export class StatusEffect<
 			this.timer.destroy();
 		});
 
-		Character._addStatus(this);
+		Character.addStatus(this);
 		this.startReplicationClient();
 
 		if (isServerContext()) {
-			setStatusData(this.Character.GetId(), this.id, this._packData());
+			setStatusData(this.Character.GetId(), this.id, this.packData());
 		}
 		this.OnConstruct(...Args);
 		isServerContext()
@@ -203,7 +203,7 @@ export class StatusEffect<
 	 * Starts the status effect.
 	 */
 	public Start(Time?: number) {
-		if (this._isReplicated)
+		if (this.isReplicated)
 			return logWarning("Cannot perform this action on a replicated status");
 
 		if (this.timer.getState() === TimerState.Running) {
@@ -215,7 +215,7 @@ export class StatusEffect<
 			this.timer.stop();
 		}
 
-		this._setState({
+		this.setState({
 			IsActive: true,
 		});
 
@@ -235,7 +235,7 @@ export class StatusEffect<
 	 * Pauses the status effect.
 	 */
 	public Pause() {
-		if (this._isReplicated)
+		if (this.isReplicated)
 			return logWarning("Cannot perform this action on a replicated status");
 
 		if (this.timer.getState() !== TimerState.Running) {
@@ -250,7 +250,7 @@ export class StatusEffect<
 	 * Resumes the status effect.
 	 */
 	public Resume() {
-		if (this._isReplicated)
+		if (this.isReplicated)
 			return logWarning("Cannot perform this action on a replicated status");
 
 		if (this.timer.getState() !== TimerState.Paused) {
@@ -265,14 +265,14 @@ export class StatusEffect<
 	 * Ends the status effect.
 	 */
 	public End() {
-		if (this._isReplicated)
+		if (this.isReplicated)
 			return logWarning("Cannot perform this action on a replicated status");
 
 		if (!this.GetState().IsActive) {
 			return;
 		}
 
-		this._setState({
+		this.setState({
 			IsActive: false,
 		});
 
@@ -326,7 +326,7 @@ export class StatusEffect<
 	 * Clears the metadata
 	 */
 	protected ClearMetadata() {
-		if (this._isReplicated) {
+		if (this.isReplicated) {
 			logError(
 				"Cannot :ClearMetadata() of replicated status effect on client! \n This can lead to a possible desync",
 			);
@@ -345,7 +345,7 @@ export class StatusEffect<
 	/**
 	 * Sets the state of the status effect.
 	 */
-	protected _setState(Patch: Partial<StatusEffectState>) {
+	protected setState(Patch: Partial<StatusEffectState>) {
 		const newState = {
 			...this.state,
 			...Patch,
@@ -369,7 +369,7 @@ export class StatusEffect<
 	 * Sets the metadata of the status effect.
 	 */
 	protected SetMetadata(NewMeta: Metadata) {
-		if (this._isReplicated) {
+		if (this.isReplicated) {
 			logError(
 				"Cannot :SetMetadata() of replicated status effect on client! \n This can lead to a possible desync",
 			);
@@ -446,7 +446,7 @@ export class StatusEffect<
 			this.End();
 			deleteStatusData(this.Character.GetId(), this.id);
 		} else {
-			this._setState({
+			this.setState({
 				IsActive: false,
 			});
 		}
@@ -470,7 +470,7 @@ export class StatusEffect<
 	 * @internal Reserved for internal usage
 	 * @hidden
 	 */
-	public _packData(): StatusData {
+	public packData(): StatusData {
 		return {
 			className: tostring(getmetatable(this)),
 			state: this.state,
@@ -497,9 +497,9 @@ export class StatusEffect<
 	}
 
 	/** @hidden @internal */
-	public _processDataUpdate(
+	public processDataUpdate(
 		StatusData?: StatusData,
-		PreviousData: StatusData = this._packData(),
+		PreviousData: StatusData = this.packData(),
 	) {
 		if (!StatusData) return;
 
@@ -529,15 +529,15 @@ export class StatusEffect<
 	}
 
 	private startReplicationClient() {
-		if (!this._isReplicated) return;
+		if (!this.isReplicated) return;
 
 		const subscription = subscribe(
 			() => clientAtom()?.statusEffects.get(this.id),
-			(current, old) => this._processDataUpdate(current, old),
+			(current, old) => this.processDataUpdate(current, old),
 		);
 
 		const state = clientAtom()?.statusEffects.get(this.id);
-		this._processDataUpdate(state);
+		this.processDataUpdate(state);
 
 		this.janitor.Add(subscription);
 	}

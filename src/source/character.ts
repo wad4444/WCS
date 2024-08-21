@@ -200,17 +200,17 @@ export class Character {
 
 		if (isServerContext()) {
 			const server = getActiveHandler<WCS_Server>()!;
-			setCharacterData(this.id, this._packData());
+			setCharacterData(this.id, this.packData());
 
 			this.DamageTaken.Connect((Container) => {
 				for (const player of Players.GetPlayers()) {
-					if (!server._filterReplicatedCharacters(player, this)) continue;
+					if (!server.filterReplicatedCharacters(player, this)) continue;
 					ServerEvents.damageTaken.fire(player, Container.Damage);
 				}
 			});
 			this.DamageDealt.Connect((_, Container) => {
 				for (const player of Players.GetPlayers()) {
-					if (!server._filterReplicatedCharacters(player, this)) continue;
+					if (!server.filterReplicatedCharacters(player, this)) continue;
 					ServerEvents.damageDealt.fire(
 						player,
 						Container.Source?.GetId()!,
@@ -298,7 +298,7 @@ export class Character {
 	 * @internal Reserved for internal usage
 	 * @hidden
 	 */
-	public _addStatus(Status: AnyStatus) {
+	public addStatus(Status: AnyStatus) {
 		this.statusEffects.set(Status.GetId(), Status);
 		Status.HumanoidDataChanged.Connect(() => this.updateHumanoidProps());
 		Status.StateChanged.Connect(() => {
@@ -324,7 +324,7 @@ export class Character {
 	 * @internal Reserved for internal usage
 	 * @hidden
 	 */
-	public _addSkill(Skill: AnySkill) {
+	public addSkill(Skill: AnySkill) {
 		const name = Skill.GetName();
 		if (this.skills.has(name)) {
 			logError(
@@ -339,7 +339,7 @@ export class Character {
 		Skill.Destroyed.Connect(() => {
 			this.SkillRemoved.Fire(Skill);
 
-			if (this.skills.get(name)?._id !== Skill._id) return;
+			if (this.skills.get(name)?.id !== Skill.id) return;
 			this.skills.delete(name);
 		});
 
@@ -350,10 +350,10 @@ export class Character {
 	 * @internal Reserved for internal usage
 	 * @hidden
 	 */
-	public _packData(): CharacterData {
+	public packData(): CharacterData {
 		const packedStatusEffect = new Map<string, StatusData>();
 		this.statusEffects.forEach((Status, Id) =>
-			packedStatusEffect.set(Id, Status._packData()),
+			packedStatusEffect.set(Id, Status.packData()),
 		);
 
 		return {

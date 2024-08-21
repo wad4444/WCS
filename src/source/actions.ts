@@ -29,7 +29,7 @@ function getAtom() {
 			"Attempted to dispatch an action before server handler initialization.",
 		);
 
-	return handler.__WCS_Atom;
+	return handler.atom;
 }
 
 export function setCharacterData(
