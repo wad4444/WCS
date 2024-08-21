@@ -499,6 +499,37 @@ export abstract class SkillBase<
 		});
 	}
 
+	protected CancelCooldown() {
+		if (!isServerContext()) {
+			logWarning("Cannot :CancelCooldown() on client.");
+			return;
+		}
+		if (!this.GetState().Debounce) return;
+
+		if (this.CooldownTimer.getState() === TimerState.Running) {
+			this.CooldownTimer.stop();
+		}
+
+		if (this.CooldownTimer.getState() === TimerState.Paused) {
+			this.CooldownTimer.resume();
+			this.CooldownTimer.stop();
+		}
+
+		this._setState({
+			Debounce: false,
+			_timerEndTimestamp: undefined,
+		});
+	}
+
+	protected ExtendCooldown(Duration: number) {
+		if (this.CooldownTimer.getTimeLeft() - Duration < 0) {
+			this.CancelCooldown();
+			return;
+		}
+
+		this.ApplyCooldown(this.CooldownTimer.getTimeLeft() + Duration);
+	}
+
 	/**
 	 * @internal Reserved for internal usage
 	 * @hidden

@@ -149,6 +149,8 @@ type SkillImpl = {
 	[any]: any,
 	new: (Character, ...any) -> Skill,
 	ApplyCooldown: (Skill, number) -> (),
+	ExtendCooldown: (Skill, number) -> (),
+	CancelCooldown: (Skill) -> (),
 	ShouldStart: (Skill) -> boolean,
 	GetName: (Skill) -> string,
 	OnStartServer: (Skill, ...any) -> (),
