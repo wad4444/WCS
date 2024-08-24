@@ -115,7 +115,7 @@ export function getActiveHandler<T extends WCS_Server | WCS_Client>() {
 }
 
 export function freezeCheck<T extends object>(obj: T) {
-	table.isfrozen(obj) && table.freeze(obj);
+	!table.isfrozen(obj) && table.freeze(obj);
 }
 
 export function shallowEqual(a: object, b: object) {
