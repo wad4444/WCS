@@ -389,7 +389,7 @@ export abstract class SkillBase<
 		} else if (PreviousState.IsActive && !State.IsActive) {
 			if (
 				this.executionThread &&
-				coroutine.status(this.executionThread) !== "dead"
+				coroutine.status(this.executionThread) !== "normal"
 			) {
 				task.cancel(this.executionThread);
 				this.executionThread = undefined;
