@@ -529,9 +529,15 @@ export class Character {
 		});
 
 		const oldMoveset = this.moveset;
-		this.setMovesetServer(movesetObject.Name);
+		if (oldMoveset) {
+			const oldMovesetObject = GetMovesetObjectByName(oldMoveset)!;
+			oldMovesetObject.OnCharacterRemoved.Fire(this);
+		}
 
+		this.setMovesetServer(movesetObject.Name);
 		this.MovesetChanged.Fire(movesetObject.Name, oldMoveset);
+
+		movesetObject.OnCharacterAdded.Fire(this);
 	}
 
 	/**
@@ -682,6 +688,15 @@ export class Character {
 		) => {
 			this.moveset = New;
 			this.MovesetChanged.Fire(New, Old);
+
+			if (New) {
+				const newMovesetObject = GetMovesetObjectByName(New)!;
+				newMovesetObject.OnCharacterAdded.Fire(this);
+			}
+			if (Old) {
+				const oldMovesetObject = GetMovesetObjectByName(Old)!;
+				oldMovesetObject.OnCharacterRemoved.Fire(this);
+			}
 		};
 
 		const processDataUpdate = (CharacterData: CharacterData | undefined) => {
