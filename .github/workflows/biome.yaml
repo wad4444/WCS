@@ -17,5 +17,8 @@ jobs:
       - name: Install NPM Dependencies
         uses: bahmutov/npm-install@v1
 
+      - name: Setup Biome CLI
+        uses: biomejs/setup-biome@v2
+
       - name: Run Biome
-        run: npx biome check
+        run: biome ci .
