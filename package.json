@@ -11,17 +11,8 @@
 		"test:build": "rbxtsc --type=game -p testing -i testing/include",
 		"serve": "rojo serve testing/testing.project.json"
 	},
-	"keywords": [
-		"WCS",
-		"Combat",
-		"CombatSystem",
-		"CombatHandler"
-	],
-	"files": [
-		"out",
-		"!**/*.tsbuildinfo",
-		"!out/tests/*"
-	],
+	"keywords": ["WCS", "Combat", "CombatSystem", "CombatHandler"],
+	"files": ["out", "!**/*.tsbuildinfo", "!out/tests/*"],
 	"author": "wad4444",
 	"license": "MIT",
 	"devDependencies": {
