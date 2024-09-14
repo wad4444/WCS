@@ -58,6 +58,23 @@ export = () => {
 		expect(passedArg).to.be.equal(10);
 	});
 
+	it("should fire events", () => {
+		let i = 0;
+
+		@SkillDecorator
+		class test_skill2 extends Skill {}
+
+		const moveset = CreateMoveset("someMoveset2", [test_skill2]);
+		moveset.OnCharacterAdded.Once(() => i++);
+		moveset.OnCharacterRemoved.Once(() => i++);
+
+		const char = makeChar();
+		char.ApplyMoveset(moveset);
+		char.ClearMoveset();
+
+		expect(i).to.be.equal(2);
+	});
+
 	it("should not accept invalid skills", () => {
 		expect(() => CreateMoveset("_smhsrmh", [[] as never])).to.throw(
 			"constructor",
