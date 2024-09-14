@@ -355,13 +355,13 @@ export abstract class SkillBase<
 	/**
 	 * Destroys the skill and removes it from the character
 	 */
+	public Destroy(): void;
 	/** @hidden */
 	public Destroy(flag: (typeof Flags)["CanDestroyLocallyClient"]): void;
-	public Destroy(): void;
 	public Destroy(flag?: (typeof Flags)["CanDestroyLocallyClient"]) {
 		if (isClientContext() && flag !== Flags.CanDestroyLocallyClient) {
 			logError(
-				"Can't destroy a skill on the client, this can lead to a possible desync",
+				"Attempted to manually destroy a skill on client. \n On client side skills are destroyed by the handler automatically, \n doing this manually can lead to a possible desync",
 			);
 		}
 		if (this.destroyed) return;

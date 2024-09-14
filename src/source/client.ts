@@ -195,7 +195,7 @@ class Client {
 
 		subscribe(clientAtom, (data) => {
 			if (!data || character?.Instance !== data.instance) {
-				character?.Destroy();
+				character?.Destroy(Flags.CanDestroyLocallyClient);
 				character = undefined;
 			}
 			if (data && !character) {
