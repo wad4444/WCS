@@ -231,7 +231,14 @@ export class Character {
 	 * Destroys the object and performs necessary cleanup tasks.
 	 * You usually suppost to fire this manually when your humanoid dies.
 	 */
-	public Destroy() {
+	public Destroy(flag: (typeof Flags)["CanDestroyLocallyClient"]): void;
+	public Destroy(): void;
+	public Destroy(flag?: (typeof Flags)["CanDestroyLocallyClient"]) {
+		if (isClientContext() && flag !== Flags.CanDestroyLocallyClient) {
+			logError(
+				"Attempted to manually destroy a character on client. \n On client side character are destroyed by the handler automatically, \n doing this manually can lead to a possible desync",
+			);
+		}
 		if (this.destroyed) return;
 		Character.currentCharMap.delete(this.Instance);
 		Character.CharacterDestroyed.Fire(this);
@@ -676,7 +683,7 @@ export class Character {
 
 		return () => {
 			flaggedAsDestroyed = true;
-			skill?.Destroy();
+			skill?.Destroy(Flags.CanDestroyLocallyClient);
 		};
 	}
 
