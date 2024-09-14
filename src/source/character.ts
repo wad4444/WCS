@@ -231,7 +231,15 @@ export class Character {
 	 * Destroys the object and performs necessary cleanup tasks.
 	 * You usually suppost to fire this manually when your humanoid dies.
 	 */
-	public Destroy() {
+	public Destroy(): void;
+	/** @hidden */
+	public Destroy(flag: (typeof Flags)["CanDestroyLocallyClient"]): void;
+	public Destroy(flag?: (typeof Flags)["CanDestroyLocallyClient"]) {
+		if (isClientContext() && flag !== Flags.CanDestroyLocallyClient) {
+			logError(
+				"Attempted to manually destroy a character on client. \n On client side character is destroyed by the handler automatically, \n doing this manually can lead to a possible desync",
+			);
+		}
 		if (this.destroyed) return;
 		Character.currentCharMap.delete(this.Instance);
 		Character.CharacterDestroyed.Fire(this);
@@ -529,9 +537,15 @@ export class Character {
 		});
 
 		const oldMoveset = this.moveset;
-		this.setMovesetServer(movesetObject.Name);
+		if (oldMoveset) {
+			const oldMovesetObject = GetMovesetObjectByName(oldMoveset)!;
+			oldMovesetObject.OnCharacterRemoved.Fire(this);
+		}
 
+		this.setMovesetServer(movesetObject.Name);
 		this.MovesetChanged.Fire(movesetObject.Name, oldMoveset);
+
+		movesetObject.OnCharacterAdded.Fire(this);
 	}
 
 	/**
@@ -574,9 +588,11 @@ export class Character {
 		this.cleanupMovesetSkills();
 
 		const oldMoveset = this.moveset;
-		this.setMovesetServer(undefined);
+		const oldMovesetObject = GetMovesetObjectByName(oldMoveset)!;
 
+		this.setMovesetServer(undefined);
 		this.MovesetChanged.Fire(this.moveset, oldMoveset);
+		oldMovesetObject.OnCharacterRemoved.Fire(this);
 	}
 
 	private setMovesetServer(to?: string) {
@@ -668,7 +684,7 @@ export class Character {
 
 		return () => {
 			flaggedAsDestroyed = true;
-			skill?.Destroy();
+			skill?.Destroy(Flags.CanDestroyLocallyClient);
 		};
 	}
 
@@ -682,6 +698,15 @@ export class Character {
 		) => {
 			this.moveset = New;
 			this.MovesetChanged.Fire(New, Old);
+
+			if (New) {
+				const newMovesetObject = GetMovesetObjectByName(New)!;
+				newMovesetObject.OnCharacterAdded.Fire(this);
+			}
+			if (Old) {
+				const oldMovesetObject = GetMovesetObjectByName(Old)!;
+				oldMovesetObject.OnCharacterRemoved.Fire(this);
+			}
 		};
 
 		const processDataUpdate = (CharacterData: CharacterData | undefined) => {

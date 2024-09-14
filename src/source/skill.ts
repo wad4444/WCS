@@ -355,7 +355,15 @@ export abstract class SkillBase<
 	/**
 	 * Destroys the skill and removes it from the character
 	 */
-	public Destroy() {
+	public Destroy(): void;
+	/** @hidden */
+	public Destroy(flag: (typeof Flags)["CanDestroyLocallyClient"]): void;
+	public Destroy(flag?: (typeof Flags)["CanDestroyLocallyClient"]) {
+		if (isClientContext() && flag !== Flags.CanDestroyLocallyClient) {
+			logError(
+				"Attempted to manually destroy a skill on client. \n On client side skills are destroyed by the handler automatically, \n doing this manually can lead to a possible desync",
+			);
+		}
 		if (this.destroyed) return;
 
 		this.setState({
@@ -612,11 +620,8 @@ export abstract class SkillBase<
 		};
 	}
 
-	/** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
 	protected OnConstruct(...Args: ConstructorArguments) {}
-	/** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
 	protected OnConstructClient(...Args: ConstructorArguments) {}
-	/** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
 	protected OnConstructServer(...Args: ConstructorArguments) {}
 	/** Called whenever skill starts on the server. Accepts an argument passed to Start(). */
 	protected OnStartServer(...Params: StarterParams) {}

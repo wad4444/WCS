@@ -1,5 +1,7 @@
+import Signal from "@rbxts/sleitnick-signal";
 import { t } from "@rbxts/t";
-import { type AnySkill, Skill, SkillBase, type UnknownSkill } from "./skill";
+import type { Character } from "exports";
+import { type AnySkill, SkillBase, type UnknownSkill } from "./skill";
 import {
 	type Constructor,
 	freezeCheck,
@@ -13,6 +15,9 @@ export interface Moveset {
 	readonly ConstructorParams?:
 		| Record<string, any[] | undefined>
 		| Map<Constructor<AnySkill>, any[]>;
+
+	OnCharacterAdded: Signal<[character: Character]>;
+	OnCharacterRemoved: Signal<[character: Character]>;
 }
 
 const registeredMovesets = new Map<string, Moveset>();
@@ -27,7 +32,7 @@ export function CreateMoveset(
 		| Map<Constructor<AnySkill>, any[]>,
 ): Moveset {
 	if (registeredMovesets.has(Name)) {
-		logError(`StatusEffect with name ${Name} was already registered before`);
+		logError(`Moveset with name ${Name} was already registered before`);
 	}
 
 	if (!t.table(Skills)) logError("Skills you provided is not a valid array");
@@ -41,6 +46,8 @@ export function CreateMoveset(
 		Name: Name,
 		Skills: Skills,
 		ConstructorParams: ConstructorParams,
+		OnCharacterAdded: new Signal<[character: Character]>(),
+		OnCharacterRemoved: new Signal<[character: Character]>(),
 	} as const;
 
 	registeredMovesets.set(Name, moveset);
