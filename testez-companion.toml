@@ -1,1 +1,1 @@
-roots = ["ReplicatedStorage/library/tests"]
+roots = ["ReplicatedStorage/wcs/tests"]

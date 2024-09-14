@@ -7,7 +7,7 @@
 		"build-wally": "rbxtsc --type model",
 		"build-npm": "rbxtsc --type package",
 		"prepublishOnly": "npm run build-npm",
-		"test:watch": "rbxtsc -w --type=game -p testing -i testing/include",
+		"test:watch": "cd testing && rbxtsc -w --type=game -p testing -i testing/include",
 		"test:build": "rbxtsc --type=game -p testing -i testing/include",
 		"serve": "rojo serve testing/testing.project.json"
 	},
@@ -31,8 +31,8 @@
 		"@rbxts/types": "^1.0.783",
 		"rbxts-transformer-flamework": "^1.2.2",
 		"rbxts-transformer-private": "^1.0.3",
-		"roblox-ts": "^2.3.0",
-		"typescript": "^5.2.2"
+		"roblox-ts": "^3.0.0",
+		"typescript": "^5.5.3"
 	},
 	"types": "out/index.d.ts",
 	"repository": {
@@ -43,8 +43,8 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@flamework/core": "^1.2.2",
-		"@flamework/networking": "^1.2.2",
+		"@flamework/core": "^1.2.3",
+		"@flamework/networking": "^1.2.3",
 		"@rbxts/charm": "^0.6.0",
 		"@rbxts/charm-payload-converter": "^1.0.1",
 		"@rbxts/flamework-binary-serializer": "^0.6.0",

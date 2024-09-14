@@ -612,11 +612,8 @@ export abstract class SkillBase<
 		};
 	}
 
-	/** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
 	protected OnConstruct(...Args: ConstructorArguments) {}
-	/** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
 	protected OnConstructClient(...Args: ConstructorArguments) {}
-	/** @internal @deprecated Due to the execution order of constructors. Prefer overriding class constructor instead. */
 	protected OnConstructServer(...Args: ConstructorArguments) {}
 	/** Called whenever skill starts on the server. Accepts an argument passed to Start(). */
 	protected OnStartServer(...Params: StarterParams) {}

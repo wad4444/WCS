@@ -580,9 +580,11 @@ export class Character {
 		this.cleanupMovesetSkills();
 
 		const oldMoveset = this.moveset;
-		this.setMovesetServer(undefined);
+		const oldMovesetObject = GetMovesetObjectByName(oldMoveset)!;
 
+		this.setMovesetServer(undefined);
 		this.MovesetChanged.Fire(this.moveset, oldMoveset);
+		oldMovesetObject.OnCharacterRemoved.Fire(this);
 	}
 
 	private setMovesetServer(to?: string) {

@@ -32,7 +32,7 @@ export function CreateMoveset(
 		| Map<Constructor<AnySkill>, any[]>,
 ): Moveset {
 	if (registeredMovesets.has(Name)) {
-		logError(`StatusEffect with name ${Name} was already registered before`);
+		logError(`Moveset with name ${Name} was already registered before`);
 	}
 
 	if (!t.table(Skills)) logError("Skills you provided is not a valid array");

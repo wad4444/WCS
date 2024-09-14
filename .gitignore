@@ -2,6 +2,7 @@
 /out
 /include
 *.tsbuildinfo
-/testing/out
-/testing/include
+testing/out
+testing/include
+testing/node_modules
 flamework.build
