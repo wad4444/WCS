@@ -510,6 +510,10 @@ export class Character {
 		return this.skills.get(tostring(Constructor)) as T | undefined;
 	}
 
+	public GetSkillsDerivedFrom<T extends AnySkill>(Constructor: Constructor<T>) {
+		return mapToArray(this.skills).filter((T) => T instanceof Constructor) as T[];
+	}
+
 	/**
 	 * Apply a moveset to the character.
 	 */

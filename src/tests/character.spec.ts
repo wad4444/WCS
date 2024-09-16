@@ -143,6 +143,18 @@ export = () => {
 			expect(changed).to.be.equal(4);
 		});
 
+		it("should get derived skills", () => {
+			@SkillDecorator
+			class baseSkill extends Skill {}
+			@SkillDecorator
+			class derivedFromBaseSkill extends baseSkill {}
+
+			const char = makeChar();
+			const skill = new derivedFromBaseSkill(char);
+
+			expect(char.GetSkillsDerivedFrom(baseSkill)[0]).to.be.equal(skill);
+		});
+
 		it("should remove skills", () => {
 			const char = makeChar();
 			new someSkill(char);
