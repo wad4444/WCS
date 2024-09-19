@@ -511,7 +511,9 @@ export class Character {
 	}
 
 	public GetSkillsDerivedFrom<T extends AnySkill>(Constructor: Constructor<T>) {
-		return mapToArray(this.skills).filter((T) => T instanceof Constructor) as T[];
+		return mapToArray(this.skills).filter(
+			(T) => T instanceof Constructor,
+		) as T[];
 	}
 
 	/**
