@@ -20,9 +20,6 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Remove package-lock.json 🔨
-        run: rm -rf package-lock.json
-        
       - name: Install NPM Dependencies
         uses: bahmutov/npm-install@v1
 
