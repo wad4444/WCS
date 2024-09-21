@@ -33,8 +33,8 @@ export function isConstructor(obj: object): obj is Constructor<never> {
 	const ctor = obj as {
 		new?: (...args: unknown[]) => unknown;
 		constructor?: (...args: unknown[]) => unknown;
-	}
-	
+	};
+
 	return ctor.new !== undefined || ctor.constructor !== undefined;
 }
 
