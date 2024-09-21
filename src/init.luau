@@ -27,6 +27,8 @@ type Partial_StatusEffectState = {
 
 export type Moveset = {
 	Name: string,
+	OnCharacterAdded: ReadonlySignal<(Character) -> ()>,
+	OnCharacterRemoved: ReadonlySignal<(Character) -> ()>,
 	Skills: { SkillImpl },
 }
 
@@ -223,6 +225,7 @@ type CharacterImpl = {
 	HasStatusEffects: (Character, { StatusEffectImpl }) -> boolean,
 	GetSkillFromString: (Character, string) -> Skill?,
 	GetSkills: (Character) -> { Skill },
+	GetSkillsDerivedFrom: (Character, Skill) -> { Skill },
 	GetAllActiveSkills: (Character) -> { Skill },
 	GetSkillFromConstructor: (Character, SkillImpl) -> Skill?,
 	ApplyMoveset: (Character, Moveset | string) -> (),
