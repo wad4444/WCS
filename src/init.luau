@@ -222,7 +222,7 @@ type CharacterImpl = {
 	GetAllActiveStatusEffects: (Character) -> { StatusEffect },
 	GetAllStatusEffectsOfType: (Character, StatusEffectImpl) -> { StatusEffect },
 	GetAllActiveStatusEffectsOfType: (Character, StatusEffectImpl) -> { StatusEffect },
-	HasStatusEffects: (Character, { StatusEffectImpl }) -> boolean,
+	HasStatusEffects: (Character, { StatusEffectImpl } | StatusEffectImpl) -> boolean,
 	GetSkillFromString: (Character, string) -> Skill?,
 	GetSkills: (Character) -> { Skill },
 	GetSkillsDerivedFrom: (Character, Skill) -> { Skill },

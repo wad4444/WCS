@@ -31,6 +31,7 @@ import {
 	freezeCheck,
 	getActiveHandler,
 	isClientContext,
+	isConstructor,
 	isServerContext,
 	logError,
 	logWarning,
@@ -469,12 +470,25 @@ export class Character {
 	/**
 	 * Checks if character has any active status effects of the specified type.
 	 */
-	public HasStatusEffects(Constructors: Constructor<AnyStatus>[]) {
+	public HasStatusEffects(Constructor: Constructor<AnyStatus>): boolean;
+	public HasStatusEffects(Constructors: Constructor<AnyStatus>[]): boolean;
+	public HasStatusEffects(
+		Constructors: Constructor<AnyStatus>[] | Constructor<AnyStatus>,
+	) {
+		if (isConstructor(Constructors)) {
+			for (const [_, Effect] of pairs(this.statusEffects)) {
+				if (!Effect.GetState().IsActive || !(Effect instanceof Constructors))
+					continue;
+				return true;
+			}
+
+			return false;
+		}
+
+		const ConstrucorsArray = Constructors as Constructor<AnyStatus>[];
 		for (const [_, Effect] of pairs(this.statusEffects)) {
 			if (!Effect.GetState().IsActive) continue;
-			if (
-				Constructors.find((T) => tostring(T) === tostring(getmetatable(Effect)))
-			)
+			if (ConstrucorsArray.find((T) => Effect instanceof T) !== undefined)
 				return true;
 		}
 		return false;

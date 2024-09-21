@@ -29,6 +29,15 @@ export function mapToArray<T extends defined, K extends defined>(
 	return arr;
 }
 
+export function isConstructor(obj: object): obj is Constructor<never> {
+	const ctor = obj as {
+		new?: (...args: unknown[]) => unknown;
+		constructor?: (...args: unknown[]) => unknown;
+	}
+	
+	return ctor.new !== undefined || ctor.constructor !== undefined;
+}
+
 export function createIdGenerator(initialValue = 0, increment = 1) {
 	return () => {
 		initialValue += increment;
