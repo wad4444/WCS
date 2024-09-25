@@ -239,7 +239,7 @@ Retrieves all active status effects of a specific type.
 Checks if character has any active status effects of the specified type.
 
 **`Parameters:`**
-* Statuses: `Constructor<AnyStatus>[]` - A list of status effect classes to check. 
+* Statuses: `Constructor<AnyStatus>[] | Constructor<AnyStatus>` - A list of status effect classes to check. 
 
 **`Returns`**
  * boolean
@@ -264,6 +264,15 @@ Retrieves the skill instance by its name.
 
 **`Returns`**
  * Skill: `Skill?`
+
+### `GetSkillsDerivedFrom(constructor)`
+Retrieves all skills that extend from constructor.
+
+**`Parameters:`**
+* Constructor: `Constructor<AnySkill>`.
+
+**`Returns`**
+ * Skills: `Skill[]`
 
 ### `GetSkillFromConstructor(constructor)`
 Retrieves a skill instance based on the provided constructor.

@@ -14,6 +14,8 @@ import TOCInline from "@theme/TOCInline";
 [Metadata]: ../tutorial/extras/metadata.md
 [Janitor]: https://howmanysmall.github.io/Janitor/
 
+<TOCInline toc={toc} />
+
 ## Fields
 
 ### `Character` **@readonly**
