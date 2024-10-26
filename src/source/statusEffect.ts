@@ -314,8 +314,8 @@ export class StatusEffect<
 	 * Clears the humanoid data.
 	 */
 	public ClearHumanoidData() {
-		this.HumanoidDataChanged.Fire(undefined, this.humanoidData);
 		this.humanoidData = undefined;
+		this.HumanoidDataChanged.Fire(undefined, this.humanoidData);
 
 		if (isServerContext()) {
 			patchStatusData(this.Character.GetId(), this.id, {
