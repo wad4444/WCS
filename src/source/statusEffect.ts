@@ -298,8 +298,10 @@ export class StatusEffect<
 			Priority: Priority,
 		};
 
-		this.HumanoidDataChanged.Fire(newData, this.humanoidData);
+		const old = this.humanoidData;
 		this.humanoidData = newData;
+
+		this.HumanoidDataChanged.Fire(newData, old);
 
 		if (isServerContext()) {
 			patchStatusData(this.Character.GetId(), this.id, {
