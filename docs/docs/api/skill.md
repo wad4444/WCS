@@ -168,8 +168,14 @@ Applies a cooldown to the skill. Works only on server.
 **`Parameters:`**
 * Cooldown: `number`
 
-**`Returns:`**
-* boolean
+### `ExtendCooldown(cd)`
+Extends the currently going skill cooldown. Works only on server.
+
+**`Parameters:`**
+* Cooldown: `number`
+
+### `CancelCooldown()`
+Cancels current cooldown.
 
 ### `OnConstruct(...args)` @override
 Called after class gets instantiated (both client and server).
