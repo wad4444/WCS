@@ -18,6 +18,7 @@ export abstract class HoldableSkill<
 > extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
 	/** Manually starting or stopping the timer will break things */
 	protected readonly HoldTimer = new Timer(10);
+	/** @internal @hidden */
 	protected skillType: SkillType = SkillType.Holdable;
 
 	constructor(Character: Character);
