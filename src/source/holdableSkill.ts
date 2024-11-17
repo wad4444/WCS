@@ -21,14 +21,14 @@ export abstract class HoldableSkill<
 	/** @internal @hidden */
 	protected skillType: SkillType = SkillType.Holdable;
 
-	constructor(Character: Character);
+	constructor(Character: Character, ...Args: ConstructorArguments);
 	/**
 	 * @internal Reserved for internal usage
 	 * @hidden
 	 */
 	constructor(Character: SkillProps);
-	constructor(Props: Character | SkillProps) {
-		super(Props as never);
+	constructor(Props: Character | SkillProps, ...Args: ConstructorArguments) {
+		super(Props as never, ...Args);
 		if (isServerContext()) {
 			this.janitor.Add(
 				this.HoldTimer.completed.Connect(
