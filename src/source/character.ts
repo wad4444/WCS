@@ -374,14 +374,17 @@ export class Character {
 		};
 	}
 
-	public SetDefaultProps(Props: AffectableHumanoidProps) {
-		this.defaultProps = Props;
+	public SetDefaultProps(Props: Partial<AffectableHumanoidProps>) {
+		this.defaultProps = {
+			...this.defaultProps,
+			...Props,
+		};
 		freezeCheck(this.defaultProps);
 		this.updateHumanoidProps();
 
 		if (isServerContext()) {
 			patchCharacterData(this.id, {
-				defaultProps: Props,
+				defaultProps: this.defaultProps,
 			});
 		}
 	}
