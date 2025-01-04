@@ -590,12 +590,13 @@ export class Character {
 	 * Default - Currently applied moveset
 	 */
 	public GetMovesetSkills(Moveset: Moveset | undefined = this.GetMoveset()) {
-		if (!Moveset) return;
+		if (!Moveset) return [];
 
 		return mapToArray(this.skills).filter((skill) => {
-			for (const [_, ctor] of pairs(Moveset.Skills)) {
-				return skill instanceof ctor;
+			for (const ctor of Moveset.Skills) {
+				if (skill instanceof ctor) return true;
 			}
+			return false;
 		});
 	}
 
