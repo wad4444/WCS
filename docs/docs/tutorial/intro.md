@@ -12,7 +12,7 @@ It allows you to create **any kind** of combat system with **ease**, providing t
 
 **WCS** is made utilizing **[TypeScript](https://typescriptlang.org/)** and compiled to luau using **[roblox-ts](https://roblox-ts.com/)**. It provides support for
 [roblox-ts](https://roblox-ts.com/) users and [luau](https://luau-lang.org/) users,
-by prodiving type definitions for both languages.
+by providing type definitions for both languages.
 
 But the usage may differ depending on the language you use, as some utility tools were exported specifically for luau users,
 the main differences are listed [on this page](./extras//differences.md).
