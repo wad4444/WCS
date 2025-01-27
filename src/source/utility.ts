@@ -23,7 +23,7 @@ export interface LikeJanitor {
 			| ((_: O) => void)
 			| ExtractKeys<O, () => void>
 			| true,
-	>(obj: O, methodName: M): O;
+	>(obj: O, methodName?: M): O;
 	AddObject<
 		O extends Constructable<unknown, Array<unknown>>,
 		M extends
