@@ -9,6 +9,24 @@ import type { AnySkill } from "./skill";
 export const consolePrefix = "WCS";
 const errorString = `--// [${consolePrefix}]: Caught an error in your code //--`;
 
+type Constructable<T> = new (...args: Parameters<T>) => T;
+export interface LikeJanitor {
+	Cleanup(): void;
+	/** @internal @hidden */
+	Destroy(): void;
+	Add<
+		O extends object | Instance | thread | Callback,
+		T extends InstanceType<O>,
+		M extends undefined | ExtractKeys<T, () => void> | true,
+	>(obj: T, methodName: M): T;
+	AddObject<
+		O extends Constructable<unknown>,
+		T extends InstanceType<O>,
+		M extends undefined | ExtractKeys<T, () => void> | true,
+	>(object: O, methodName?: M, ...args: ConstructorParameters<O>): T;
+	AddPromise<T extends Promise<unknown>>(promise: T): T;
+}
+
 export function logWarning(Message: string, DisplayTraceback = true) {
 	warn(
 		`[${consolePrefix}]: ${Message} \n \n ${DisplayTraceback ? debug.traceback() : undefined}`,

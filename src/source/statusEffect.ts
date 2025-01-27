@@ -18,6 +18,7 @@ import type {
 import { type FlagWithData, Flags } from "./flags";
 import {
 	type DeepReadonly,
+	type LikeJanitor,
 	clientAtom,
 	createIdGenerator,
 	freezeCheck,
@@ -74,7 +75,7 @@ export class StatusEffect<
 	ConstructorArguments extends unknown[] = [],
 > {
 	private readonly janitor = new Janitor();
-	protected readonly Janitor = new Janitor<any>();
+	protected readonly Janitor = new Janitor() as LikeJanitor;
 
 	public readonly MetadataChanged = new Signal<
 		[NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined]

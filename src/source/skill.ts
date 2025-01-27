@@ -13,6 +13,7 @@ import type { AnyStatus } from "./statusEffect";
 import {
 	type Constructor,
 	type DeepReadonly,
+	type LikeJanitor,
 	clientAtom,
 	createIdGenerator,
 	freezeCheck,
@@ -84,7 +85,7 @@ export abstract class SkillBase<
 	/**
 	 * A Janitor object. Cleans up everything after skill ends.
 	 */
-	protected readonly Janitor = new Janitor<any>();
+	protected readonly Janitor = new Janitor() as LikeJanitor;
 	/**
 	 * A Timer object. Starts, when ApplyCooldown() gets invoked on server. Does not sync to client.
 	 */
