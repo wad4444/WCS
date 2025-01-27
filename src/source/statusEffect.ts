@@ -18,7 +18,6 @@ import type {
 import { type FlagWithData, Flags } from "./flags";
 import {
 	type DeepReadonly,
-	type LikeJanitor,
 	clientAtom,
 	createIdGenerator,
 	freezeCheck,
@@ -61,8 +60,8 @@ type StatusEffectConstructor = new (
 ) => UnknownStatus;
 
 type ReadonlyState = DeepReadonly<StatusEffectState>;
-export type AnyStatus = StatusEffect<any, any[]>;
-export type UnknownStatus = StatusEffect<unknown, unknown[]>;
+export type AnyStatus = StatusEffect<any, any[], any>;
+export type UnknownStatus = StatusEffect<unknown, unknown[], any>;
 
 const registeredStatuses: Map<string, StatusEffectConstructor> = new Map();
 const nextId = createIdGenerator(0, isServerContext() ? 1 : -1);
@@ -73,9 +72,10 @@ const nextId = createIdGenerator(0, isServerContext() ? 1 : -1);
 export class StatusEffect<
 	Metadata = void,
 	ConstructorArguments extends unknown[] = [],
+	Janitor extends object | void = void,
 > {
 	private readonly janitor = new Janitor();
-	protected readonly Janitor: LikeJanitor = new Janitor();
+	protected readonly Janitor = new Janitor<Janitor>();
 
 	public readonly MetadataChanged = new Signal<
 		[NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined]

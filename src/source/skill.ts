@@ -13,7 +13,6 @@ import type { AnyStatus } from "./statusEffect";
 import {
 	type Constructor,
 	type DeepReadonly,
-	type LikeJanitor,
 	clientAtom,
 	createIdGenerator,
 	freezeCheck,
@@ -54,8 +53,8 @@ export interface SkillData {
 	constructorArguments: unknown[];
 	metadata: unknown;
 }
-export type AnySkill = SkillBase<any[], any[], any>;
-export type UnknownSkill = SkillBase<unknown[], unknown[], unknown>;
+export type AnySkill = SkillBase<any[], any[], any, any>;
+export type UnknownSkill = SkillBase<unknown[], unknown[], unknown, any>;
 
 export type SkillConstructor = new (
 	...args: [Character, ...constructorArgs: any[]]
@@ -76,6 +75,7 @@ export abstract class SkillBase<
 	StarterParams extends unknown[] = [],
 	ConstructorArguments extends unknown[] = [],
 	Metadata = void,
+	Janitor extends object | void = void,
 > {
 	/** @internal @hidden */
 	protected readonly janitor = new Janitor();
@@ -85,7 +85,7 @@ export abstract class SkillBase<
 	/**
 	 * A Janitor object. Cleans up everything after skill ends.
 	 */
-	protected readonly Janitor: LikeJanitor = new Janitor();
+	protected readonly Janitor = new Janitor<Janitor>();
 	/**
 	 * A Timer object. Starts, when ApplyCooldown() gets invoked on server. Does not sync to client.
 	 */
