@@ -75,7 +75,7 @@ export class StatusEffect<
 	ConstructorArguments extends unknown[] = [],
 > {
 	private readonly janitor = new Janitor();
-	protected readonly Janitor = new Janitor() as LikeJanitor;
+	protected readonly Janitor: LikeJanitor = new Janitor();
 
 	public readonly MetadataChanged = new Signal<
 		[NewMeta: Metadata | undefined, PreviousMeta: Metadata | undefined]
