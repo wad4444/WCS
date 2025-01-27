@@ -15,7 +15,8 @@ export abstract class HoldableSkill<
 	StarterParams extends unknown[] = [],
 	ConstructorArguments extends unknown[] = [],
 	Metadata = void,
-> extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
+	Janitor extends object | void = void,
+> extends SkillBase<StarterParams, ConstructorArguments, Metadata, Janitor> {
 	/** Manually starting or stopping the timer will break things */
 	protected readonly HoldTimer = new Timer(10);
 	/** @internal @hidden */

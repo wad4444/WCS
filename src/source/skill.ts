@@ -640,7 +640,8 @@ export abstract class Skill<
 	StarterParams extends unknown[] = [],
 	ConstructorArguments extends unknown[] = [],
 	Metadata = void,
-> extends SkillBase<StarterParams, ConstructorArguments, Metadata> {
+	Janitor extends void | object = void,
+> extends SkillBase<StarterParams, ConstructorArguments, Metadata, Janitor> {
 	constructor(Character: Character, ...Args: ConstructorArguments) {
 		super(Character, ...Args);
 		this.init();
