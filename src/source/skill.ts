@@ -489,7 +489,7 @@ export abstract class SkillBase<
 	/**
 	 * Applies a cooldown to the skill. Works only on server.
 	 */
-	protected ApplyCooldown(Duration: number) {
+	public ApplyCooldown(Duration: number) {
 		if (!isServerContext()) {
 			logWarning("Cannot :ApplyCooldown() on client.");
 			return;
@@ -514,7 +514,7 @@ export abstract class SkillBase<
 		});
 	}
 
-	protected CancelCooldown() {
+	public CancelCooldown() {
 		if (!isServerContext()) {
 			logWarning("Cannot :CancelCooldown() on client.");
 			return;
@@ -536,8 +536,8 @@ export abstract class SkillBase<
 		});
 	}
 
-	protected ExtendCooldown(Duration: number) {
-		if (this.CooldownTimer.getTimeLeft() - Duration < 0) {
+	public ExtendCooldown(Duration: number) {
+		if (this.CooldownTimer.getTimeLeft() + Duration < 0) {
 			this.CancelCooldown();
 			return;
 		}
