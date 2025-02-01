@@ -94,6 +94,11 @@ export function instanceofConstructor<T extends object>(
 export type Constructor<T extends object = object> = new (
 	...args: never[]
 ) => T;
+
+export type AbstractConstructor<T extends object = object> = abstract new (
+	...args: never[]
+) => T;
+
 export type DeepWritable<T> = T extends Map<infer K, infer V>
 	? Map<K, V>
 	: T extends object

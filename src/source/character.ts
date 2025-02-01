@@ -25,6 +25,7 @@ import {
 	type UnknownStatus,
 } from "./statusEffect";
 import {
+	type AbstractConstructor,
 	type Constructor,
 	GetParamsFromMoveset,
 	clientAtom,
@@ -527,7 +528,9 @@ export class Character {
 		return this.skills.get(tostring(Constructor)) as T | undefined;
 	}
 
-	public GetSkillsDerivedFrom<T extends AnySkill>(Constructor: Constructor<T>) {
+	public GetSkillsDerivedFrom<T extends AnySkill>(
+		Constructor: Constructor<T> | AbstractConstructor<T>,
+	) {
 		return mapToArray(this.skills).filter(
 			(T) => T instanceof Constructor,
 		) as T[];
