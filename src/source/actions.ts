@@ -14,7 +14,6 @@ function MutateAtom<C extends Atom<any>>(
 	recipe: (draft: Draft<InferAtomState<C>>) =>
 		| typeof draft
 		| undefined
-		// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 		| void
 		| (InferAtomState<C> extends undefined ? typeof None : never),
 ) {

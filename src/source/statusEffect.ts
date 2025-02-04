@@ -30,7 +30,7 @@ import {
 
 export interface StatusData {
 	className: string;
-	state: StatusEffectState;
+	state: _internal_StatusEffectState;
 	endTimestamp?: number;
 	metadata?: unknown;
 	humanoidData?: HumanoidData;
