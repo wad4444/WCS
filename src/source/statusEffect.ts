@@ -1,6 +1,6 @@
 import { subscribe } from "@rbxts/charm";
 import { Janitor } from "@rbxts/janitor";
-import { Players } from "@rbxts/services";
+import { Players, Workspace } from "@rbxts/services";
 import Signal from "@rbxts/sleitnick-signal";
 import { t } from "@rbxts/t";
 import { Timer, TimerState } from "@rbxts/timer";
@@ -31,6 +31,7 @@ import {
 export interface StatusData {
 	className: string;
 	state: StatusEffectState;
+	endTimestamp?: number;
 	metadata?: unknown;
 	humanoidData?: HumanoidData;
 	constructorArgs: unknown[];
@@ -39,6 +40,11 @@ export interface StatusData {
 interface StatusEffectProps {
 	Character: Character;
 	Flag: FlagWithData<string>;
+}
+
+/** @hidden */
+interface _internal_StatusEffectState extends StatusEffectState {
+	_timerEndTimestamp?: number;
 }
 
 export interface StatusEffectState {
@@ -102,7 +108,7 @@ export class StatusEffect<
 	public readonly Character: Character;
 	public DestroyOnEnd = true;
 
-	private state: StatusEffectState = {
+	private state: _internal_StatusEffectState = {
 		IsActive: false,
 	};
 	private metadata?: Metadata;
@@ -216,13 +222,24 @@ export class StatusEffect<
 			this.timer.stop();
 		}
 
+		if (Time !== undefined && Time > 0) {
+			this.timer.setLength(Time);
+			this.timer.start();
+		}
+
+		const timestamp =
+			this.timer.getState() !== TimerState.NotRunning
+				? Workspace.GetServerTimeNow() + this.timer.getTimeLeft()
+				: undefined;
+
 		this.setState({
 			IsActive: true,
+			_timerEndTimestamp: timestamp,
 		});
+	}
 
-		if (Time === undefined || Time <= 0) return;
-		this.timer.setLength(Time);
-		this.timer.start();
+	public GetTimerEndTimestamp() {
+		return this.state._timerEndTimestamp;
 	}
 
 	/**
@@ -244,6 +261,9 @@ export class StatusEffect<
 			return;
 		}
 
+		this.setState({
+			_timerEndTimestamp: undefined,
+		});
 		this.timer.pause();
 	}
 
@@ -260,6 +280,10 @@ export class StatusEffect<
 		}
 
 		this.timer.resume();
+		this.setState({
+			_timerEndTimestamp:
+				Workspace.GetServerTimeNow() + this.timer.getTimeLeft(),
+		});
 	}
 
 	/**
@@ -275,6 +299,7 @@ export class StatusEffect<
 
 		this.setState({
 			IsActive: false,
+			_timerEndTimestamp: undefined,
 		});
 
 		if (this.timer.getState() === TimerState.NotRunning) {
@@ -348,7 +373,7 @@ export class StatusEffect<
 	/**
 	 * Sets the state of the status effect.
 	 */
-	protected setState(Patch: Partial<StatusEffectState>) {
+	protected setState(Patch: Partial<_internal_StatusEffectState>) {
 		const newState = {
 			...this.state,
 			...Patch,
