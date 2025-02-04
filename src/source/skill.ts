@@ -494,6 +494,7 @@ export abstract class SkillBase<
 			logWarning("Cannot :ApplyCooldown() on client.");
 			return;
 		}
+		if (Duration <= 0) return;
 
 		if (this.CooldownTimer.getState() === TimerState.Running) {
 			this.CooldownTimer.stop();
