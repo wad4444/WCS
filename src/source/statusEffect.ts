@@ -16,6 +16,7 @@ import type {
 	DamageContainer,
 } from "./character";
 import { type FlagWithData, Flags } from "./flags";
+import type { UnknownSkill } from "./skill";
 import {
 	type DeepReadonly,
 	clientAtom,
@@ -453,7 +454,11 @@ export class StatusEffect<
 	/**
 	 * A method that is used to modify damage applied to a character
 	 */
-	public HandleDamage(Modified: number, Original: number) {
+	public HandleDamage(
+		Modified: number,
+		Original: number,
+		Source: UnknownSkill | UnknownStatus | undefined,
+	) {
 		return Modified;
 	}
 

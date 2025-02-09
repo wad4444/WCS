@@ -11,7 +11,9 @@ type InferAtomState<T> = T extends Atom<infer S> ? S : never;
 
 function MutateAtom<C extends Atom<any>>(
 	atom: C,
-	recipe: (draft: Draft<InferAtomState<C>>) =>
+	recipe: (
+		draft: Draft<InferAtomState<C>>,
+	) =>
 		| typeof draft
 		| undefined
 		| void

@@ -294,7 +294,11 @@ export class Character {
 		this.GetAllActiveStatusEffects()
 			.sort((a, b) => a.GetModificationPriority() < b.GetModificationPriority())
 			.forEach((Status) => {
-				modifiedDamage = Status.HandleDamage(modifiedDamage, originalDamage);
+				modifiedDamage = Status.HandleDamage(
+					modifiedDamage,
+					originalDamage,
+					container.Source,
+				);
 			});
 
 		const container = {
