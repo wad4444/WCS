@@ -297,7 +297,7 @@ export class Character {
 				modifiedDamage = Status.HandleDamage(
 					modifiedDamage,
 					originalDamage,
-					container.Source,
+					Container.Source,
 				);
 			});
 
