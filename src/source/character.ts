@@ -250,7 +250,9 @@ export class Character {
 		this.janitor.Cleanup();
 		this.destroyed = true;
 
-		this.skills.forEach((Skill) => Skill.Destroy());
+		this.skills.forEach((Skill) =>
+			Skill.Destroy(Flags.CanDestroyLocallyClient),
+		);
 		this.statusEffects.forEach((Status) => Status.Destroy());
 
 		if (isServerContext()) {
