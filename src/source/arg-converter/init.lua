@@ -10,7 +10,7 @@ function module.ConvertArgs(args)
 
     if lastIndex then
         for i = 1, lastIndex do
-            newArgs[i] = args[i] or HOLD_STR
+            newArgs[i] = if args[i] == nil then HOLD_STR else args[i]
         end
     end
     return newArgs
