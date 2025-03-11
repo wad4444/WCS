@@ -1,4 +1,6 @@
 import { Networking } from "@flamework/networking";
+import type { SyncPayload } from "@rbxts/charm-sync";
+import type { CharacterData } from "exports";
 import type { SerializedData } from "./serdes";
 
 interface ClientToServerEvents {
@@ -11,7 +13,11 @@ interface ClientToServerEvents {
 }
 
 interface ServerToClientEvents {
-	sync(serialized: SerializedData): void;
+	sync(
+		...payloads: SyncPayload<{
+			atom: Charm.Atom<CharacterData | undefined>;
+		}>[]
+	): void;
 	messageToClient(serialized: SerializedData): void;
 	messageToClient_urel: Networking.Unreliable<
 		(serialized: SerializedData) => void

@@ -1,6 +1,5 @@
 import { Reflect } from "@flamework/core";
-import { subscribe, sync } from "@rbxts/charm";
-import { fromSerializeablePayload } from "@rbxts/charm-payload-converter";
+import { subscribe } from "@rbxts/charm";
 import { t } from "@rbxts/t";
 import {
 	clientAtom,
@@ -21,11 +20,11 @@ import {
 import { ClientEvents, ClientFunctions } from "./networking";
 import {
 	type SerializedData,
-	dispatchSerializer,
 	messageSerializer,
 } from "./serdes";
 import type { UnknownSkill } from "./skill";
 import type { UnknownStatus } from "./statusEffect";
+import CharmSync from "@rbxts/charm-sync";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -34,7 +33,7 @@ class Client {
 	private isActive = false;
 	private registeredModules: ModuleScript[] = [];
 
-	private clientSyncer = sync.client({
+	private clientSyncer = CharmSync.client({
 		atoms: { atom: clientAtom },
 	});
 
@@ -80,12 +79,8 @@ class Client {
 		setActiveHandler(this);
 		this.setupCharacterReplication();
 
-		ClientEvents.sync.connect((serialized) => {
-			const payloads = dispatchSerializer.deserialize(
-				serialized.buffer,
-				serialized.blobs,
-			);
-			this.clientSyncer.sync(...payloads.map(fromSerializeablePayload));
+		ClientEvents.sync.connect((...payloads) => {
+			this.clientSyncer.sync(...payloads);
 		});
 		ClientEvents.start();
 

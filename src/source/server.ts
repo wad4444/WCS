@@ -1,6 +1,6 @@
 import { Reflect } from "@flamework/core";
-import { atom, sync } from "@rbxts/charm";
-import { toSerializeablePayload } from "@rbxts/charm-payload-converter";
+import { atom } from "@rbxts/charm";
+import CharmSync from "@rbxts/charm-sync";
 import { Players } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import {
@@ -20,7 +20,6 @@ import {
 import { ServerEvents, ServerFunctions } from "./networking";
 import {
 	type SerializedData,
-	dispatchSerializer,
 	messageSerializer,
 	skillRequestSerializer,
 } from "./serdes";
@@ -35,7 +34,7 @@ class Server {
 
 	/** @internal */
 	public atom = atom<Map<string, CharacterData>>(new Map());
-	private syncer = sync.server({
+	private syncer = CharmSync.server({
 		atoms: { atom: this.atom },
 		preserveHistory: true,
 	});
@@ -92,7 +91,7 @@ class Server {
 			if (!correspondingId) return;
 			assignedIdentifiers.set(player, correspondingId);
 
-			type ModifiedPayload = Charm.SyncPayload<{
+			type ModifiedPayload = CharmSync.SyncPayload<{
 				atom: Charm.Atom<CharacterData | undefined>;
 			}>;
 			const modified: ModifiedPayload[] = [];
@@ -107,23 +106,24 @@ class Server {
 							data: { atom: characterData },
 						});
 					}
-				} else {
-					const data = payload.data.atom;
-					if (data === undefined) continue;
-
-					const characterData = data.get(correspondingId);
-					if (characterData === undefined) continue;
-
-					modified.push({
-						type: "patch",
-						data: { atom: characterData },
-					});
+					continue;
 				}
+
+				print(payload.data);
+
+				const data = payload.data.atom;
+				if (data === undefined) continue;
+
+				const characterData = data.get(correspondingId);
+				if (characterData === undefined) continue;
+
+				modified.push({
+					type: "patch",
+					data: { atom: characterData as never },
+				});
 			}
 
-			const serializeable = modified.map(toSerializeablePayload);
-			const serialized = dispatchSerializer.serialize(serializeable);
-			ServerEvents.sync.fire(player, serialized);
+			ServerEvents.sync.fire(player, ...modified);
 		});
 		ServerEvents.start.connect((player) => this.syncer.hydrate(player));
 
