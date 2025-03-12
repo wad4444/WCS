@@ -258,7 +258,6 @@ export class StatusEffect<
 			return logWarning("Cannot perform this action on a replicated status");
 
 		if (this.timer.getState() !== TimerState.Running) {
-			logWarning("Cannot pause a non active status effect");
 			return;
 		}
 
@@ -276,7 +275,6 @@ export class StatusEffect<
 			return logWarning("Cannot perform this action on a replicated status");
 
 		if (this.timer.getState() !== TimerState.Paused) {
-			logWarning("Cannot resume a non paused status effect");
 			return;
 		}
 
