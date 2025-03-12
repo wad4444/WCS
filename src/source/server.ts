@@ -109,8 +109,6 @@ class Server {
 					continue;
 				}
 
-				print(payload.data);
-
 				const data = payload.data.atom;
 				if (data === undefined) continue;
 
