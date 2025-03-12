@@ -32,6 +32,7 @@ class Client {
 
 	private clientSyncer = CharmSync.client({
 		atoms: { atom: clientAtom },
+		ignoreUnhydrated: false,
 	});
 
 	constructor() {
