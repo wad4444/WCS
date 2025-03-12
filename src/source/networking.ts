@@ -14,7 +14,7 @@ interface ClientToServerEvents {
 
 interface ServerToClientEvents {
 	sync(
-		...payloads: SyncPayload<{
+		payloads: SyncPayload<{
 			atom: Charm.Atom<CharacterData | undefined>;
 		}>[]
 	): void;

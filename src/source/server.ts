@@ -123,7 +123,7 @@ class Server {
 				});
 			}
 
-			ServerEvents.sync.fire(player, ...modified);
+			ServerEvents.sync.fire(player, modified);
 		});
 		ServerEvents.start.connect((player) => this.syncer.hydrate(player));
 

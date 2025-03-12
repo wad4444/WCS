@@ -1,5 +1,6 @@
 import { Reflect } from "@flamework/core";
 import { subscribe } from "@rbxts/charm";
+import CharmSync from "@rbxts/charm-sync";
 import { t } from "@rbxts/t";
 import {
 	clientAtom,
@@ -18,13 +19,9 @@ import {
 	ValidateArgs,
 } from "./message";
 import { ClientEvents, ClientFunctions } from "./networking";
-import {
-	type SerializedData,
-	messageSerializer,
-} from "./serdes";
+import { type SerializedData, messageSerializer } from "./serdes";
 import type { UnknownSkill } from "./skill";
 import type { UnknownStatus } from "./statusEffect";
-import CharmSync from "@rbxts/charm-sync";
 
 let currentInstance: Client | undefined = undefined;
 export type WCS_Client = Client;
@@ -79,7 +76,7 @@ class Client {
 		setActiveHandler(this);
 		this.setupCharacterReplication();
 
-		ClientEvents.sync.connect((...payloads) => {
+		ClientEvents.sync.connect((payloads) => {
 			this.clientSyncer.sync(...payloads);
 		});
 		ClientEvents.start();
