@@ -46,6 +46,7 @@ interface StatusEffectProps {
 /** @hidden */
 interface _internal_StatusEffectState extends StatusEffectState {
 	_timerEndTimestamp?: number;
+	_startTimestamp?: number;
 }
 
 export interface StatusEffectState {
@@ -235,6 +236,7 @@ export class StatusEffect<
 
 		this.setState({
 			IsActive: true,
+			_startTimestamp: Workspace.GetServerTimeNow(),
 			_timerEndTimestamp: timestamp,
 		});
 	}
@@ -298,6 +300,7 @@ export class StatusEffect<
 
 		this.setState({
 			IsActive: false,
+			_startTimestamp: undefined,
 			_timerEndTimestamp: undefined,
 		});
 
@@ -312,6 +315,10 @@ export class StatusEffect<
 		}
 
 		this.timer.stop();
+	}
+
+	public GetStartTimestamp() {
+		return this.state._startTimestamp;
 	}
 
 	/**
