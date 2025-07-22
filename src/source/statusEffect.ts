@@ -241,7 +241,7 @@ export class StatusEffect<
 		});
 	}
 
-	public GetTimerEndTimestamp() {
+	public GetEndTimestamp() {
 		return this.state._timerEndTimestamp;
 	}
 

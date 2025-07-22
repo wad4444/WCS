@@ -70,9 +70,10 @@ export type StatusEffectImpl = {
 	OnConstructServer: (StatusEffect, ...any) -> (),
 	OnStartServer: (StatusEffect) -> (),
 	OnStartClient: (StatusEffect) -> (),
-	GetStartTimestamp: (StatusEffect) -> (),
 	OnEndClient: (StatusEffect) -> (),
 	OnEndServer: (StatusEffect) -> (),
+	GetStartTimestamp: (StatusEffect) -> number?,
+	GetEndTimestamp: (StatusEffect) -> number?,
 	CreateDamageContainer: (StatusEffect, number) -> DamageContainer,
 	GetDebounceEndTimestamp: (StatusEffect) -> number,
 	GetModificationPriority: (StatusEffect) -> number,
@@ -203,6 +204,13 @@ export type AffectableHumanoidProps = {
 	AutoRotate: boolean,
 }
 
+export type Partial_AffectableHumanoidProps = {
+	WalkSpeed: number?,
+	JumpPower: number?,
+	JumpHeight: number?,
+	AutoRotate: boolean?,
+}
+
 type HoldableSkillImpl = SkillImpl & {
 	__index: HoldableSkillImpl,
 	SetMaxHoldTime: (HoldableSkillImpl, number) -> (),
@@ -218,7 +226,7 @@ type CharacterImpl = {
 	GetLocalCharacter: () -> Character?,
 	GetCharacterMap: () -> { [Instance]: Character },
 	GetCharacterFromInstance: (Instance) -> Character?,
-	SetDefaultProps: (Character, AffectableHumanoidProps) -> (),
+	SetDefaultProps: (Character, Partial_AffectableHumanoidProps) -> (),
 	GetDefaultProps: (Character) -> AffectableHumanoidProps,
 	GetAllStatusEffects: (Character) -> { StatusEffect },
 	GetAllActiveStatusEffects: (Character) -> { StatusEffect },
