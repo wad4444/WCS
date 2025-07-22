@@ -16,7 +16,7 @@ interface ServerToClientEvents {
 	sync(
 		payloads: SyncPayload<{
 			atom: Charm.Atom<CharacterData | undefined>;
-		}>[]
+		}>[],
 	): void;
 	messageToClient(serialized: SerializedData): void;
 	messageToClient_urel: Networking.Unreliable<
