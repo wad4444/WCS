@@ -102,6 +102,18 @@ Warns if `time` wasn't provided in `Start()`.
 ### `Resume()`
 Resumes the internal [Timer].
 
+### `GetStartTimestamp()`
+Returns a start timestamp of the internal [Timer], if active.
+
+**`Returns:`**
+* number?
+
+### `GetEndTimestamp()`
+Returns the approximated end timestamp of the internal [Timer], if active.
+
+**`Returns:`**
+* number?
+
 ### `SetHumanoidData(data, priority?)`
 Sets the currently applied [Humanoid Data].
 
@@ -146,13 +158,14 @@ State object looks like this:
 ### `Destroy()`
 Destroys the skill and removes it from the character.
 
-### `HandleDamage(modified, original)` @override
+### `HandleDamage(modified, original, source)` @override
 Accepts 2 arguments: the previously modified and original damage.
 Should return modified damage.
 
 **`Parameters:`**
 * Modified: `number` - a damage previously modified by other status effects.
 * Original: `number` - original damage value from the container.
+* Source: `AnySkill | AnyStatus | nil` - damage source.
 
 **`Returns:`**
 * number

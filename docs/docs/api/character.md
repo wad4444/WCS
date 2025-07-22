@@ -182,7 +182,7 @@ Returns the calculated damage.
 Sets default humanoid properties of the character.
 
 **`Parameters:`**
-* Properties: `AffectableHumanoidProps` - A map of a `PropertyName` and its `Value`.
+* Properties: `Partial_AffectableHumanoidProps` - A partial map of a `PropertyName` and its `Value`.
 
 <Tabs groupId="languages">
 <TabItem value="TypeScript" default>
