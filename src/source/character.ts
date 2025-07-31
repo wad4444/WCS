@@ -454,6 +454,15 @@ export class Character {
 	}
 
 	/**
+	 * @internal
+	 * @hidden
+	 * Retrieves a status effect from the status effects map based on a given id.
+	 */
+	public GetStatusEffectFromId(Id: string) {
+		return this.statusEffects.get(Id);
+	}
+
+	/**
 	 * Retrieves all status effects of a given type.
 	 */
 	public GetAllStatusEffectsOfType<T extends AnyStatus>(

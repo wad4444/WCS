@@ -1,8 +1,9 @@
 local luaSpecific = script.Parent
 local source = luaSpecific.Parent.source
 
-local skillLib = require(source.skill)
 local holdable = require(source.holdableSkill)
+local skillLib = require(source.skill)
+local statusLib = require(source.statusEffect)
 
 local message = require(source.message)
 local utility = require(source.utility)
@@ -10,6 +11,17 @@ local utility = require(source.utility)
 function DefineMessage(fn, options)
 	local foundCtor, methodName
 	for _, ctor in skillLib.GetRegisteredSkills() do
+		if foundCtor then
+			break
+		end
+		for name, method in ctor do
+			if method == fn then
+				foundCtor, methodName = ctor, name
+				break
+			end
+		end
+	end
+	for _, ctor in statusLib.GetRegisteredStatusEffects() do
 		if foundCtor then
 			break
 		end

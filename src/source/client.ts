@@ -15,6 +15,7 @@ import { Character } from "./character";
 import { Flags } from "./flags";
 import {
 	INVALID_MESSAGE_STR,
+	MessageContentType,
 	type MessageOptions,
 	ValidateArgs,
 } from "./message";
@@ -114,64 +115,72 @@ class Client {
 		});
 
 		const eventHandler = (serialized: SerializedData) => {
-			const [Name, MethodName, PackedArgs] = messageSerializer.deserialize(
-				serialized.buffer,
-				serialized.blobs,
-			);
+			const [ContentType, Name, MethodName, PackedArgs] =
+				messageSerializer.deserialize(serialized.buffer, serialized.blobs);
 			const character = Character.GetLocalCharacter();
 			if (!character) return;
 
-			const skill = character.GetSkillFromString(Name);
-			if (!skill) return;
+			let messageClass: UnknownSkill | UnknownStatus | undefined;
+			if (ContentType === MessageContentType.Skill) {
+				messageClass = character.GetSkillFromString(Name);
+			} else if (ContentType === MessageContentType.StatusEffect) {
+				messageClass = character.GetStatusEffectFromId(Name);
+			}
+			if (!messageClass) return;
 
 			const args = RestoreArgs(PackedArgs);
 
-			const config = Reflect.getMetadata(skill, `Config_${MethodName}`) as
-				| MessageOptions
-				| undefined;
-			if (config?.OnlyWhenActive && !skill.GetState().IsActive) return;
+			const config = Reflect.getMetadata(
+				messageClass,
+				`Config_${MethodName}`,
+			) as MessageOptions | undefined;
+			if (config?.OnlyWhenActive && !messageClass.GetState().IsActive) return;
 
 			if (config?.Validators) {
 				if (!ValidateArgs(config.Validators, args)) return;
 			}
 
-			const method = skill[MethodName as never] as (
-				self: UnknownSkill,
+			const method = messageClass[MethodName as never] as (
+				self: UnknownSkill | UnknownStatus,
 				...args: unknown[]
 			) => unknown;
-			method(skill, ...args);
+			method(messageClass, ...args);
 		};
 		ClientEvents.messageToClient.connect(eventHandler);
 		ClientEvents.messageToClient_urel.connect(eventHandler);
 
 		ClientFunctions.messageToClient.setCallback((serialized) => {
-			const [Name, MethodName, PackedArgs] = messageSerializer.deserialize(
-				serialized.buffer,
-				serialized.blobs,
-			);
+			const [ContentType, Name, MethodName, PackedArgs] =
+				messageSerializer.deserialize(serialized.buffer, serialized.blobs);
 			const character = Character.GetLocalCharacter();
 			if (!character) return;
 
-			const skill = character.GetSkillFromString(Name);
-			if (!skill) return;
+			let messageClass: UnknownSkill | UnknownStatus | undefined;
+			if (ContentType === MessageContentType.Skill) {
+				messageClass = character.GetSkillFromString(Name);
+			} else if (ContentType === MessageContentType.StatusEffect) {
+				messageClass = character.GetStatusEffectFromId(Name);
+			}
+			if (!messageClass) return;
 
 			const args = RestoreArgs(PackedArgs);
 
-			const config = Reflect.getMetadata(skill, `Config_${MethodName}`) as
-				| MessageOptions
-				| undefined;
-			if (config?.OnlyWhenActive && !skill.GetState().IsActive)
+			const config = Reflect.getMetadata(
+				messageClass,
+				`Config_${MethodName}`,
+			) as MessageOptions | undefined;
+			if (config?.OnlyWhenActive && !messageClass.GetState().IsActive)
 				return INVALID_MESSAGE_STR;
 
 			if (config?.Validators) {
 				if (!ValidateArgs(config.Validators, args)) return INVALID_MESSAGE_STR;
 			}
 
-			const method = skill[MethodName as never] as (
-				self: UnknownSkill,
+			const method = messageClass[MethodName as never] as (
+				self: UnknownSkill | UnknownStatus,
 				...args: unknown[]
 			) => Promise<unknown> | unknown;
-			const returnedValue = method(skill, ...args);
+			const returnedValue = method(messageClass, ...args);
 			if (Promise.is(returnedValue)) {
 				const [success, value] = returnedValue.await();
 				return success ? value : INVALID_MESSAGE_STR;
