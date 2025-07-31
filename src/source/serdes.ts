@@ -1,4 +1,5 @@
 import { createBinarySerializer } from "@rbxts/flamework-binary-serializer";
+import type { MessageContentType } from "exports";
 
 export const skillRequestSerializer =
 	createBinarySerializer<
@@ -6,7 +7,12 @@ export const skillRequestSerializer =
 	>();
 export const messageSerializer =
 	createBinarySerializer<
-		[Name: string, MethodName: string, Args: Map<number, unknown>]
+		[
+			ContentType: MessageContentType,
+			Name: string,
+			MethodName: string,
+			Args: Map<number, unknown>,
+		]
 	>();
 
 export type SerializedData = {
