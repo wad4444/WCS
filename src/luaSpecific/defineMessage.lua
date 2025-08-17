@@ -36,6 +36,7 @@ function DefineMessage(fn, options)
 	local isInvalid = skillLib.SkillBase[methodName] ~= nil
 		or skillLib.Skill[methodName] ~= nil
 		or holdable.HoldableSkill[methodName] ~= nil
+		or statusLib.StatusEffect[methodName] ~= nil
 
 	if not foundCtor or isInvalid or not rawget(foundCtor, methodName) then
 		utility.logError("Provided function is not a valid skill method.")
