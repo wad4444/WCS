@@ -10,12 +10,12 @@ import {
 } from "./networking";
 import { messageSerializer } from "./serdes";
 import { SkillBase } from "./skill";
+import { StatusEffect } from "./statusEffect";
 import {
 	instanceofConstructor,
 	isClientContext,
 	isServerContext,
 	logError,
-	logWarning,
 } from "./utility";
 
 /**
@@ -53,14 +53,25 @@ export function ValidateArgs(validators: t.check<any>[], args: unknown[]) {
 	return true;
 }
 
+/** @internal @hidden */
+export enum MessageContentType {
+	Skill = "Skill",
+	StatusEffect = "StatusEffect",
+}
+
 export function Message<T extends MessageOptions>(Options: T) {
 	return (
 		ctor: Record<string, any>,
 		methodName: string,
 		_: TypedPropertyDescriptor<GetDesiredMethodType<ValidateUnreliable<T>>>,
 	) => {
-		if (!instanceofConstructor(ctor as never, SkillBase as never)) {
-			logError(`${ctor} is not a valid skill constructor.`);
+		let contentType: MessageContentType;
+		if (instanceofConstructor(ctor as never, SkillBase as never)) {
+			contentType = MessageContentType.Skill;
+		} else if (instanceofConstructor(ctor as never, StatusEffect as never)) {
+			contentType = MessageContentType.StatusEffect;
+		} else {
+			logError(`${ctor} is not a valid skill/ status effect constructor.`);
 		}
 		if (!rawget(ctor, methodName)) {
 			logError(`${ctor} does not have a method named ${methodName}.`);
@@ -97,10 +108,15 @@ export function Message<T extends MessageOptions>(Options: T) {
 
 		if (current === Options.Destination) return;
 
-		ctor[methodName] = function (this: SkillBase, ...args: unknown[]) {
+		ctor[methodName] = function (
+			this: SkillBase | StatusEffect,
+			...args: unknown[]
+		) {
 			if (!this.Player) return;
+
 			const serialized = messageSerializer.serialize([
-				this.Name,
+				contentType,
+				contentType === MessageContentType.Skill ? this.Name : this.GetId(),
 				methodName,
 				ConvertArgs(args),
 			]);
