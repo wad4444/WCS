@@ -6,7 +6,12 @@ export const skillRequestSerializer =
 	>();
 export const messageSerializer =
 	createBinarySerializer<
-		[Name: string, MethodName: string, Args: Map<number, unknown>]
+		[
+			ContentType: "Skill" | "StatusEffect",
+			Name: string,
+			MethodName: string,
+			Args: Map<number, unknown>,
+		]
 	>();
 
 export type SerializedData = {
