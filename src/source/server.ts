@@ -15,7 +15,6 @@ import { RestoreArgs } from "./arg-converter";
 import { Character, type CharacterData } from "./character";
 import {
 	INVALID_MESSAGE_STR,
-	MessageContentType,
 	type MessageOptions,
 	ValidateArgs,
 } from "./message";
@@ -157,20 +156,11 @@ class Server {
 			if (!character || character.Player !== Player) return;
 
 			let messageClass: UnknownSkill | UnknownStatus | undefined;
-			if (ContentType === MessageContentType.Skill) {
+			if (ContentType === "Skill") {
 				messageClass = character.GetSkillFromString(Name);
-			} else if (ContentType === MessageContentType.StatusEffect) {
+			} else if (ContentType === "StatusEffect") {
 				messageClass = character.GetStatusEffectFromId(Name);
 			}
-			print(
-				`Message class: ${messageClass}`,
-				ContentType,
-				MessageContentType.StatusEffect,
-				ContentType === MessageContentType.StatusEffect,
-				character.GetStatusEffectFromId(Name),
-				Name,
-				character.GetAllStatusEffects(),
-			);
 			if (!messageClass) return;
 
 			const args = RestoreArgs(PackedArgs);
@@ -202,21 +192,10 @@ class Server {
 			const character = Character.GetCharacterFromInstance(playerCharacter);
 			if (!character || character.Player !== Player) return;
 
-			let messageClass: UnknownSkill | UnknownStatus | undefined;
-			if (ContentType === MessageContentType.Skill) {
-				messageClass = character.GetSkillFromString(Name);
-			} else if (ContentType === MessageContentType.StatusEffect) {
-				messageClass = character.GetStatusEffectFromId(Name);
-			}
-			print(
-				`Message class: ${messageClass}`,
-				ContentType,
-				MessageContentType.StatusEffect,
-				ContentType === MessageContentType.StatusEffect,
-				character.GetStatusEffectFromId(Name),
-				Name,
-				character.GetAllStatusEffects(),
-			);
+			const messageClass =
+				ContentType === "Skill"
+					? character.GetSkillFromString(Name)
+					: character.GetStatusEffectFromId(Name);
 			if (!messageClass) return;
 
 			const args = RestoreArgs(PackedArgs);

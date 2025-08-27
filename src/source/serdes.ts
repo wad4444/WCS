@@ -1,5 +1,4 @@
 import { createBinarySerializer } from "@rbxts/flamework-binary-serializer";
-import type { MessageContentType } from "exports";
 
 export const skillRequestSerializer =
 	createBinarySerializer<
@@ -8,7 +7,7 @@ export const skillRequestSerializer =
 export const messageSerializer =
 	createBinarySerializer<
 		[
-			ContentType: MessageContentType,
+			ContentType: "Skill" | "StatusEffect",
 			Name: string,
 			MethodName: string,
 			Args: Map<number, unknown>,

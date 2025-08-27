@@ -53,26 +53,17 @@ export function ValidateArgs(validators: t.check<any>[], args: unknown[]) {
 	return true;
 }
 
-/** @internal @hidden */
-export enum MessageContentType {
-	Skill = "Skill",
-	StatusEffect = "StatusEffect",
-}
-
 export function Message<T extends MessageOptions>(Options: T) {
 	return (
 		ctor: Record<string, any>,
 		methodName: string,
 		_: TypedPropertyDescriptor<GetDesiredMethodType<ValidateUnreliable<T>>>,
 	) => {
-		let contentType: MessageContentType;
-		if (instanceofConstructor(ctor as never, SkillBase as never)) {
-			contentType = MessageContentType.Skill;
-		} else if (instanceofConstructor(ctor as never, StatusEffect as never)) {
-			contentType = MessageContentType.StatusEffect;
-		} else {
-			logError(`${ctor} is not a valid skill/ status effect constructor.`);
-		}
+		const contentType = instanceofConstructor(ctor as never, SkillBase as never)
+			? "Skill"
+			: instanceofConstructor(ctor as never, StatusEffect as never)
+				? "StatusEffect"
+				: logError(`${ctor} is not a valid skill/ status effect constructor.`);
 		if (!rawget(ctor, methodName)) {
 			logError(`${ctor} does not have a method named ${methodName}.`);
 		}
@@ -116,7 +107,7 @@ export function Message<T extends MessageOptions>(Options: T) {
 
 			const serialized = messageSerializer.serialize([
 				contentType,
-				contentType === MessageContentType.Skill ? this.Name : this.GetId(),
+				contentType === "Skill" ? this.Name : this.GetId(),
 				methodName,
 				ConvertArgs(args),
 			]);

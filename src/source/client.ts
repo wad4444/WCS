@@ -15,7 +15,6 @@ import { Character } from "./character";
 import { Flags } from "./flags";
 import {
 	INVALID_MESSAGE_STR,
-	MessageContentType,
 	type MessageOptions,
 	ValidateArgs,
 } from "./message";
@@ -120,12 +119,10 @@ class Client {
 			const character = Character.GetLocalCharacter();
 			if (!character) return;
 
-			let messageClass: UnknownSkill | UnknownStatus | undefined;
-			if (ContentType === MessageContentType.Skill) {
-				messageClass = character.GetSkillFromString(Name);
-			} else if (ContentType === MessageContentType.StatusEffect) {
-				messageClass = character.GetStatusEffectFromId(Name);
-			}
+			const messageClass =
+				ContentType === "Skill"
+					? character.GetSkillFromString(Name)
+					: character.GetStatusEffectFromId(Name);
 			if (!messageClass) return;
 
 			const args = RestoreArgs(PackedArgs);
@@ -155,12 +152,10 @@ class Client {
 			const character = Character.GetLocalCharacter();
 			if (!character) return;
 
-			let messageClass: UnknownSkill | UnknownStatus | undefined;
-			if (ContentType === MessageContentType.Skill) {
-				messageClass = character.GetSkillFromString(Name);
-			} else if (ContentType === MessageContentType.StatusEffect) {
-				messageClass = character.GetStatusEffectFromId(Name);
-			}
+			const messageClass =
+				ContentType === "Skill"
+					? character.GetSkillFromString(Name)
+					: character.GetStatusEffectFromId(Name);
 			if (!messageClass) return;
 
 			const args = RestoreArgs(PackedArgs);
