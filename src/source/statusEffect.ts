@@ -613,3 +613,14 @@ export function StatusEffectDecorator<T extends StatusEffectConstructor>(
 export function GetRegisteredStatusEffectConstructor(Name: string) {
 	return registeredStatuses.get(Name);
 }
+
+/**
+ * @internal
+ * @hidden
+ */
+export function GetRegisteredStatusEffects() {
+	return table.freeze(table.clone(registeredStatuses)) as ReadonlyMap<
+		string,
+		StatusEffectConstructor
+	>;
+}

@@ -151,7 +151,7 @@ export abstract class SkillBase<
 	};
 	private destroyed = false;
 	private metadata?: Metadata;
-	protected readonly Name = tostring(getmetatable(this));
+	public readonly Name = tostring(getmetatable(this));
 	/**
 	 * A table of arguments provided after the Character in .new().
 	 */
